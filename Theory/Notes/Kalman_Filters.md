@@ -3,3 +3,10 @@ Kalman Filters are recursive mathematical functions which help us calculate the 
 Variants:
  - EKF (Extended Kalman Filters)
  - UKF (Unscented Kalman Filters)
+
+
+-------- Implementing a basic Kalam Filters --------
+This will be the most detailed implementation of a Kalman Filter
+
+
+----------------------------------------------------      
