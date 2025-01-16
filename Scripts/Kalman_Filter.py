@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 
 # Define the Kalman Filter class
 class KalmanFilter:
@@ -28,7 +29,7 @@ class KalmanFilter:
 
     def update(self, z, H):
         """
-        Update step (Corrects the state estimate using measurements)
+        Update step
         """
         # Compute the residual (difference between the measured and predicted values)
         y = z - np.dot(H, self.x)  # y = z - H * x
@@ -45,9 +46,6 @@ class KalmanFilter:
         self.P = np.dot(I - np.dot(K, H), self.P)
 
     def get_state(self):
-        """
-        Return the current state estimate
-        """
         return self.x
 
 # Define the dimensions of the state and measurement vectors
@@ -72,62 +70,85 @@ H[6, 12] = 1  # DVL x bias
 H[7, 13] = 1  # DVL y bias
 H[8, 14] = 1  # DVL z bias
 
-# Simulated sensor data (real measurements would come from sensors)
-z_acc = np.array([0.1, 0.2, 0.3])  # Accelerometer measurements (with noise)
-z_gyro = np.array([0.05, -0.02, 0.1])  # Gyroscope measurements (with noise)
-z_dvl = np.array([1.2, 0.1, -0.5])  # DVL velocity measurements (with noise)
+# Load the data from CSV file
+data = pd.read_csv('../Data/Data_Cleaned.csv')  # Replace with your actual CSV file path
 
-# Measurement vector combining all sensor measurements
-z = np.concatenate([z_acc, z_gyro, z_dvl])
+# Extract sensor data
+z_acc = data[['ACC X [m/s^2]', 'ACC Y [m/s^2]', 'ACC Z [m/s^2]']].values
+z_gyro = data[['GYRO X [rad/s]', 'GYRO Y [rad/s]', 'GYRO Z [rad/s]']].values
+z_dvl = data[['DVL X [m/s]', 'DVL Y [m/s]', 'DVL Z [m/s]']].values
+
+# Combine sensor data into a single measurement vector (z)
+z = np.hstack((z_acc, z_gyro, z_dvl))
 
 # Store the results for plotting
 estimated_biasses = []
+corrected_acc = []
+corrected_gyro = []
+corrected_dvl = []
 
-# Kalman filter loop: Predict and Update steps for 100 iterations
-for _ in range(100):  # Loop for 100 iterations
+# Kalman filter loop: Predict and Update steps for each time step in the data
+for i in range(len(data)):  # Loop over the rows in the CSV data
     # Prediction step
     kf.predict(F)
     
-    # Update step with the sensor measurements
-    kf.update(z, H)
+    # Update step with the sensor measurements for the current iteration
+    current_z = z[i, :]  # Current measurement vector
+    kf.update(current_z, H)
     
     # Get the current state estimate (including biases)
     estimated_state = kf.get_state()
     
-    # Store estimated biases (accelerometer, gyroscope, DVL)
+    # Store the estimated biases (accelerometer, gyroscope, DVL)
     estimated_biasses.append(estimated_state[6:15])  # We store only the biases (indices 6-14)
+    
+    # Correct the sensor values using the estimated biases
+    corrected_acc.append(current_z[0:3] - estimated_state[6:9])  # Correct accelerometer data
+    corrected_gyro.append(current_z[3:6] - estimated_state[9:12])  # Correct gyroscope data
+    corrected_dvl.append(current_z[6:9] - estimated_state[12:15])  # Correct DVL data
 
-# Convert the results into a NumPy array for easier manipulation
-estimated_biasses = np.array(estimated_biasses)
+# Convert to numpy arrays for easier manipulation
+corrected_acc = np.array(corrected_acc)
+corrected_gyro = np.array(corrected_gyro)
+corrected_dvl = np.array(corrected_dvl)
 
-# Plotting the estimated biases over 100 iterations
+# Plotting the corrected values vs sensor values
 fig, axs = plt.subplots(3, 1, figsize=(10, 8))
 
-# Plot accelerometer biases
-axs[0].plot(estimated_biasses[:, 0], label="Accelerometer Bias (X)")
-axs[0].plot(estimated_biasses[:, 1], label="Accelerometer Bias (Y)")
-axs[0].plot(estimated_biasses[:, 2], label="Accelerometer Bias (Z)")
-axs[0].set_title("Accelerometer Biases over Time")
+# Plot accelerometer
+axs[0].plot(z_acc[:, 0], label="Accelerometer X - Sensor")
+axs[0].plot(corrected_acc[:, 0], label="Accelerometer X - Corrected")
+axs[0].plot(z_acc[:, 1], label="Accelerometer Y - Sensor")
+axs[0].plot(corrected_acc[:, 1], label="Accelerometer Y - Corrected")
+axs[0].plot(z_acc[:, 2], label="Accelerometer Z - Sensor")
+axs[0].plot(corrected_acc[:, 2], label="Accelerometer Z - Corrected")
+axs[0].set_title("Accelerometer Measurements: Sensor vs Corrected")
 axs[0].set_xlabel("Iterations")
-axs[0].set_ylabel("Bias Value")
+axs[0].set_ylabel("Acceleration (m/s^2)")
 axs[0].legend()
 
-# Plot gyroscope biases
-axs[1].plot(estimated_biasses[:, 3], label="Gyroscope Bias (X)")
-axs[1].plot(estimated_biasses[:, 4], label="Gyroscope Bias (Y)")
-axs[1].plot(estimated_biasses[:, 5], label="Gyroscope Bias (Z)")
-axs[1].set_title("Gyroscope Biases over Time")
+# Plot gyroscope
+axs[1].plot(z_gyro[:, 0], label="Gyroscope X - Sensor")
+axs[1].plot(corrected_gyro[:, 0], label="Gyroscope X - Corrected")
+axs[1].plot(z_gyro[:, 1], label="Gyroscope Y - Sensor")
+axs[1].plot(corrected_gyro[:, 1], label="Gyroscope Y - Corrected")
+axs[1].plot(z_gyro[:, 2], label="Gyroscope Z - Sensor")
+axs[1].plot(corrected_gyro[:, 2], label="Gyroscope Z - Corrected")
+axs[1].set_title("Gyroscope Measurements: Sensor vs Corrected")
 axs[1].set_xlabel("Iterations")
-axs[1].set_ylabel("Bias Value")
+axs[1].set_ylabel("Angular Velocity (rad/s)")
 axs[1].legend()
 
-# Plot DVL biases
-axs[2].plot(estimated_biasses[:, 6], label="DVL Bias (X)")
-axs[2].plot(estimated_biasses[:, 7], label="DVL Bias (Y)")
-axs[2].plot(estimated_biasses[:, 8], label="DVL Bias (Z)")
-axs[2].set_title("DVL Biases over Time")
+# Plot DVL
+axs[2].plot(z_dvl[:, 0], label="DVL X - Sensor")
+axs[2].plot(corrected_dvl[:, 0], label="DVL X - Corrected")
+axs[2].plot(z_dvl[:, 1], label="DVL Y - Sensor")
+axs[2].plot(corrected_dvl[:, 1], label="DVL Y - Corrected")
+axs[2].plot(z_dvl[:, 2], label="DVL Z - Sensor")
+axs[2].plot(corrected_dvl[:, 2], label="DVL Z - Corrected")
+axs[2].set_title("DVL Measurements: Sensor vs Corrected")
 axs[2].set_xlabel("Iterations")
-axs[2].set_ylabel("Bias Value")
+axs[2].set_ylabel("Velocity (m/s)")
 axs[2].legend()
 
 plt.tight_layout()
