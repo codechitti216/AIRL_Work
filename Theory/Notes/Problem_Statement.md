@@ -10,7 +10,7 @@ Methods:
 
 Step 2: Velocity Estimation
 Input : Complete Data (6x + 4y)  
-Output : $V_x$,$V_y$,$V_z$  
+Output : $V_x,V_y,V_z$  
 Methods:
 - MLP  
 - LSTM  
@@ -20,7 +20,7 @@ Methods:
 - TCN  
 
 Step 3: Bias Estimation followed by Correction  
-Input : $V_x$,$V_y$,$V_z$  
+Input : $V_x,V_y,V_z$   
 Output : Bias Free Data (Cleaner Data)  
 
 Methods:  
