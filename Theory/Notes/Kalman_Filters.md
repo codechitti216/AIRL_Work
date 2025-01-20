@@ -50,3 +50,6 @@ Variables:
 This part will be about how Kalman Filters are used to calculate non measureable values
 
 ----------------------------------------------------      
+
+How does Extended Kalman Filters handle Non Linearity of the system and convert it into linear system? 
+
