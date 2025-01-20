@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def f(state, dt):
-    """State transition function for 3D space."""
     x, y, z, vx, vy, vz, ax, ay, az, bx, by, bz, bvx, bvy, bvz, bax, bay, baz = state
     new_x = x + vx * dt + 0.5 * ax * dt**2 + bx
     new_y = y + vy * dt + 0.5 * ay * dt**2 + by
@@ -17,7 +16,6 @@ def f(state, dt):
                      new_ax, new_ay, new_az, bx, by, bz, bvx, bvy, bvz, bax, bay, baz])
 
 def h(state):
-    """Observation function for 3D space."""
     x, y, z, vx, vy, vz, ax, ay, az, bx, by, bz, bvx, bvy, bvz, bax, bay, baz = state
     z_x = x + bx
     z_y = y + by
@@ -31,7 +29,6 @@ def h(state):
     return np.array([z_x, z_y, z_z, z_vx, z_vy, z_vz, z_ax, z_ay, z_az])
 
 def compute_jacobians(state, dt):
-    """Compute Jacobian matrices for f and h in 3D."""
     F = np.eye(18)
     F[0, 3] = dt  
     F[0, 6] = 0.5 * dt**2  
@@ -57,7 +54,6 @@ def compute_jacobians(state, dt):
     return F, H
 
 def ekf(z, initial_state, P_0, dt, Q, R, num_steps):
-    """Extended Kalman Filter for 3D space."""
     state = np.array(initial_state)
     P = np.array(P_0)
     estimates = []
