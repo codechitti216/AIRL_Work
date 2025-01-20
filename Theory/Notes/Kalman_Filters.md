@@ -53,3 +53,4 @@ This part will be about how Kalman Filters are used to calculate non measureable
 
 How does Extended Kalman Filters handle Non Linearity of the system and convert it into linear system? 
 
+It uses Taylor Series expansion to approximate the non linear state transition function using the Jacobian of the function at that time step. 
