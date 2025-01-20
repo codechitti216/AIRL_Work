@@ -33,26 +33,26 @@ def h(state):
 def compute_jacobians(state, dt):
     """Compute Jacobian matrices for f and h in 3D."""
     F = np.eye(18)
-    F[0, 3] = dt  # x depends on vx
-    F[0, 6] = 0.5 * dt**2  # x depends on ax
-    F[1, 4] = dt  # y depends on vy
-    F[1, 7] = 0.5 * dt**2  # y depends on ay
-    F[2, 5] = dt  # z depends on vz
-    F[2, 8] = 0.5 * dt**2  # z depends on az
-    F[3, 6] = dt  # vx depends on ax
-    F[4, 7] = dt  # vy depends on ay
-    F[5, 8] = dt  # vz depends on az
+    F[0, 3] = dt  
+    F[0, 6] = 0.5 * dt**2  
+    F[1, 4] = dt  
+    F[1, 7] = 0.5 * dt**2  
+    F[2, 5] = dt  
+    F[2, 8] = 0.5 * dt**2  
+    F[3, 6] = dt  
+    F[4, 7] = dt  
+    F[5, 8] = dt  
 
     H = np.zeros((9, 18))
-    H[0, 0] = 1; H[0, 9] = 1  # x and bx
-    H[1, 1] = 1; H[1, 10] = 1  # y and by
-    H[2, 2] = 1; H[2, 11] = 1  # z and bz
-    H[3, 3] = 1; H[3, 12] = 1  # vx and bvx
-    H[4, 4] = 1; H[4, 13] = 1  # vy and bvy
-    H[5, 5] = 1; H[5, 14] = 1  # vz and bvz
-    H[6, 6] = 1; H[6, 15] = 1  # ax and bax
-    H[7, 7] = 1; H[7, 16] = 1  # ay and bay
-    H[8, 8] = 1; H[8, 17] = 1  # az and baz
+    H[0, 0] = 1; H[0, 9] = 1  
+    H[1, 1] = 1; H[1, 10] = 1  
+    H[2, 2] = 1; H[2, 11] = 1  
+    H[3, 3] = 1; H[3, 12] = 1  
+    H[4, 4] = 1; H[4, 13] = 1  
+    H[5, 5] = 1; H[5, 14] = 1  
+    H[6, 6] = 1; H[6, 15] = 1  
+    H[7, 7] = 1; H[7, 16] = 1  
+    H[8, 8] = 1; H[8, 17] = 1  
 
     return F, H
 
@@ -77,12 +77,12 @@ def ekf(z, initial_state, P_0, dt, Q, R, num_steps):
     return np.array(estimates), np.array(predictions)
 
 if __name__ == "__main__":
-    x_0 = [0] * 18  # Initial state with all zeros
-    P_0 = np.eye(18) * 1e-3  # Initial covariance
-    Q = np.eye(18) * 1e-5  # Process noise
-    R = np.eye(9) * 1e-1  # Measurement noise
-    dt = 0.1  # Time step
-    num_steps = 50  # Number of time steps
+    x_0 = [0] * 18  
+    P_0 = np.eye(18) * 1e-3  
+    Q = np.eye(18) * 1e-5  
+    R = np.eye(9) * 1e-1  
+    dt = 0.1  
+    num_steps = 50  
 
     true_measurements = np.array([
         [i * dt, i * dt * 0.5, 0.1 * np.sin(i * dt), 
