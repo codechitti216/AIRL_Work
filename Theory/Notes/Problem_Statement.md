@@ -1,4 +1,15 @@
-In this problem, there are three steps. 
+In this problem, there are three steps.   
+
+Raw Data : DVL and IMU sensor data  
+
+Data Preprocessing:  
+    - Coordinate System Transformation   
+        - ECI  
+        - ECEF  
+        - LNF  
+        - LTPF  
+        - BF  
+
 
 Step 1: Complete Data  
 Input : Incomplete Data (6x + 4y + z)  
@@ -39,3 +50,36 @@ Methods:
 _We need to find out the best combinatino for the velocity prediction._
 
 So, the tasks are to write codes individually and then run simularions on all the possible combinations. 
+
+# Raw Data Description
+
+## Files
+### DVL  
+#### Attributes:
+   - Time (in seconds)
+   - $V_x$
+   - $V_y$
+   - $V_z$
+
+### GT  
+#### Attributes:
+   - Time (in seconds)
+   - Longitude
+   - Latitude
+   - Altitude
+   - $V_{North}$
+   - $V_{East}$
+   - $V_{Down}$
+   - Roll
+   - Pitch
+   - Yaw
+
+### IMU
+#### Attributes:
+   - Time (in seconds)
+   - $A_x$
+   - $A_y$
+   - $A_z$
+   - $Gyro_x$
+   - $Gyro_y$
+   - $Gyro_z$
