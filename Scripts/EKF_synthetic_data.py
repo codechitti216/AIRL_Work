@@ -105,4 +105,3 @@ if __name__ == "__main__":
             axs[i, j].grid()
     plt.tight_layout()
     plt.show()
-    
