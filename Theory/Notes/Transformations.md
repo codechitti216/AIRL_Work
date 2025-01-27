@@ -1,4 +1,4 @@
-This will include the theory behind the transformations between every frame of references  
+This will include the theory behind the transformations between every frame of reference
 
 # Frames of References  
     - Earth Centered Intertial Frame
