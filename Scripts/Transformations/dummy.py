@@ -1,103 +1,90 @@
 import numpy as np
 
-def ned_to_enu(ned_vector):
-    """Convert a vector from NED to ENU coordinate frame."""
-    transform_matrix = np.array([
-        [0, 1, 0],  
-        [1, 0, 0],  
-        [0, 0, -1]  
+# Constants for Earth's dimensions (WGS84)
+a = 6378137  # Semi-major axis (meters)
+e2 = 0.00669437999014  # Eccentricity squared
+omega_e = 7.292115e-5  # Earth's angular velocity in rad/s
+
+def ecef_to_ned_velocity(lat_ref, lon_ref, alt_ref, ecef_vel, ecef_pos):
+    """
+    Convert velocity from ECEF to NED.
+    """
+    # Convert reference latitude and longitude to radians
+    lat_ref_rad = np.radians(lat_ref)
+    lon_ref_rad = np.radians(lon_ref)
+
+    # Compute the prime vertical radius of curvature
+    N = a / np.sqrt(1 - e2 * np.sin(lat_ref_rad) ** 2)
+
+    # Reference ECEF coordinates
+    x_ref = (N + alt_ref) * np.cos(lat_ref_rad) * np.cos(lon_ref_rad)
+    y_ref = (N + alt_ref) * np.cos(lat_ref_rad) * np.sin(lon_ref_rad)
+    z_ref = ((1 - e2) * N + alt_ref) * np.sin(lat_ref_rad)
+
+    # Compute the rotation matrix from ECEF to NED
+    rotation_matrix_ecef_to_ned = np.array([
+        [-np.sin(lat_ref_rad) * np.cos(lon_ref_rad), -np.sin(lat_ref_rad) * np.sin(lon_ref_rad), np.cos(lat_ref_rad)],
+        [-np.sin(lon_ref_rad), np.cos(lon_ref_rad), 0],
+        [-np.cos(lat_ref_rad) * np.cos(lon_ref_rad), -np.cos(lat_ref_rad) * np.sin(lon_ref_rad), -np.sin(lat_ref_rad)]
     ])
-    return transform_matrix @ ned_vector
 
-def ned_to_seu(ned_vector):
-    """Convert a vector from NED to SEU coordinate frame."""
-    transform_matrix = np.array([
-        [0, 1, 0],  
-        [-1, 0, 0], 
-        [0, 0, -1]  
+    # Earth's rotational velocity at the reference point
+    omega_ref = omega_e * np.array([-y_ref, x_ref, 0]) / np.linalg.norm([x_ref, y_ref])
+    reference_velocity = np.cross(omega_ref, ecef_pos)
+
+    # Convert velocity from ECEF to NED
+    ned_vel = np.dot(rotation_matrix_ecef_to_ned, ecef_vel - reference_velocity)
+
+    return ned_vel
+
+
+def ned_to_ecef_velocity(lat_ref, lon_ref, alt_ref, ned_vel, ecef_pos):
+    """
+    Convert velocity from NED to ECEF.
+    """
+    # Convert latitude and longitude to radians
+    lat_ref_rad = np.radians(lat_ref)
+    lon_ref_rad = np.radians(lon_ref)
+
+    # Compute the prime vertical radius of curvature
+    N = a / np.sqrt(1 - e2 * np.sin(lat_ref_rad) ** 2)
+
+    # Reference ECEF coordinates
+    x_ref = (N + alt_ref) * np.cos(lat_ref_rad) * np.cos(lon_ref_rad)
+    y_ref = (N + alt_ref) * np.cos(lat_ref_rad) * np.sin(lon_ref_rad)
+    z_ref = ((1 - e2) * N + alt_ref) * np.sin(lat_ref_rad)
+
+    # Compute the rotation matrix from NED to ECEF (transpose of ECEF to NED)
+    rotation_matrix_ecef_to_ned = np.array([
+        [-np.sin(lat_ref_rad) * np.cos(lon_ref_rad), -np.sin(lat_ref_rad) * np.sin(lon_ref_rad), np.cos(lat_ref_rad)],
+        [-np.sin(lon_ref_rad), np.cos(lon_ref_rad), 0],
+        [-np.cos(lat_ref_rad) * np.cos(lon_ref_rad), -np.cos(lat_ref_rad) * np.sin(lon_ref_rad), -np.sin(lat_ref_rad)]
     ])
-    return transform_matrix @ ned_vector
+    rotation_matrix_ned_to_ecef = rotation_matrix_ecef_to_ned.T
 
-def ned_to_body(ned_vector, rotation_matrix):
-    """Convert a vector from NED to Body Frame using a rotation matrix."""
-    return rotation_matrix @ ned_vector
+    # Earth's rotational velocity at the reference point
+    omega_ref = omega_e * np.array([-y_ref, x_ref, 0]) / np.linalg.norm([x_ref, y_ref])
+    reference_velocity = np.cross(omega_ref, ecef_pos)
 
-def update_lat_lon_alt(lat, lon, alt, ned_displacement):
-    """Update latitude, longitude, and altitude from NED displacement."""
-    R_EARTH = 6378137.0
-    north, east, down = ned_displacement
-    up = -down
+    # Convert velocity from NED to ECEF
+    ecef_vel = np.dot(rotation_matrix_ned_to_ecef, ned_vel) + reference_velocity
 
-    lat_rad = np.radians(lat)
-    lon_rad = np.radians(lon)
-
-    delta_lat = north / R_EARTH
-    delta_lon = east / (R_EARTH * np.cos(lat_rad))
-
-    lat_new = lat + np.degrees(delta_lat)
-    lon_new = lon + np.degrees(delta_lon)
-    alt_new = alt + up
-
-    return lat_new, lon_new, alt_new
-
-def rotate_vector(vector, theta):
-    """Rotate a vector using the angle theta between ECI and ECEF frames."""
-    rotation_matrix = np.array([
-        [np.cos(theta), np.sin(theta), 0],
-        [-np.sin(theta), np.cos(theta), 0],
-        [0, 0, 1]
-    ])
-    return rotation_matrix @ vector
+    return ecef_vel
 
 
-def run_tests():
-    """Run validation tests."""
-    
-    ned_vector = np.array([100, 200, -50])
-    expected_enu = np.array([200, 100, 50])
-    assert np.allclose(ned_to_enu(ned_vector), expected_enu), "NED to ENU failed"
+# Example usage
+lat_ref = 37.7749  # Latitude of the reference point (San Francisco)
+lon_ref = -122.4194  # Longitude of the reference point (San Francisco)
+alt_ref = 30  # Altitude of the reference point (30 meters)
 
-    
-    expected_seu = np.array([200, -100, 50])
-    assert np.allclose(ned_to_seu(ned_vector), expected_seu), "NED to SEU failed"
+# Example ECEF velocity input
+ecef_vel = np.array([10, 5, -2])
+ecef_pos = np.array([-2706187.55929115, -4261079.50629063, 3885743.86684897])
 
-    
-    lat, lon, alt = 37.7749, -122.4194, 30
-    expected_lat, expected_lon, expected_alt = 37.775798, -122.417127, 80
-    new_lat, new_lon, new_alt = update_lat_lon_alt(lat, lon, alt, ned_vector)
-    assert np.isclose(new_lat, expected_lat, atol=1e-6), "Latitude update failed"
-    assert np.isclose(new_lon, expected_lon, atol=1e-6), "Longitude update failed"
-    assert np.isclose(new_alt, expected_alt), "Altitude update failed"
+# Convert ECEF to NED velocity
+ned_vel = ecef_to_ned_velocity(lat_ref, lon_ref, alt_ref, ecef_vel, ecef_pos)
+print(f"NED velocity: {ned_vel}")
 
-    
-    theta = np.radians(45)
-    rotated = rotate_vector(ned_vector, theta)
-    expected_rotated = np.array([212.132034, 70.710678, -50])
-    assert np.allclose(rotated, expected_rotated, atol=1e-6), "Vector rotation failed"
-
-    print("All tests passed!")
-
-if __name__ == "__main__":
-    
-    ned_vector = np.array([100, 200, -50])
-
-    enu_vector = ned_to_enu(ned_vector)
-    print("ENU Vector:", enu_vector)
-
-    seu_vector = ned_to_seu(ned_vector)
-    print("SEU Vector:", seu_vector)
-
-    rotation_matrix = np.eye(3)
-    body_vector = ned_to_body(ned_vector, rotation_matrix)
-    print("Body Frame Vector:", body_vector)
-
-    lat, lon, alt = 37.7749, -122.4194, 30
-    new_lat, new_lon, new_alt = update_lat_lon_alt(lat, lon, alt, ned_vector)
-    print("Updated Lat, Lon, Alt:", new_lat, new_lon, new_alt)
-
-    theta = np.radians(45)
-    rotated_vector = rotate_vector(ned_vector, theta)
-    print("Rotated Vector:", rotated_vector)
-
-    
-    run_tests()
+# Convert NED back to ECEF velocity
+ecef_vel_back = ned_to_ecef_velocity(lat_ref, lon_ref, alt_ref, ned_vel, ecef_pos)
+print(f"ECEF velocity (back): {ecef_vel_back}")
