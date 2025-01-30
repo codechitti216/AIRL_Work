@@ -18,25 +18,25 @@ from Memory_Neural_Network import MemoryNeuralNetwork
 
 from LSTM import LSTMNetwork
 
-ID = 0
+# ID = 0
 
 
-neeta = 1.2e-3
-neeta_dash = 5e-4
-lipschitz_constant = 1.2
-epochs = 100
+# neeta = 1.2e-3
+# neeta_dash = 5e-4
+# lipschitz_constant = 1.2
+# epochs = 40
 
 
-base_path = "../../../Data"
+# base_path = "../../../Data"
 
 
-results_df = pd.DataFrame(columns=['ID', 'Trajectory', 'Learning Rate 1', 'Learning Rate 2', 
-                                   'Stacking Count', '6()', '4()', 'Best RMSE Loss', 'Time Taken', 'File Name'])
+# results_df = pd.DataFrame(columns=['ID', 'Trajectory', 'Learning Rate 1', 'Learning Rate 2', 
+#                                    'Stacking Count', '6()', '4()', 'Best RMSE Loss', 'Time Taken', 'File Name'])
 
 
-file_pattern = re.compile(r'combined_(\d+)_(\d+)\.csv')
+# file_pattern = re.compile(r'combined_(\d+)_(\d+)\.csv')
 
-print("Starting experiment script...")
+# print("Starting experiment script...")
 
 
 # for traj_folder in os.listdir(base_path):
@@ -134,7 +134,7 @@ print("Starting experiment script...")
 
 #         results_df = pd.concat([results_df, pd.DataFrame([{
 #             'ID': ID,
-#             'Trajectory': traj_folder,
+#             'Trajectory': traj_folder[-1],
 #             'Learning Rate 1': neeta,
 #             'Learning Rate 2': neeta_dash,
 #             'Stacking Count': 1,
@@ -142,11 +142,38 @@ print("Starting experiment script...")
 #             '4()': b,
 #             'Best RMSE Loss': best_rmse,
 #             'Time Taken': time_taken,
-#             'File Name': file_path
 #         }])], ignore_index=True)
 
 # results_df.to_csv('MNN_experiment_results.csv', index=False)
 # print("All experiments completed. Results saved in 'experiment_results.csv'.")
+
+
+ID = 0
+
+
+neeta = 1.2e-3
+
+print(neeta)
+
+neeta_dash = 5e-4
+lipschitz_constant = 1.2
+epochs = 40
+
+number_of_hidden_neurons=100
+number_of_output_neurons=3
+
+
+base_path = "../../../Data"
+
+
+results_df = pd.DataFrame(columns=['ID', 'Trajectory', 'Learning Rate', 
+                                   'Stacking Count', '6()', '4()', 'Best RMSE Loss', 'Time Taken','Epochs'])
+
+
+file_pattern = re.compile(r'combined_(\d+)_(\d+)\.csv')
+
+print("Starting experiment script...")
+
 
 
 for traj_folder in os.listdir(base_path):
@@ -177,8 +204,8 @@ for traj_folder in os.listdir(base_path):
 
         # Initialize LSTM Model
         print("Initializing LSTM Model...")
-        lstm = LSTMNetwork(number_of_input_neurons=num_inputs, number_of_hidden_neurons=100,
-                           number_of_output_neurons=3, neeta=1e-4, neeta_dash=1e-5, seed_value=12345)
+        lstm = LSTMNetwork(num_inputs, number_of_hidden_neurons,
+                           number_of_output_neurons, neeta)
 
         try:
             df = pd.read_csv(file_path)
@@ -227,7 +254,7 @@ for traj_folder in os.listdir(base_path):
 
             for i in range(len(X_train)):
                 pred = lstm.forward(X_train_tensor[i, :])  # Corrected forward pass
-                lstm.backprop(y_train_tensor[i, :])  # Backpropagation
+                lstm.backprop(X_train_tensor[i, :], y_train_tensor[i, :])  # Backpropagation
                 mse = mean_squared_error(y_train_tensor[i, :].cpu().numpy(), pred.cpu().detach().numpy())
                 error_sum += mse
 
@@ -248,15 +275,14 @@ for traj_folder in os.listdir(base_path):
         ID += 1
         results_df = pd.concat([results_df, pd.DataFrame([{
             'ID': ID,
-            'Trajectory': traj_folder,
-            'Learning Rate 1': lstm.neeta,
-            'Learning Rate 2': lstm.neeta_dash,
+            'Trajectory': traj_folder[-1],
+            'Learning Rate': lstm.neeta,
             'Stacking Count': 1,
             '6()': a,
             '4()': b,
             'Best RMSE Loss': best_rmse,
             'Time Taken': time_taken,
-            'File Name': file_path
+            'Epochs': epochs
         }])], ignore_index=True)
 
 # Save results
