@@ -19,8 +19,8 @@ class MemoryNeuralNetwork(nn.Module):
         self.neeta = neeta
         self.neeta_dash = neeta_dash
 
-        
         self.alpha_input_layer = nn.Parameter(torch.rand(self.number_of_input_neurons, device=self.device))
+
         self.alpha_hidden_layer = nn.Parameter(torch.rand(self.number_of_hidden_neurons, device=self.device))
         self.alpha_last_layer = nn.Parameter(torch.rand(self.number_of_output_neurons, device=self.device))
 
@@ -91,6 +91,10 @@ class MemoryNeuralNetwork(nn.Module):
              
         
         self.error_last_layer = self.output_nn - y_des
+        
+        loss = torch.mean(self.error_last_layer ** 2)  
+        
+        grad_output = 2 * self.error_last_layer / y_des.size(0)  
 
         
         self.error_hidden_layer = self.activation_function_derivative(self.input_to_hidden_layer_nn) * \
@@ -117,11 +121,15 @@ class MemoryNeuralNetwork(nn.Module):
         self.pd_e_wrt_v_last_layer = self.error_last_layer
         self.pd_v_wrt_alpha_last_layer = self.output_nn  
         
-        self.weights_hidden_to_output_nn.data -= self.neeta * self.error_last_layer.repeat(self.number_of_hidden_neurons, 1) * \
-                                                self.output_of_hidden_layer_nn.repeat(self.number_of_output_neurons, 1).t()
+        self.weights_hidden_to_output_nn.data -= self.neeta * torch.matmul(
+        self.output_of_hidden_layer_nn.unsqueeze(1),  
+        grad_output.unsqueeze(0)  
+    )
 
-        self.weights_input_to_hidden_nn.data -= self.neeta * self.error_hidden_layer.repeat(self.number_of_input_neurons, 1) * \
-                                                self.output_of_input_layer_nn.repeat(self.number_of_hidden_neurons, 1).t()
+        self.weights_input_to_hidden_nn.data -= self.neeta * torch.matmul(
+        self.output_of_input_layer_nn.unsqueeze(1),  
+        self.error_hidden_layer.unsqueeze(0)  
+    )
 
         self.weights_hidden_to_output_mn.data -= self.neeta * self.error_last_layer.repeat(self.number_of_hidden_neurons, 1) * \
                                                 self.output_of_hidden_layer_mn.repeat(self.number_of_output_neurons, 1).t()

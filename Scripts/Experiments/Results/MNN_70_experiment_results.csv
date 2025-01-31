@@ -1,0 +1,2 @@
+ID,Trajectory,Learning Rate 1,Learning Rate 2,Stacking Count,6(),4(),Best RMSE Loss,Time Taken,Epochs
+1,9,0.0012,0.0005,5,1,3,0.1995106432469945,177.18798828125,70
