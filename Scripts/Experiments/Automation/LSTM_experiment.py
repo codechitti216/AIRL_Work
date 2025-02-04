@@ -14,19 +14,24 @@ np.random.seed(0)
 random.seed(0)
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'Architecture_Codes')))
-from LSTM import LSTMNetwork
+from Memory_Neural_Network import MemoryNeuralNetwork
 
 ID = 0
 
 neeta = 1.2e-3
-epochs = 75
+neeta_dash = 5e-4
+lipschitz_constant = 1.2
+epochs = 70
 
-stacking_count = 2  
+stacking_count = 5  # Change this value as needed
 print(f"Stacking count set to: {stacking_count}")
 
 base_path = "../../../Data"
+checkpoint_dir = "../../../Scripts/Experiments/Checkpoints"
+os.makedirs(checkpoint_dir, exist_ok=True)
 
-results_df = pd.DataFrame(columns=['ID', 'Trajectory', 'Learning Rate', 'Stacking Count', '6()', '4()', 'Best RMSE Loss', 'Time Taken', 'Epochs'])
+results_df = pd.DataFrame(columns=['ID', 'Trajectory', 'Learning Rate 1', 'Learning Rate 2', 
+                                   'Stacking Count', '6()', '4()', 'Best RMSE Loss', 'Time Taken', 'Epochs'])
 
 file_pattern = re.compile(r'combined_(\d+)_(\d+)\.csv')
 
@@ -58,13 +63,19 @@ for traj_folder in os.listdir(base_path):
         num_inputs = (6 * a) + (4 * b)
         print(f"Parsed values - a: {a}, b: {b}, input size: {num_inputs}")
 
-        print("Initializing LSTM Network...")
-        lstm = LSTMNetwork(
-            number_of_input_neurons=num_inputs,
-            number_of_hidden_neurons=60,
-            number_of_output_neurons=3,
-            neeta=neeta
-        )
+        print("Initializing Memory Neural Network...")
+        mnn = MemoryNeuralNetwork(number_of_input_neurons=num_inputs, number_of_output_neurons=3, 
+                                  neeta=neeta, neeta_dash=neeta_dash, lipschitz_norm=lipschitz_constant, 
+                                  spectral_norm=True)
+        
+        checkpoint_path = os.path.join(checkpoint_dir, f'checkpoint_{a}_{b}.pth')
+        best_rmse = float('inf')
+        
+        if os.path.exists(checkpoint_path):
+            checkpoint = torch.load(checkpoint_path)
+            mnn.load_state_dict(checkpoint['model_state_dict'])
+            best_rmse = checkpoint['best_rmse']
+            print(f"Loaded checkpoint from {checkpoint_path} with best RMSE: {best_rmse:.6f}")
 
         try:
             df = pd.read_csv(file_path)
@@ -95,14 +106,10 @@ for traj_folder in os.listdir(base_path):
         num_samples = len(input_data_stacked)
         train_samples = 2 * num_samples // 3
         X_train, y_train = input_data_stacked[:train_samples], target_data_stacked[:train_samples]
-        X_test, y_test = input_data_stacked[train_samples:], target_data_stacked[train_samples:]
 
-        print(f"Dataset split: {train_samples} training samples, {num_samples - train_samples} testing samples")
+        X_train_tensor = torch.tensor(X_train, dtype=torch.float32)
+        y_train_tensor = torch.tensor(y_train, dtype=torch.float32)
 
-        X_train_tensor = torch.tensor(X_train, dtype=torch.float32).to(lstm.device)
-        y_train_tensor = torch.tensor(y_train, dtype=torch.float32).to(lstm.device)
-
-        best_rmse = float('inf')
         start_time = time.time()
         print(f"Training started for {file_path}")
 
@@ -110,17 +117,19 @@ for traj_folder in os.listdir(base_path):
             error_sum = 0.0
 
             for i in range(len(X_train_tensor)):
-                
-                loss = lstm.backprop(X_train_tensor[i], y_train_tensor[i])
-                error_sum += loss
-                
-                if i % 100 == 0:
-                
-                    print(f"Epoch {epoch + 1}, Sample {i}: MSE = {loss:.6f}")
+                pred = mnn.feedforward(X_train_tensor[i, :])
+                mnn.backprop(y_train_tensor[i, :])
+                mse = mean_squared_error(y_train_tensor[i, :].cpu().detach().numpy(), pred.cpu().detach().numpy())
+                error_sum += mse
 
             epoch_error = error_sum / len(X_train_tensor)
             if epoch_error < best_rmse:
                 best_rmse = epoch_error
+                torch.save({
+                    'model_state_dict': mnn.state_dict(),
+                    'best_rmse': best_rmse
+                }, checkpoint_path)
+                print(f"Checkpoint saved at {checkpoint_path} with RMSE: {best_rmse:.6f}")
 
         time_taken = time.time() - start_time
         print(f"Training completed for {file_path} in {time_taken:.2f} seconds. Best RMSE: {best_rmse:.6f}")
@@ -129,7 +138,8 @@ for traj_folder in os.listdir(base_path):
         results_df = pd.concat([results_df, pd.DataFrame([{
             'ID': ID,
             'Trajectory': int(''.join(filter(str.isdigit, traj_folder))),
-            'Learning Rate': neeta,
+            'Learning Rate 1': neeta,
+            'Learning Rate 2': neeta_dash,
             'Stacking Count': stacking_count,
             '6()': a,
             '4()': b,
@@ -138,5 +148,5 @@ for traj_folder in os.listdir(base_path):
             'Epochs': epochs
         }])], ignore_index=True)
 
-results_df.to_csv(f'../../../Scripts/Experiments/Results/LSTM_{epochs}_experiment_results.csv', index=False)
+results_df.to_csv(f'../../../Scripts/Experiments/Results/MNN_{epochs}_experiment_results.csv', index=False)
 print("All experiments completed. Results saved.")
