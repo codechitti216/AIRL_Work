@@ -3,8 +3,8 @@ import pandas as pd
 import numpy as np
 
 
-num_past_imu = 2 
-num_past_dvl = 2
+num_past_imu = 1
+num_past_dvl = 5
 
 
 data_folder = "../Data"

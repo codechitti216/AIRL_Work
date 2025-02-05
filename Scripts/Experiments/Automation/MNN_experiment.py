@@ -5,149 +5,135 @@ import os
 import glob
 import time
 import re
+import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error
 import sys
 import random
 
+import warnings
+warnings.filterwarnings("ignore")
+
+# Set random seeds for reproducibility
 torch.manual_seed(0)
 np.random.seed(0)
 random.seed(0)
 
+# Logging setup
+log_file = "../../Experiments/experiment_log_MNN.txt"
+def log(message):
+    print(message)
+    with open(log_file, "a") as f:
+        f.write(message + "\n")
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'Architecture_Codes')))
 from Memory_Neural_Network import MemoryNeuralNetwork
-from LSTM import LSTMNetwork
 
 ID = 0
-
 neeta = 1.2e-3
 neeta_dash = 5e-4
 lipschitz_constant = 1.2
 epochs = 70
 
 # User-defined stacking count
-stacking_count = 5  # Change this value as needed
-print(f"Stacking count set to: {stacking_count}")
+stacking_count = 5
+log(f"Stacking count set to: {stacking_count}")
 
+# Base paths
 base_path = "../../../Data"
+results_path = "../../Experiments/Results_New/MNN/Results.csv"
+checkpoint_base = "../../Experiments/Results_New/MNN/Checkpoints_MNN"
 
-results_df = pd.DataFrame(columns=['ID', 'Trajectory', 'Learning Rate 1', 'Learning Rate 2', 
-                                   'Stacking Count', '6()', '4()', 'Best RMSE Loss', 'Time Taken', 'Epochs'])
+# Create results DataFrame
+if os.path.exists(results_path):
+    results_df = pd.read_csv(results_path)
+else:
+    results_df = pd.DataFrame(columns=['ID', 'Trajectory', 'Learning Rate 1', 'Learning Rate 2', 'Stacking Count', '6()', '4()', 'Best RMSE Loss', 'Time Taken', 'Epochs'])
 
 file_pattern = re.compile(r'combined_(\d+)_(\d+)\.csv')
-
-print("Starting experiment script...")
+log("Starting experiment script...")
 
 for traj_folder in os.listdir(base_path):
     traj_path = os.path.join(base_path, traj_folder)
-    print(f"Checking directory: {traj_path}")
+    log(f"Checking directory: {traj_path}")
 
     if not os.path.isdir(traj_path):
-        print(f"Skipping {traj_path} (not a directory)")
         continue
 
+    trajectory_id = int(''.join(filter(str.isdigit, traj_folder)))
     csv_files = glob.glob(os.path.join(traj_path, 'combined_*.csv'))
-    print(f"Found {len(csv_files)} CSV files in {traj_path}")
-
-    if not csv_files:
-        print(f"No CSV files found in {traj_path}")
-        continue
 
     for file_path in csv_files:
-        print(f"Processing file: {file_path}")
+        log(f"Processing file: {file_path}")
         match = file_pattern.search(os.path.basename(file_path))
         if not match:
-            print(f"Skipping {file_path} (filename doesn't match expected pattern)")
             continue
 
         a, b = int(match.group(1)), int(match.group(2))
         num_inputs = (6 * a) + (4 * b)
-        print(f"Parsed values - a: {a}, b: {b}, input size: {num_inputs}")
+        log(f"Parsed values - a: {a}, b: {b}, input size: {num_inputs}")
 
-        print("Initializing Memory Neural Network...")
+        # Initialize Memory Neural Network
         mnn = MemoryNeuralNetwork(number_of_input_neurons=num_inputs, number_of_output_neurons=3, 
                                   neeta=neeta, neeta_dash=neeta_dash, lipschitz_norm=lipschitz_constant, 
                                   spectral_norm=True)
 
+        # Load dataset
         try:
             df = pd.read_csv(file_path)
-            print(f"Dataset loaded. Shape: {df.shape}")
         except Exception as e:
-            print(f"Error loading {file_path}: {e}")
+            log(f"Error loading {file_path}: {e}")
             continue
 
-        input_columns = [item for i in range(a) for item in [f'ACC X_{i}', f'ACC Y_{i}', f'ACC Z_{i}', f'GYRO X_{i}', f'GYRO Y_{i}', f'GYRO Z_{i}']]
-        input_columns += [item for j in range(b) for item in [f'DVL{j}_1', f'DVL{j}_2', f'DVL{j}_3', f'DVL{j}_4']]
+        input_columns = [f'ACC X_{i}' for i in range(a)] + [f'ACC Y_{i}' for i in range(a)] + [f'ACC Z_{i}' for i in range(a)] + \
+                        [f'GYRO X_{i}' for i in range(a)] + [f'GYRO Y_{i}' for i in range(a)] + [f'GYRO Z_{i}' for i in range(a)] + \
+                        [f'DVL{j}_1' for j in range(b)] + [f'DVL{j}_2' for j in range(b)] + [f'DVL{j}_3' for j in range(b)] + [f'DVL{j}_4' for j in range(b)]
         output_columns = ['V North', 'V East', 'V Down']
 
-        missing_inputs = [col for col in input_columns if col not in df.columns]
-        missing_outputs = [col for col in output_columns if col not in df.columns]
-        if missing_inputs or missing_outputs:
-            print(f"Missing columns in {file_path}: Inputs {missing_inputs}, Outputs {missing_outputs}")
+        if not set(input_columns).issubset(df.columns) or not set(output_columns).issubset(df.columns):
+            log(f"Skipping {file_path} due to missing columns")
             continue
 
-        input_data = df[input_columns].values
-        target_data = df[output_columns].shift(-1).dropna().values  # Shift target data by one row
+        input_data = df[input_columns].values[:-1]
+        target_data = df[output_columns].shift(-1).dropna().values[:-1]
 
-        # Ensure input and target data have the same length
-        input_data = input_data[:-1]
-        target_data = target_data[:-1]
-
-        # Stack the input data along the batch dimension
-        input_data_stacked = np.tile(input_data, (stacking_count, 1))
-        target_data_stacked = np.tile(target_data, (stacking_count, 1))
-        print(f"Input data stacked {stacking_count} times along the batch dimension. New shape: {input_data_stacked.shape}")
-
-        num_samples = len(input_data_stacked)
-        train_samples = 2 * num_samples // 3
-        X_train, y_train = input_data_stacked[:train_samples], target_data_stacked[:train_samples]
-        X_test, y_test = input_data_stacked[train_samples:], target_data_stacked[train_samples:]
-
-        print(f"Dataset split: {train_samples} training samples, {num_samples - train_samples} testing samples")
-
-        X_train_tensor = torch.tensor(X_train, dtype=torch.float32)
-        y_train_tensor = torch.tensor(y_train, dtype=torch.float32)
-        X_test_tensor = torch.tensor(X_test, dtype=torch.float32)
-        y_test_tensor = torch.tensor(y_test, dtype=torch.float32)
+        train_samples = 2 * len(input_data) // 3
+        X_train, y_train = input_data[:train_samples], target_data[:train_samples]
 
         best_rmse = float('inf')
-        start_time = time.time()
-        print(f"Training started for {file_path}")
+        losses = []
+        checkpoint_path = f"{checkpoint_base}/Trajectory{trajectory_id}/checkpoint_{a}_{b}.pth"
+        os.makedirs(os.path.dirname(checkpoint_path), exist_ok=True)
 
+        # Load checkpoint if exists
+        if os.path.exists(checkpoint_path):
+            checkpoint = torch.load(checkpoint_path)
+            if isinstance(checkpoint, dict) and 'model_state' in checkpoint:
+                mnn.load_state_dict(checkpoint['model_state'])
+                best_rmse = checkpoint['best_rmse']
+                log(f"Resuming training from {checkpoint_path} with best RMSE: {best_rmse:.6f}")
+            else:
+                log(f"Checkpoint at {checkpoint_path} is not in the expected format. Skipping loading.")
+
+        start_time = time.time()
         for epoch in range(epochs):
             error_sum = 0.0
-
             for i in range(len(X_train)):
-                pred = mnn.feedforward(X_train[i, :])
-                mnn.backprop(y_train[i, :])
+                pred = mnn.feedforward(torch.tensor(X_train[i, :], dtype=torch.float32))
+                mnn.backprop(torch.tensor(y_train[i, :], dtype=torch.float32))
                 mse = mean_squared_error(y_train[i, :], pred.cpu().detach().numpy())
                 error_sum += mse
-                if i % 100 == 0:
-                    print(f"Epoch {epoch + 1}, Sample {i}: MSE = {mse:.6f}")
 
-            epoch_error = error_sum / len(X_train)
-            if epoch_error < best_rmse:
-                best_rmse = epoch_error
+            epoch_rmse = error_sum / len(X_train)
+            losses.append(epoch_rmse)
 
-            if (epoch + 1) % 20 == 0:
-                print(f"Epoch {epoch + 1}/{epochs} - Best RMSE so far: {best_rmse:.6f}")
+            if epoch_rmse < best_rmse:
+                best_rmse = epoch_rmse
+                torch.save({'model_state': mnn.state_dict(), 'best_rmse': best_rmse}, checkpoint_path)
+                log(f"Checkpoint saved: {checkpoint_path} (Best RMSE: {best_rmse:.6f})")
 
         time_taken = time.time() - start_time
-        print(f"Training completed for {file_path} in {time_taken:.2f} seconds. Best RMSE: {best_rmse:.6f}")
+        log(f"Training completed in {time_taken:.2f} seconds. Best RMSE: {best_rmse:.6f}")
 
-        ID += 1
-
-        results_df = pd.concat([results_df, pd.DataFrame([{
-            'ID': ID,
-            'Trajectory': int(''.join(filter(str.isdigit, traj_folder))),
-            'Learning Rate 1': neeta,
-            'Learning Rate 2': neeta_dash,
-            'Stacking Count': stacking_count,
-            '6()': a,
-            '4()': b,
-            'Best RMSE Loss': best_rmse,
-            'Time Taken': time_taken,
-            'Epochs' : epochs
-        }])], ignore_index=True)
-
-results_df.to_csv(f'../../../Scripts/Experiments/Results/MNN_{epochs}_experiment_results.csv', index=False)
-print("All experiments completed. Results saved in 'MNN_100_experiment_results.csv'.")
+# Save final results
+results_df.to_csv(results_path, index=False)
+log("All experiments completed. Results saved.")
