@@ -96,8 +96,11 @@ for traj_folder in os.listdir(base_path):
         input_data = df[input_columns].values[:-1]
         target_data = df[output_columns].shift(-1).dropna().values[:-1]
 
-        train_samples = 2 * len(input_data) // 3
-        X_train, y_train = input_data[:train_samples], target_data[:train_samples]
+        input_data_stacked = np.tile(input_data, (stacking_count, 1))
+        target_data_stacked = np.tile(target_data, (stacking_count, 1))
+        
+        train_samples = 2 * len(input_data_stacked) // 3
+        X_train, y_train = input_data_stacked[:train_samples], target_data_stacked[:train_samples]
 
         best_rmse = float('inf')
         losses = []
@@ -111,8 +114,6 @@ for traj_folder in os.listdir(base_path):
                 mnn.load_state_dict(checkpoint['model_state'])
                 best_rmse = checkpoint['best_rmse']
                 log(f"Resuming training from {checkpoint_path} with best RMSE: {best_rmse:.6f}")
-            else:
-                log(f"Checkpoint at {checkpoint_path} is not in the expected format. Skipping loading.")
 
         start_time = time.time()
         for epoch in range(epochs):
@@ -133,6 +134,16 @@ for traj_folder in os.listdir(base_path):
 
         time_taken = time.time() - start_time
         log(f"Training completed in {time_taken:.2f} seconds. Best RMSE: {best_rmse:.6f}")
+
+        # Save RMSE loss plot
+        plt.figure()
+        plt.plot(range(len(losses)), losses, label='RMSE Loss')
+        plt.xlabel('Epoch')
+        plt.ylabel('Loss')
+        plt.title(f'Training Loss (Trajectory {trajectory_id}, a={a}, b={b})')
+        plt.legend()
+        plt.savefig(f"../../Experiments/Results_New/MNN/RMSE_Trajectory{trajectory_id}_{a}_{b}.png")
+        plt.close()
 
 # Save final results
 results_df.to_csv(results_path, index=False)
