@@ -1,0 +1,56 @@
+Stacking count set to: 5
+Starting experiment script...
+Checking directory: ../../../Data\combined.py
+Checking directory: ../../../Data\dataset_creator.py
+Checking directory: ../../../Data\Trajectory1
+Processing file: ../../../Data\Trajectory1\combined_1_3.csv
+Parsed values - a: 1, b: 3, input size: 18
+Checkpoint saved: ../../Experiments/Results_New/MNN/Checkpoints_MNN/Trajectory1/checkpoint_1_3.pth (Best RMSE: 0.551956)
+Training completed in 202.59 seconds. Best RMSE: 0.551956
+Processing file: ../../../Data\Trajectory1\combined_1_4.csv
+Parsed values - a: 1, b: 4, input size: 22
+Checkpoint saved: ../../Experiments/Results_New/MNN/Checkpoints_MNN/Trajectory1/checkpoint_1_4.pth (Best RMSE: 0.513517)
+Checkpoint saved: ../../Experiments/Results_New/MNN/Checkpoints_MNN/Trajectory1/checkpoint_1_4.pth (Best RMSE: 0.497666)
+Checkpoint saved: ../../Experiments/Results_New/MNN/Checkpoints_MNN/Trajectory1/checkpoint_1_4.pth (Best RMSE: 0.464936)
+Checkpoint saved: ../../Experiments/Results_New/MNN/Checkpoints_MNN/Trajectory1/checkpoint_1_4.pth (Best RMSE: 0.457731)
+Checkpoint saved: ../../Experiments/Results_New/MNN/Checkpoints_MNN/Trajectory1/checkpoint_1_4.pth (Best RMSE: 0.441261)
+Training completed in 182.16 seconds. Best RMSE: 0.441261
+Processing file: ../../../Data\Trajectory1\combined_1_5.csv
+Parsed values - a: 1, b: 5, input size: 26
+Checkpoint saved: ../../Experiments/Results_New/MNN/Checkpoints_MNN/Trajectory1/checkpoint_1_5.pth (Best RMSE: 0.456271)
+Checkpoint saved: ../../Experiments/Results_New/MNN/Checkpoints_MNN/Trajectory1/checkpoint_1_5.pth (Best RMSE: 0.451992)
+Checkpoint saved: ../../Experiments/Results_New/MNN/Checkpoints_MNN/Trajectory1/checkpoint_1_5.pth (Best RMSE: 0.430823)
+Checkpoint saved: ../../Experiments/Results_New/MNN/Checkpoints_MNN/Trajectory1/checkpoint_1_5.pth (Best RMSE: 0.410376)
+Checkpoint saved: ../../Experiments/Results_New/MNN/Checkpoints_MNN/Trajectory1/checkpoint_1_5.pth (Best RMSE: 0.379809)
+Training completed in 178.79 seconds. Best RMSE: 0.379809
+All experiments completed. Results saved.
+Stacking count set to: 5
+Starting experiment script...
+Checking directory: ../../../Data\combined.py
+Checking directory: ../../../Data\dataset_creator.py
+Checking directory: ../../../Data\Trajectory1
+Processing file: ../../../Data\Trajectory1\combined_1_3.csv
+Parsed values - a: 1, b: 3, input size: 18
+Resuming training from ../../Experiments/Results_New/MNN/Checkpoints_MNN/Trajectory1/checkpoint_1_3.pth with best RMSE: 0.551956
+Checkpoint saved: ../../Experiments/Results_New/MNN/Checkpoints_MNN/Trajectory1/checkpoint_1_3.pth (Best RMSE: 0.527486)
+Training completed in 187.95 seconds. Best RMSE: 0.527486
+Processing file: ../../../Data\Trajectory1\combined_1_4.csv
+Parsed values - a: 1, b: 4, input size: 22
+Resuming training from ../../Experiments/Results_New/MNN/Checkpoints_MNN/Trajectory1/checkpoint_1_4.pth with best RMSE: 0.441261
+Checkpoint saved: ../../Experiments/Results_New/MNN/Checkpoints_MNN/Trajectory1/checkpoint_1_4.pth (Best RMSE: 0.436793)
+Training completed in 513.72 seconds. Best RMSE: 0.436793
+Processing file: ../../../Data\Trajectory1\combined_1_5.csv
+Parsed values - a: 1, b: 5, input size: 26
+Resuming training from ../../Experiments/Results_New/MNN/Checkpoints_MNN/Trajectory1/checkpoint_1_5.pth with best RMSE: 0.379809
+Checkpoint saved: ../../Experiments/Results_New/MNN/Checkpoints_MNN/Trajectory1/checkpoint_1_5.pth (Best RMSE: 0.374943)
+Checkpoint saved: ../../Experiments/Results_New/MNN/Checkpoints_MNN/Trajectory1/checkpoint_1_5.pth (Best RMSE: 0.364092)
+Training completed in 432.19 seconds. Best RMSE: 0.364092
+All experiments completed. Results saved.
+Stacking count set to: 5
+Starting experiment script...
+Checking directory: ../../../Data\combined.py
+Checking directory: ../../../Data\dataset_creator.py
+Checking directory: ../../../Data\Trajectory1
+Processing file: ../../../Data\Trajectory1\combined_1_3.csv
+Parsed values - a: 1, b: 3, input size: 18
+Resuming training from ../../Experiments/Results_New/MNN/Checkpoints_MNN/Trajectory1/checkpoint_1_3.pth with best RMSE: 0.527486

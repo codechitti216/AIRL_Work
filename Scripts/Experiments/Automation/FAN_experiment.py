@@ -26,12 +26,14 @@ def log(message):
         f.write(message + "\n")
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'Architecture_Codes')))
-from FAN import FAN
+from FAN import FAN  # Replacing MNN with FAN
 
 ID = 0
-learning_rate = 1e-3
+learning_rate = 1.2e-3  # Replacing MNN-specific learning rates
 epochs = 70
-stacking_count = 5
+
+# User-defined stacking count
+stacking_count = 2
 log(f"Stacking count set to: {stacking_count}")
 
 # Base paths
@@ -46,7 +48,7 @@ else:
     results_df = pd.DataFrame(columns=['ID', 'Trajectory', 'Learning Rate', 'Stacking Count', '6()', '4()', 'Best RMSE Loss', 'Time Taken', 'Epochs'])
 
 file_pattern = re.compile(r'combined_(\d+)_(\d+)\.csv')
-log("Starting FAN experiment script...")
+log("Starting experiment script...")
 
 for traj_folder in os.listdir(base_path):
     traj_path = os.path.join(base_path, traj_folder)
@@ -68,8 +70,10 @@ for traj_folder in os.listdir(base_path):
         num_inputs = (6 * a) + (4 * b)
         log(f"Parsed values - a: {a}, b: {b}, input size: {num_inputs}")
 
+        # Initialize Fourier Analysis Network (FAN)
         fan = FAN(number_of_input_neurons=num_inputs, number_of_output_neurons=3, learning_rate=learning_rate)
 
+        # Load dataset
         try:
             df = pd.read_csv(file_path)
         except Exception as e:
@@ -99,12 +103,13 @@ for traj_folder in os.listdir(base_path):
         checkpoint_path = f"{checkpoint_base}/Trajectory{trajectory_id}/checkpoint_{a}_{b}.pth"
         os.makedirs(os.path.dirname(checkpoint_path), exist_ok=True)
 
+        # Load checkpoint if exists
         if os.path.exists(checkpoint_path):
             checkpoint = torch.load(checkpoint_path)
             if isinstance(checkpoint, dict) and 'model_state' in checkpoint:
                 fan.load_state_dict(checkpoint['model_state'])
                 best_rmse = checkpoint['best_rmse']
-                log(f"Resuming training from {checkpoint_path} with best RMSE: {best_rmse:.6f}")
+                log(f"Resuming training from {checkpoint_path} with best RMSE: {best_rmse:.6f} for {epoch+1} epochs ")
 
         start_time = time.time()
         for epoch in range(epochs):
@@ -121,11 +126,12 @@ for traj_folder in os.listdir(base_path):
             if epoch_rmse < best_rmse:
                 best_rmse = epoch_rmse
                 torch.save({'model_state': fan.state_dict(), 'best_rmse': best_rmse}, checkpoint_path)
-                log(f"Checkpoint saved: {checkpoint_path} (Best RMSE: {best_rmse:.6f})")
+                log(f"Checkpoint saved: {checkpoint_path} (Best RMSE: {best_rmse:.6f}) for {epoch+1} epochs ")
 
         time_taken = time.time() - start_time
-        log(f"Training completed in {time_taken:.2f} seconds. Best RMSE: {best_rmse:.6f}")
+        log(f"Training completed in {time_taken:.2f} seconds. Best RMSE: {best_rmse:.6f} for {epoch+1} epochs ")
 
+        # Save RMSE loss plot
         plt.figure()
         plt.plot(range(len(losses)), losses, label='RMSE Loss')
         plt.xlabel('Epoch')
@@ -135,5 +141,6 @@ for traj_folder in os.listdir(base_path):
         plt.savefig(f"../../Experiments/Results_New/FAN/RMSE_Trajectory{trajectory_id}_{a}_{b}.png")
         plt.close()
 
+# Save final results
 results_df.to_csv(results_path, index=False)
-log("All FAN experiments completed. Results saved.")
+log("All experiments completed. Results saved.")
