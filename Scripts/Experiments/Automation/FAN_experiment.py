@@ -5,59 +5,48 @@ import os
 import glob
 import time
 import re
-import sys
-import random
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error
+import sys
+import random
 
 import warnings
 warnings.filterwarnings("ignore")
 
-# Set random seed for reproducibility
+# Set random seeds for reproducibility
 torch.manual_seed(0)
 np.random.seed(0)
 random.seed(0)
 
 # Logging setup
-log_file = "../../Experiments/experiment_log_LSTM.txt"
+log_file = "../../Experiments/experiment_log_FAN.txt"
 def log(message):
     print(message)
     with open(log_file, "a") as f:
         f.write(message + "\n")
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'Architecture_Codes')))
-from LSTM import LSTMNetwork
+from FAN import FAN
 
-# Hyperparameters
 ID = 0
-neeta = 1.2e-3
-epochs = 75
-stacking_count = 2
-dropout_rate = 0.3
-seed_value = 12345
-activation = "tanh"  # Explicit activation function
-grad_clip = None  # No gradient clipping applied
-optimizer = "Adam"  # Using Adam optimizer
-loss_function = "MSELoss"
-batch_size = 1
-sequence_length = None  # Not explicitly defined
-regularization = "Dropout"
-
+learning_rate = 1e-3
+epochs = 70
+stacking_count = 5
 log(f"Stacking count set to: {stacking_count}")
 
 # Base paths
 base_path = "../../../Data"
-checkpoint_base = "../../Experiments/Results_New/LSTM/Checkpoints_LSTM"
-results_file = "../../Experiments/Results_New/LSTM/Results_LSTM.csv"
+results_path = "../../Experiments/Results_New/FAN/Results.csv"
+checkpoint_base = "../../Experiments/Results_New/FAN/Checkpoints_FAN"
 
 # Create results DataFrame
-if os.path.exists(results_file):
-    results_df = pd.read_csv(results_file)
+if os.path.exists(results_path):
+    results_df = pd.read_csv(results_path)
 else:
     results_df = pd.DataFrame(columns=['ID', 'Trajectory', 'Learning Rate', 'Stacking Count', '6()', '4()', 'Best RMSE Loss', 'Time Taken', 'Epochs'])
 
 file_pattern = re.compile(r'combined_(\d+)_(\d+)\.csv')
-log("Starting experiment script...")
+log("Starting FAN experiment script...")
 
 for traj_folder in os.listdir(base_path):
     traj_path = os.path.join(base_path, traj_folder)
@@ -79,15 +68,8 @@ for traj_folder in os.listdir(base_path):
         num_inputs = (6 * a) + (4 * b)
         log(f"Parsed values - a: {a}, b: {b}, input size: {num_inputs}")
 
-        # Initialize LSTM Network
-        lstm = LSTMNetwork(number_of_input_neurons=num_inputs, 
-                           number_of_hidden_neurons=60, 
-                           number_of_output_neurons=3, 
-                           neeta=neeta,
-                           dropout_rate=dropout_rate,
-                           seed_value=seed_value)
+        fan = FAN(number_of_input_neurons=num_inputs, number_of_output_neurons=3, learning_rate=learning_rate)
 
-        # Load dataset
         try:
             df = pd.read_csv(file_path)
         except Exception as e:
@@ -112,39 +94,46 @@ for traj_folder in os.listdir(base_path):
         train_samples = 2 * len(input_data_stacked) // 3
         X_train, y_train = input_data_stacked[:train_samples], target_data_stacked[:train_samples]
 
-        X_train_tensor = torch.tensor(X_train, dtype=torch.float32).to(lstm.device)
-        y_train_tensor = torch.tensor(y_train, dtype=torch.float32).to(lstm.device)
-
         best_rmse = float('inf')
         losses = []
         checkpoint_path = f"{checkpoint_base}/Trajectory{trajectory_id}/checkpoint_{a}_{b}.pth"
         os.makedirs(os.path.dirname(checkpoint_path), exist_ok=True)
 
-        # Load checkpoint if exists
         if os.path.exists(checkpoint_path):
             checkpoint = torch.load(checkpoint_path)
-            lstm.load_state_dict(checkpoint['model_state'])
-            best_rmse = checkpoint['best_rmse']
-            log(f"Resuming training from {checkpoint_path} with best RMSE: {best_rmse:.6f}")
+            if isinstance(checkpoint, dict) and 'model_state' in checkpoint:
+                fan.load_state_dict(checkpoint['model_state'])
+                best_rmse = checkpoint['best_rmse']
+                log(f"Resuming training from {checkpoint_path} with best RMSE: {best_rmse:.6f}")
 
         start_time = time.time()
         for epoch in range(epochs):
             error_sum = 0.0
-            for i in range(len(X_train_tensor)):
-                loss = lstm.backprop(X_train_tensor[i], y_train_tensor[i])
-                error_sum += loss
+            for i in range(len(X_train)):
+                pred = fan.feedforward(torch.tensor(X_train[i, :], dtype=torch.float32))
+                fan.backpropagate(torch.tensor(X_train[i, :], dtype=torch.float32), torch.tensor(y_train[i, :], dtype=torch.float32))
+                mse = mean_squared_error(y_train[i, :], pred.cpu().detach().numpy())
+                error_sum += mse
 
-            epoch_rmse = error_sum / len(X_train_tensor)
+            epoch_rmse = error_sum / len(X_train)
             losses.append(epoch_rmse)
 
             if epoch_rmse < best_rmse:
                 best_rmse = epoch_rmse
-                torch.save({'model_state': lstm.state_dict(), 'best_rmse': best_rmse}, checkpoint_path)
+                torch.save({'model_state': fan.state_dict(), 'best_rmse': best_rmse}, checkpoint_path)
                 log(f"Checkpoint saved: {checkpoint_path} (Best RMSE: {best_rmse:.6f})")
 
         time_taken = time.time() - start_time
         log(f"Training completed in {time_taken:.2f} seconds. Best RMSE: {best_rmse:.6f}")
 
-# Save final results
-results_df.to_csv(results_file, index=False)
-log("All experiments completed. Results saved.")
+        plt.figure()
+        plt.plot(range(len(losses)), losses, label='RMSE Loss')
+        plt.xlabel('Epoch')
+        plt.ylabel('Loss')
+        plt.title(f'Training Loss (Trajectory {trajectory_id}, a={a}, b={b})')
+        plt.legend()
+        plt.savefig(f"../../Experiments/Results_New/FAN/RMSE_Trajectory{trajectory_id}_{a}_{b}.png")
+        plt.close()
+
+results_df.to_csv(results_path, index=False)
+log("All FAN experiments completed. Results saved.")

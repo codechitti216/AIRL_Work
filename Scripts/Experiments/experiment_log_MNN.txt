@@ -1,0 +1,8 @@
+Stacking count set to: 5
+Starting experiment script...
+Checking directory: ../../../Data\combined.py
+Checking directory: ../../../Data\dataset_creator.py
+Checking directory: ../../../Data\Trajectory1
+Processing file: ../../../Data\Trajectory1\combined_1_3.csv
+Parsed values - a: 1, b: 3, input size: 18
+Checkpoint saved: ../../Experiments/Results_New/MNN/Checkpoints_MNN/Trajectory1/checkpoint_1_3.pth (Best RMSE: 0.561626)
