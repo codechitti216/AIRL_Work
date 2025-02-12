@@ -1,0 +1,9 @@
+{
+  "learning_rate": 0.0015,
+  "dropout_rate": 0.3,
+  "hidden_neurons": 80,
+  "stacking_count": 3,
+  "epochs": 70,
+  "batch_size": 32,
+  "regularization": 0.0005
+}

@@ -29,11 +29,26 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..',
 from FAN import FAN  # Replacing MNN with FAN
 
 ID = 0
-learning_rate = 1.2e-3  # Replacing MNN-specific learning rates
-epochs = 70
+import json
 
-# User-defined stacking count
-stacking_count = 2
+# Load hyperparameters from JSON
+def load_hyperparameters(config_path):
+    with open(config_path, "r") as f:
+        return json.load(f)
+
+model_name = "LSTM"  # Change to "FAN" or "MNN" in respective scripts
+config = load_hyperparameters(f"{model_name}.json")
+
+# Assign hyperparameters
+learning_rate = config["learning_rate"]
+dropout_rate = config["dropout_rate"]
+hidden_neurons = config["hidden_neurons"]
+stacking_count = config["stacking_count"]
+epochs = config["epochs"]
+batch_size = config["batch_size"]
+regularization = config["regularization"]
+
+
 log(f"Stacking count set to: {stacking_count}")
 
 # Base paths
@@ -109,7 +124,7 @@ for traj_folder in os.listdir(base_path):
             if isinstance(checkpoint, dict) and 'model_state' in checkpoint:
                 fan.load_state_dict(checkpoint['model_state'])
                 best_rmse = checkpoint['best_rmse']
-                log(f"Resuming training from {checkpoint_path} with best RMSE: {best_rmse:.6f} for {epoch+1} epochs ")
+                log(f"Resuming training from {checkpoint_path} with best RMSE: {best_rmse:.6f} for {epochs+1} epochs ")
 
         start_time = time.time()
         for epoch in range(epochs):

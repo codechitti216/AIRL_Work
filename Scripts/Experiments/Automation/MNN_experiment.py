@@ -1,150 +1,199 @@
 import torch
-import pandas as pd
-import numpy as np
+import torch.nn as nn
+import torch.optim as optim
+import json
 import os
-import glob
+import pandas as pd
 import time
 import re
-import matplotlib.pyplot as plt
-from sklearn.metrics import mean_squared_error
+from tqdm import tqdm
 import sys
-import random
-
-import warnings
-warnings.filterwarnings("ignore")
-
-# Set random seeds for reproducibility
-torch.manual_seed(0)
-np.random.seed(0)
-random.seed(0)
-
-# Logging setup
-log_file = "../../Experiments/experiment_log_MNN.txt"
-def log(message):
-    print(message)
-    with open(log_file, "a") as f:
-        f.write(message + "\n")
+import matplotlib.pyplot as plt
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'Architecture_Codes')))
-from Memory_Neural_Network import MemoryNeuralNetwork
+from MNN import MemoryNeuralNetwork
 
-ID = 0
-neeta = 1.2e-3
-neeta_dash = 5e-4
-lipschitz_constant = 1.2
-epochs = 70
 
-# User-defined stacking count
-stacking_count = 5
-log(f"Stacking count set to: {stacking_count}")
+CONFIG_PATH = "MNN.json"
+RESULTS_PATH = "../../Experiments/Results_New/MNN/Results_MNN.csv"
+CHECKPOINT_DIR = "../../Experiments/Results_New/MNN/Checkpoints_MNN/"
+LOG_FILE = "experiment_log_MNN.txt"
+DATA_DIR = "../../../Data"
 
-# Base paths
-base_path = "../../../Data"
-results_path = "../../Experiments/Results_New/MNN/Results.csv"
-checkpoint_base = "../../Experiments/Results_New/MNN/Checkpoints_MNN"
+print("Loading configuration...")
+with open(CONFIG_PATH, "r") as f:
+    config = json.load(f)
+print("Configuration loaded successfully.")
 
-# Create results DataFrame
-if os.path.exists(results_path):
-    results_df = pd.read_csv(results_path)
-else:
-    results_df = pd.DataFrame(columns=['ID', 'Trajectory', 'Learning Rate 1', 'Learning Rate 2', 'Stacking Count', '6()', '4()', 'Best RMSE Loss', 'Time Taken', 'Epochs'])
 
-file_pattern = re.compile(r'combined_(\d+)_(\d+)\.csv')
-log("Starting experiment script...")
+learning_rate = config["learning_rate"]
+dropout_rate = config["dropout_rate"]
+hidden_neurons = config["hidden_neurons"]
+stacking_count = config["stacking_count"]
+epochs = config["epochs"]
+lipschitz_constant = config["lipschitz_constant"]
+rmse_threshold = config["Threshold"]
 
-for traj_folder in os.listdir(base_path):
-    traj_path = os.path.join(base_path, traj_folder)
-    log(f"Checking directory: {traj_path}")
+print(f"Hyperparameters: LR={learning_rate}, Dropout={dropout_rate}, Hidden Neurons={hidden_neurons}, Stacking={stacking_count}, Epochs={epochs}, Lipschitz={lipschitz_constant}, RMSE Threshold={rmse_threshold}")
 
-    if not os.path.isdir(traj_path):
-        continue
 
-    trajectory_id = int(''.join(filter(str.isdigit, traj_folder)))
-    csv_files = glob.glob(os.path.join(traj_path, 'combined_*.csv'))
+os.makedirs(CHECKPOINT_DIR, exist_ok=True)
 
-    for file_path in csv_files:
-        log(f"Processing file: {file_path}")
-        match = file_pattern.search(os.path.basename(file_path))
-        if not match:
-            continue
+def log_message(message):
+    timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    with open(LOG_FILE, "a") as log:
+        log.write(f"[{timestamp}] {message}\n")
+    print(message)
 
-        a, b = int(match.group(1)), int(match.group(2))
-        num_inputs = (6 * a) + (4 * b)
-        log(f"Parsed values - a: {a}, b: {b}, input size: {num_inputs}")
 
-        # Initialize Memory Neural Network
-        mnn = MemoryNeuralNetwork(number_of_input_neurons=num_inputs, number_of_output_neurons=3, 
-                                  neeta=neeta, neeta_dash=neeta_dash, lipschitz_norm=lipschitz_constant, 
-                                  spectral_norm=True)
+def parse_filename(filename):
+    match = re.search(r'combined_(\d+)_(\d+)\.csv', filename)
+    if match:
+        return int(match.group(1)), int(match.group(2))
+    return None, None
 
-        # Load dataset
-        try:
-            df = pd.read_csv(file_path)
-        except Exception as e:
-            log(f"Error loading {file_path}: {e}")
-            continue
 
-        input_columns = [f'ACC X_{i}' for i in range(a)] + [f'ACC Y_{i}' for i in range(a)] + [f'ACC Z_{i}' for i in range(a)] + \
-                        [f'GYRO X_{i}' for i in range(a)] + [f'GYRO Y_{i}' for i in range(a)] + [f'GYRO Z_{i}' for i in range(a)] + \
-                        [f'DVL{j}_1' for j in range(b)] + [f'DVL{j}_2' for j in range(b)] + [f'DVL{j}_3' for j in range(b)] + [f'DVL{j}_4' for j in range(b)]
-        output_columns = ['V North', 'V East', 'V Down']
+def check_duplicate(trajectory_id, a, b):
+    print(f"Checking for duplicates for trajectory: {trajectory_id}, a={a}, b={b}")
+    if os.path.exists(RESULTS_PATH):
+        df = pd.read_csv(RESULTS_PATH)
+        match = df[
+            (df["Learning Rate"] == learning_rate) &
+            (df["Dropout Rate"] == dropout_rate) &
+            (df["Trajectory Id"] == trajectory_id) &
+            (df["Number of Hidden Neurons"] == hidden_neurons) &
+            (df["Epochs"] == epochs) &
+            (df["Stacking Count"] == stacking_count) &
+            (df["6()"] == a) &
+            (df["4()"] == b)
+        ]
+        if not match.empty:
+            print("Duplicate experiment found. Skipping training.")
+            return True
+    print("No duplicate found. Proceeding with training.")
+    return False
 
-        if not set(input_columns).issubset(df.columns) or not set(output_columns).issubset(df.columns):
-            log(f"Skipping {file_path} due to missing columns")
-            continue
 
-        input_data = df[input_columns].values[:-1]
-        target_data = df[output_columns].shift(-1).dropna().values[:-1]
+def train_model(trajectory_id, data_file, a, b):
+    global learning_rate, hidden_neurons, stacking_count, epochs, dropout_rate
 
-        input_data_stacked = np.tile(input_data, (stacking_count, 1))
-        target_data_stacked = np.tile(target_data, (stacking_count, 1))
-        
-        train_samples = 2 * len(input_data_stacked) // 3
-        X_train, y_train = input_data_stacked[:train_samples], target_data_stacked[:train_samples]
+    print(f"Loading data for trajectory: {trajectory_id}, a={a}, b={b}")
+    try:
+        data = pd.read_csv(data_file)
+    except Exception as e:
+        print(f"Error loading data: {e}")
+        return
+    
+    print(f"Data shape: {data.shape}")
+    data.drop(data.index[-1], inplace=True)  
+    num_inputs = (6 * a) + (4 * b)
+    input_data = data.iloc[:, :num_inputs].values
+    target_data = data.iloc[:, -3:].values
 
+    attempt = 0
+    while attempt < 2:
         best_rmse = float('inf')
-        losses = []
-        checkpoint_path = f"{checkpoint_base}/Trajectory{trajectory_id}/checkpoint_{a}_{b}.pth"
-        os.makedirs(os.path.dirname(checkpoint_path), exist_ok=True)
+        print("Initializing model...")
+        model = MemoryNeuralNetwork(
+            number_of_input_neurons=num_inputs,
+            number_of_hidden_neurons=hidden_neurons,
+            number_of_output_neurons=3,
+            learning_rate=learning_rate,
+            dropout_rate=dropout_rate,
+            lipschitz_constant=lipschitz_constant
+        ).to("cuda")
+        print("Model initialized successfully.")
 
-        # Load checkpoint if exists
-        if os.path.exists(checkpoint_path):
-            checkpoint = torch.load(checkpoint_path)
-            if isinstance(checkpoint, dict) and 'model_state' in checkpoint:
-                mnn.load_state_dict(checkpoint['model_state'])
-                best_rmse = checkpoint['best_rmse']
-                log(f"Resuming training from {checkpoint_path} with best RMSE: {best_rmse:.6f}")
-
+        optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+        loss_fn = nn.MSELoss()
+        
+        checkpoint_path = os.path.join(
+            CHECKPOINT_DIR,
+            f"MNN_lr{learning_rate}_drop{dropout_rate}_{trajectory_id}_hid{hidden_neurons}_ep{epochs}_stack{stacking_count}_a{a}_b{b}.pth"
+        )
+        
+        torch.autograd.set_detect_anomaly(True)
+        model.train()
         start_time = time.time()
+        print(f"Starting training attempt {attempt + 1} for trajectory: {trajectory_id}, a={a}, b={b}")
+        
+        rmse_per_epoch = []
         for epoch in range(epochs):
-            error_sum = 0.0
-            for i in range(len(X_train)):
-                pred = mnn.feedforward(torch.tensor(X_train[i, :], dtype=torch.float32))
-                mnn.backprop(torch.tensor(y_train[i, :], dtype=torch.float32))
-                mse = mean_squared_error(y_train[i, :], pred.cpu().detach().numpy())
-                error_sum += mse
-
-            epoch_rmse = error_sum / len(X_train)
-            losses.append(epoch_rmse)
-
-            if epoch_rmse < best_rmse:
-                best_rmse = epoch_rmse
-                torch.save({'model_state': mnn.state_dict(), 'best_rmse': best_rmse}, checkpoint_path)
-                log(f"Checkpoint saved: {checkpoint_path} (Best RMSE: {best_rmse:.6f})")
-
-        time_taken = time.time() - start_time
-        log(f"Training completed in {time_taken:.2f} seconds. Best RMSE: {best_rmse:.6f}")
-
-        # Save RMSE loss plot
+            epoch_loss = 0
+            print(f"Epoch {epoch + 1}/{epochs} started...")
+            for i in tqdm(range(len(input_data)), desc=f"Epoch {epoch + 1}/{epochs}"):
+                x = torch.tensor(input_data[i], dtype=torch.float32, device="cuda")
+                y = torch.tensor(target_data[i], dtype=torch.float32, device="cuda")
+                optimizer.zero_grad()
+                output = model(x)
+                loss = loss_fn(output, y)
+                loss.backward(retain_graph=True)
+                torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+                optimizer.step()
+                epoch_loss += loss.item()
+            avg_rmse = (epoch_loss / len(input_data)) ** 0.5
+            rmse_per_epoch.append(avg_rmse)
+            best_rmse = min(best_rmse, avg_rmse)
+            log_message(f"Epoch {epoch + 1}: RMSE = {avg_rmse:.5f}")
+            torch.save(model.state_dict(), checkpoint_path)
+        
+        
+        results_df = pd.DataFrame({
+            "Learning Rate": [learning_rate],
+            "Dropout Rate": [dropout_rate],
+            "Trajectory Id": [trajectory_id],
+            "Number of Hidden Neurons": [hidden_neurons],
+            "Epochs": [epochs],
+            "Stacking Count": [stacking_count],
+            "6()": [a],
+            "4()": [b],
+            "Best RMSE": [best_rmse]
+        })
+        if os.path.exists(RESULTS_PATH):
+            results_df.to_csv(RESULTS_PATH, mode='a', header=False, index=False)
+        else:
+            results_df.to_csv(RESULTS_PATH, mode='w', header=True, index=False)
+        
+        
+        plot_dir = "../../Experiments/Results_New/MNN/Plots/"
+        os.makedirs(plot_dir, exist_ok=True)
+        plot_path = os.path.join(plot_dir, f"MNN_lr{learning_rate}_drop{dropout_rate}_{trajectory_id}_hid{hidden_neurons}_ep{epochs}_stack{stacking_count}_a{a}_b{b}.png")
         plt.figure()
-        plt.plot(range(len(losses)), losses, label='RMSE Loss')
-        plt.xlabel('Epoch')
-        plt.ylabel('Loss')
-        plt.title(f'Training Loss (Trajectory {trajectory_id}, a={a}, b={b})')
-        plt.legend()
-        plt.savefig(f"../../Experiments/Results_New/MNN/RMSE_Trajectory{trajectory_id}_{a}_{b}.png")
+        plt.plot(range(1, epochs + 1), rmse_per_epoch, marker='o', linestyle='-', color='b')
+        plt.xlabel("Epochs")
+        plt.ylabel("RMSE")
+        plt.title(f"Best RMSE vs. Epochs\nTrajectory: {trajectory_id}, a={a}, b={b}")
+        plt.grid()
+        plt.savefig(plot_path)
         plt.close()
+        log_message(f"Saved RMSE plot to {plot_path}")
+        
+        
+        if best_rmse <= rmse_threshold:
+            break
+        else:
+            log_message(f"Best RMSE ({best_rmse:.5f}) exceeded threshold ({rmse_threshold}). Retrying with updated hyperparameters...")
+            learning_rate *= 1.25
+            dropout_rate *= 1.15
+            hidden_neurons = min(hidden_neurons + 20, 150)
+            stacking_count += 1
+            attempt += 1
 
-# Save final results
-results_df.to_csv(results_path, index=False)
-log("All experiments completed. Results saved.")
+
+
+print("Starting training process...")
+for trajectory_folder in sorted(os.listdir(DATA_DIR)):
+    trajectory_path = os.path.join(DATA_DIR, trajectory_folder)
+    if os.path.isdir(trajectory_path):
+        for file in sorted(os.listdir(trajectory_path)):
+            if file.startswith("combined_") and file.endswith(".csv"):
+                a, b = parse_filename(file)
+                if a is None or b is None:
+                    continue
+                trajectory_id = trajectory_folder
+                data_file = os.path.join(trajectory_path, file)
+                if not check_duplicate(trajectory_id, a, b):
+                    log_message(f"Starting training for Trajectory: {trajectory_id}, a={a}, b={b}")
+                    train_model(trajectory_id, data_file, a, b)
+                else:
+                    log_message(f"Skipping duplicate experiment for Trajectory: {trajectory_id}, a={a}, b={b}")

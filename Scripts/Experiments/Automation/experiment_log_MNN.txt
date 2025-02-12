@@ -1,0 +1,48 @@
+[2025-02-11 13:02:00] Starting training for Trajectory: Trajectory1, a=1, b=3
+[2025-02-11 13:03:23] Starting training for Trajectory: Trajectory1, a=1, b=3
+[2025-02-11 13:03:59] Starting training for Trajectory: Trajectory1, a=1, b=3
+[2025-02-11 13:05:03] Starting training for Trajectory: Trajectory1, a=1, b=3
+[2025-02-11 13:09:34] Starting training for Trajectory: Trajectory1, a=1, b=3
+[2025-02-11 13:11:53] Starting training for Trajectory: Trajectory1, a=1, b=3
+[2025-02-11 13:12:13] Starting training for Trajectory: Trajectory1, a=1, b=3
+[2025-02-11 13:15:39] Starting training for Trajectory: Trajectory1, a=1, b=3
+[2025-02-11 13:16:55] Starting training for Trajectory: Trajectory1, a=1, b=3
+[2025-02-11 13:18:24] Starting training for Trajectory: Trajectory1, a=1, b=3
+[2025-02-11 14:50:38] Starting training for Trajectory: Trajectory1, a=1, b=3
+[2025-02-11 14:52:51] Starting training for Trajectory: Trajectory1, a=1, b=3
+[2025-02-11 14:54:27] Starting training for Trajectory: Trajectory1, a=1, b=3
+[2025-02-11 14:56:55] Starting training for Trajectory: Trajectory1, a=1, b=3
+[2025-02-11 15:04:18] Starting training for Trajectory: Trajectory1, a=1, b=3
+[2025-02-11 15:05:46] Starting training for Trajectory: Trajectory1, a=1, b=3
+[2025-02-11 15:09:27] Epoch 1: RMSE = 12.91413
+[2025-02-11 15:09:27] Starting training for Trajectory: Trajectory1, a=1, b=4
+[2025-02-11 15:13:08] Epoch 1: RMSE = 12.90347
+[2025-02-11 15:13:08] Starting training for Trajectory: Trajectory1, a=1, b=5
+[2025-02-11 15:16:47] Epoch 1: RMSE = 12.89468
+[2025-02-11 15:16:47] Starting training for Trajectory: Trajectory10, a=1, b=3
+[2025-02-11 15:20:29] Epoch 1: RMSE = 13.01716
+[2025-02-11 15:20:29] Starting training for Trajectory: Trajectory10, a=1, b=4
+[2025-02-11 15:23:42] Starting training for Trajectory: Trajectory1, a=1, b=3
+[2025-02-11 15:30:10] Epoch 1: RMSE = 12.24650
+[2025-02-11 15:30:10] Starting training for Trajectory: Trajectory1, a=1, b=4
+[2025-02-11 15:36:03] Epoch 1: RMSE = 12.23189
+[2025-02-11 15:36:03] Starting training for Trajectory: Trajectory1, a=1, b=5
+[2025-02-11 15:39:55] Epoch 1: RMSE = 12.21222
+[2025-02-11 16:31:53] Starting training for Trajectory: Trajectory1, a=1, b=3
+[2025-02-11 16:31:56] Resumed training from checkpoint: ../../Experiments/Results_New/MNN/Checkpoints_MNN/MNN_lr0.001_drop0.25_trajTrajectory1_hid80_ep1_stack2_a1_b3.pth
+[2025-02-11 16:32:51] Starting training for Trajectory: Trajectory1, a=1, b=3
+[2025-02-11 16:38:21] Epoch 1: RMSE = 12.24650
+[2025-02-11 17:22:14] Starting training for Trajectory: Trajectory1, a=1, b=3
+[2025-02-11 17:22:35] Starting training for Trajectory: Trajectory1, a=1, b=3
+[2025-02-11 17:24:17] Starting training for Trajectory: Trajectory1, a=1, b=3
+[2025-02-11 17:32:23] Epoch 1: RMSE = 12.24650
+[2025-02-11 17:36:38] Skipping duplicate experiment for Trajectory: Trajectory1, a=1, b=3
+[2025-02-11 17:37:58] Starting training for Trajectory: Trajectory1, a=1, b=3
+[2025-02-11 17:44:28] Epoch 1: RMSE = 12.24650
+[2025-02-11 17:45:51] Starting training for Trajectory: Trajectory1, a=1, b=3
+[2025-02-11 17:49:29] Epoch 1: RMSE = 12.24650
+[2025-02-11 17:49:31] Saved RMSE plot to ../../Experiments/Results_New/MNN/Plots/MNN_lr0.001_drop0.25_Trajectory1_hid80_ep1_stack2_a1_b3.png
+[2025-02-11 17:49:31] Best RMSE (12.24650) exceeded threshold (0.05). Retrying with updated hyperparameters...
+[2025-02-11 17:53:19] Epoch 1: RMSE = 13.66569
+[2025-02-11 17:53:19] Saved RMSE plot to ../../Experiments/Results_New/MNN/Plots/MNN_lr0.00125_drop0.2875_Trajectory1_hid100_ep1_stack3_a1_b3.png
+[2025-02-11 17:53:19] Best RMSE (12.24650) exceeded threshold (0.05). Retrying with updated hyperparameters...
