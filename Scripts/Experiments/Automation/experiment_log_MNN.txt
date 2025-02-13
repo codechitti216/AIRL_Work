@@ -46,3 +46,9 @@
 [2025-02-11 17:53:19] Epoch 1: RMSE = 13.66569
 [2025-02-11 17:53:19] Saved RMSE plot to ../../Experiments/Results_New/MNN/Plots/MNN_lr0.00125_drop0.2875_Trajectory1_hid100_ep1_stack3_a1_b3.png
 [2025-02-11 17:53:19] Best RMSE (12.24650) exceeded threshold (0.05). Retrying with updated hyperparameters...
+[2025-02-13 12:08:21] [INFO] Loading data for Trajectory: 1, a=1, b=3
+[2025-02-13 12:10:20] [INFO] Loading data for Trajectory: 1, a=1, b=3
+[2025-02-13 12:10:47] [INFO] Loading data for Trajectory: 1, a=1, b=3
+[2025-02-13 12:11:27] [INFO] Epoch 1: RMSE = 12.27010
+[2025-02-13 12:13:05] [INFO] Epoch 1: RMSE = 13.26409
+[2025-02-13 12:15:13] [INFO] Epoch 2: RMSE = 9.03713
