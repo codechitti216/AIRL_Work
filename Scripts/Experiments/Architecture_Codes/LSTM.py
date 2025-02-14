@@ -1,54 +1,41 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import numpy as np
 
 class LSTMNetwork(nn.Module):
-    def __init__(self, number_of_input_neurons, number_of_hidden_neurons,
-                 number_of_output_neurons, neeta, seed_value=12345):  
+    def __init__(self, number_of_input_neurons=15, number_of_hidden_neurons=100, 
+                 number_of_output_neurons=3, learning_rate=0.001, dropout_rate=0.25, seed_value=16981):
         super(LSTMNetwork, self).__init__()
         
         torch.manual_seed(seed_value)
-        np.random.seed(seed_value)
-        
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         
-        self.lstm = nn.LSTM(input_size=number_of_input_neurons, 
-                             hidden_size=number_of_hidden_neurons, 
-                             batch_first=True)
+        self.lstm = nn.LSTM(input_size=number_of_input_neurons,
+                            hidden_size=number_of_hidden_neurons,
+                            batch_first=True)
         
         self.fc = nn.Linear(number_of_hidden_neurons, number_of_output_neurons)
-        
-        self.optimizer = optim.Adam(self.parameters(), lr=neeta)
-        self.criterion = nn.MSELoss()
-        
-        self.hidden_state = None  
-        
-        self.neeta = neeta
+        self.dropout = nn.Dropout(dropout_rate)
+        self.learning_rate = learning_rate
         
         self.to(self.device)
-
+    
     def forward(self, x):
-        x = x.unsqueeze(0).unsqueeze(0)  
+        x = x.unsqueeze(0).unsqueeze(0)
+        h_0, c_0 = (torch.zeros(1, 1, self.lstm.hidden_size).to(self.device),
+                    torch.zeros(1, 1, self.lstm.hidden_size).to(self.device))
+        out, _ = self.lstm(x, (h_0, c_0))
+        out = self.dropout(out[:, -1, :])
+        return self.fc(out).squeeze(0)
+    
+    def train_model(self, train_data, target_data, learning_rate):
+        optimizer = optim.Adam(self.parameters(), lr=learning_rate)
+        criterion = nn.MSELoss()
         
-        if self.hidden_state is None:
-            h_0 = torch.zeros(1, 1, self.lstm.hidden_size).to(self.device)
-            c_0 = torch.zeros(1, 1, self.lstm.hidden_size).to(self.device)
-        else:
-            h_0, c_0 = self.hidden_state
-            h_0, c_0 = h_0.detach(), c_0.detach()  
-        
-        out, self.hidden_state = self.lstm(x, (h_0, c_0))
-        out = self.fc(out[:, -1, :])  
-        return out.squeeze(0)
-
-    def reset_hidden_state(self):
-        self.hidden_state = None  
-
-    def backprop(self, x, target):
-        self.optimizer.zero_grad()
-        prediction = self.forward(x)
-        loss = self.criterion(prediction, target.squeeze())  
+        optimizer.zero_grad()
+        prediction = self.forward(train_data)
+        loss = criterion(prediction, target_data)
         loss.backward()
-        self.optimizer.step()
+        optimizer.step()
+        
         return loss.item()

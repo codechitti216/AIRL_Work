@@ -1,149 +1,191 @@
 import torch
-import pandas as pd
-import numpy as np
 import os
-import glob
+import json
+import pandas as pd
 import time
 import re
-import sys
-import random
+from tqdm import tqdm
 import matplotlib.pyplot as plt
-from sklearn.metrics import mean_squared_error
+import sys 
 
-import warnings
-warnings.filterwarnings("ignore")
-
-# Set random seed for reproducibility
-torch.manual_seed(0)
-np.random.seed(0)
-random.seed(0)
-
-# Logging setup
-log_file = "../../Experiments/experiment_log_LSTM.txt"
-def log(message):
-    print(message)
-    with open(log_file, "a") as f:
-        f.write(message + "\n")
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'Architecture_Codes')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'Architecture_Codes'))) 
 from LSTM import LSTMNetwork
 
-# Hyperparameters
-ID = 0
-neeta = 1.2e-3
-epochs = 75
-stacking_count = 2  
-log(f"Stacking count set to: {stacking_count}")
+# Load configuration
+CONFIG_PATH = "LSTM.json"
+RESULTS_PATH = "../../Experiments/Results_New/LSTM/Results_LSTM.csv"
+CHECKPOINT_DIR = "../../Experiments/Results_New/LSTM/Checkpoints_LSTM/"
+PLOTS_DIR = "../../Experiments/Results_New/LSTM/Plots/"
+LOG_FILE = "experiment_log_LSTM.txt"
+DATA_DIR = "../../../Data"
 
-# Base paths
-base_path = "../../../Data"
-checkpoint_base = "../../Experiments/Results_New/LSTM/Checkpoints_LSTM"
-results_file = "../../Experiments/Results_New/LSTM/Results_LSTM.csv"
+print("[INFO] Loading configuration... (Checking JSON file existence)")
+with open(CONFIG_PATH, "r") as f:
+    config = json.load(f)
+print("[INFO] Configuration loaded successfully. Validating hyperparameters...")
 
-# Create results DataFrame
-if os.path.exists(results_file):
-    results_df = pd.read_csv(results_file)
-else:
-    results_df = pd.DataFrame(columns=['ID', 'Trajectory', 'Learning Rate', 'Stacking Count', '6()', '4()', 'Best RMSE Loss', 'Time Taken', 'Epochs'])
+# Load hyperparameters from config
+learning_rate = config["learning_rate"]
+dropout_rate = config["dropout_rate"]
+hidden_neurons = config["hidden_neurons"]
+stacking_count = config["stacking_count"]
+epochs = config["epochs"]
+regularization = config["regularization"]
+rmse_threshold = config.get("Threshold")
+number_of_trials = config["Trials"]
 
-file_pattern = re.compile(r'combined_(\d+)_(\d+)\.csv')
-log("Starting experiment script...")
+print(f"[INFO] Ensuring checkpoint directory exists: {CHECKPOINT_DIR}")
+os.makedirs(CHECKPOINT_DIR, exist_ok=True)
+print(f"[INFO] Ensuring plots directory exists: {PLOTS_DIR}")
+os.makedirs(PLOTS_DIR, exist_ok=True)
 
-for traj_folder in os.listdir(base_path):
-    traj_path = os.path.join(base_path, traj_folder)
-    log(f"Checking directory: {traj_path}")
+def log_message(message):
+    timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    with open(LOG_FILE, "a", encoding="utf-8") as log:  # Use UTF-8 encoding
+        log.write(f"[{timestamp}] {message}\n")
+    print(message)
 
-    if not os.path.isdir(traj_path):
-        continue
+def parse_filename(file_path):
+    match_folder = re.search(r'Trajectory(\d+)', file_path)
+    if not match_folder:
+        return None, None, None
 
-    trajectory_id = int(''.join(filter(str.isdigit, traj_folder)))
-    csv_files = glob.glob(os.path.join(traj_path, 'combined_*.csv'))
+    trajectory_id = int(match_folder.group(1))
 
-    for file_path in csv_files:
-        log(f"Processing file: {file_path}")
-        match = file_pattern.search(os.path.basename(file_path))
-        if not match:
-            continue
+    match_file = re.search(r'combined_(\d+)_(\d+)\.csv', os.path.basename(file_path))
+    if not match_file:
+        return None, None, None
 
-        a, b = int(match.group(1)), int(match.group(2))
-        num_inputs = (6 * a) + (4 * b)
-        log(f"Parsed values - a: {a}, b: {b}, input size: {num_inputs}")
+    a, b = int(match_file.group(1)), int(match_file.group(2))
 
-        # Initialize LSTM Network
-        lstm = LSTMNetwork(number_of_input_neurons=num_inputs, number_of_hidden_neurons=60, number_of_output_neurons=3, neeta=neeta)
+    return trajectory_id, a, b
 
-        # Load dataset
-        try:
-            df = pd.read_csv(file_path)
-        except Exception as e:
-            log(f"Error loading {file_path}: {e}")
-            continue
+def check_duplicate(trajectory_id, a, b):
+    print("[INFO] Checking for existing results file...")
+    if os.path.exists(RESULTS_PATH):
+        df = pd.read_csv(RESULTS_PATH)
+        match = df[
+            (df["Learning Rate"] == learning_rate) & (df["Dropout Rate"] == dropout_rate) &
+            (df["Trajectory Id"] == trajectory_id) & (df["Number of Hidden Neurons"] == hidden_neurons) &
+            (df["Epochs"] == epochs) & (df["Stacking Count"] == stacking_count) &
+            (df["6()"] == a) & (df["4()"] == b)
+        ]
+        if not match.empty:
+            log_message("[WARNING] Duplicate experiment found. Skipping training.")
+            return True
+    return False
 
-        input_columns = [f'ACC X_{i}' for i in range(a)] + [f'ACC Y_{i}' for i in range(a)] + [f'ACC Z_{i}' for i in range(a)] + \
-                        [f'GYRO X_{i}' for i in range(a)] + [f'GYRO Y_{i}' for i in range(a)] + [f'GYRO Z_{i}' for i in range(a)] + \
-                        [f'DVL{j}_1' for j in range(b)] + [f'DVL{j}_2' for j in range(b)] + [f'DVL{j}_3' for j in range(b)] + [f'DVL{j}_4' for j in range(b)]
-        output_columns = ['V North', 'V East', 'V Down']
+def train_model(trajectory_id, data_file, a, b):
+    global learning_rate, dropout_rate, hidden_neurons, stacking_count, epochs
+    log_message(f"[INFO] Loading data for Trajectory: {trajectory_id}, a={a}, b={b}")
 
-        if not set(input_columns).issubset(df.columns) or not set(output_columns).issubset(df.columns):
-            log(f"Skipping {file_path} due to missing columns")
-            continue
+    try:
+        data = pd.read_csv(data_file)
+    except Exception as e:
+        log_message(f"[ERROR] Error loading data: {e}")
+        return
+    
+    num_inputs = (6 * a) + (4 * b)
+    input_data = data.iloc[:-1, :num_inputs].values
+    target_data = data.iloc[1:, -3:].values
 
-        input_data = df[input_columns].values[:-1]
-        target_data = df[output_columns].shift(-1).dropna().values[:-1]
+    attempt = 0
+    best_rmse = float("inf")
 
-        input_data_stacked = np.tile(input_data, (stacking_count, 1))
-        target_data_stacked = np.tile(target_data, (stacking_count, 1))
-        
-        train_samples = 2 * len(input_data_stacked) // 3
-        X_train, y_train = input_data_stacked[:train_samples], target_data_stacked[:train_samples]
+    while attempt < number_of_trials:
+        lstm = LSTMNetwork(
+            learning_rate=learning_rate,
+            number_of_input_neurons=num_inputs,
+            number_of_hidden_neurons=hidden_neurons,
+            number_of_output_neurons=3,
+            dropout_rate=dropout_rate
+        ).to("cuda")
 
-        X_train_tensor = torch.tensor(X_train, dtype=torch.float32).to(lstm.device)
-        y_train_tensor = torch.tensor(y_train, dtype=torch.float32).to(lstm.device)
+        optimizer = torch.optim.Adam(lstm.parameters(), lr=learning_rate, weight_decay=regularization)
+        loss_fn = torch.nn.MSELoss()
 
-        best_rmse = float('inf')
-        losses = []
-        checkpoint_path = f"{checkpoint_base}/Trajectory{trajectory_id}/checkpoint_{a}_{b}.pth"
-        os.makedirs(os.path.dirname(checkpoint_path), exist_ok=True)
+        checkpoint_path = os.path.join(
+            CHECKPOINT_DIR, 
+            f"LSTM_lr{learning_rate}_drop{dropout_rate}_{trajectory_id}_hid{hidden_neurons}_ep{epochs}_stack{stacking_count}_a{a}_b{b}.pth"
+        )
 
-        # Load checkpoint if exists
-        if os.path.exists(checkpoint_path):
-            checkpoint = torch.load(checkpoint_path)
-            lstm.load_state_dict(checkpoint['model_state'])
-            best_rmse = checkpoint['best_rmse']
-            log(f"Resuming training from {checkpoint_path} with best RMSE: {best_rmse:.6f}")
-
+        print("[INFO] Model initialized. Starting training...")
+        lstm.train()
         start_time = time.time()
+        rmse_per_epoch = []
+
         for epoch in range(epochs):
-            error_sum = 0.0
-            for i in range(len(X_train_tensor)):
-                loss = lstm.backprop(X_train_tensor[i], y_train_tensor[i])
-                error_sum += loss
+            epoch_loss = 0
+            for i in tqdm(range(len(input_data)), desc=f"Epoch {epoch + 1}/{epochs}"):
+                x = torch.tensor(input_data[i], dtype=torch.float32, device="cuda")
+                y = torch.tensor(target_data[i], dtype=torch.float32, device="cuda")
+                optimizer.zero_grad()
+                output = lstm.forward(x)
+                loss = loss_fn(output, y)
+                loss.backward()
+                torch.nn.utils.clip_grad_norm_(lstm.parameters(), max_norm=1.0)
+                optimizer.step()
+                epoch_loss += loss.item()
+            
+            avg_rmse = (epoch_loss / len(input_data)) ** 0.5
+            rmse_per_epoch.append(avg_rmse)
+            best_rmse = min(best_rmse, avg_rmse)
+            log_message(f"[INFO] Epoch {epoch + 1}: RMSE = {avg_rmse:.5f}")
+            torch.save(lstm.state_dict(), checkpoint_path)
 
-            epoch_rmse = error_sum / len(X_train_tensor)
-            losses.append(epoch_rmse)
-
-            if epoch_rmse < best_rmse:
-                best_rmse = epoch_rmse
-                torch.save({'model_state': lstm.state_dict(), 'best_rmse': best_rmse}, checkpoint_path)
-                log(f"Checkpoint saved: {checkpoint_path} (Best RMSE: {best_rmse:.6f})")
-
-        time_taken = time.time() - start_time
-        log(f"Training completed in {time_taken:.2f} seconds. Best RMSE: {best_rmse:.6f}")
-
-        # Save RMSE plot
+        total_time = time.time() - start_time
+        plot_path = os.path.join(PLOTS_DIR, f"LSTM_lr{learning_rate}_drop{dropout_rate}_{trajectory_id}_hid{hidden_neurons}_ep{epochs}_stack{stacking_count}_a{a}_b{b}.png")
         plt.figure()
-        plt.plot(range(len(losses)), losses, label='RMSE Loss')
-        plt.xlabel('Epoch')
-        plt.ylabel('Loss')
-        plt.title(f'Training Loss (Trajectory {trajectory_id}, a={a}, b={b})')
-        plt.legend()
-        plt.savefig(f"../../Experiments/Results_New/LSTM/RMSE_Trajectory{trajectory_id}_{a}_{b}.png")
+        plt.plot(range(1, epochs + 1), rmse_per_epoch, marker='o', linestyle='-', color='b')
+        plt.xlabel("Epochs")
+        plt.ylabel("RMSE")
+        plt.title(f"LSTM RMSE - Trajectory {trajectory_id}, a={a}, b={b}, Attempt {attempt}")
+        plt.grid()
+        plt.savefig(plot_path)
         plt.close()
+        log_message(f"[INFO] Saved RMSE plot to {plot_path}")
+        
+        results_data = pd.DataFrame([{
+            "Trajectory ID": trajectory_id,
+            "6()": a,
+            "4()": b,
+            "Learning Rate": learning_rate,
+            "Dropout Rate": dropout_rate,
+            "Number of Hidden Neurons": hidden_neurons,
+            "Epochs": epochs,
+            "Stacking Count": stacking_count,
+            "Time Taken": round(total_time, 2),
+            "Best RMSE" : best_rmse
+        }])
 
-        # Append results (eliminating duplicates)
-        new_entry = pd.DataFrame([{'ID': ID, 'Trajectory': trajectory_id, 'Learning Rate': neeta, 'Stacking Count': stacking_count, '6()': a, '4()': b, 'Best RMSE Loss': best_rmse, 'Time Taken': time_taken, 'Epochs': epochs}])
-        results_df = pd.concat([results_df, new_entry]).drop_duplicates(subset=['Trajectory', 'Learning Rate', 'Stacking Count', '6()', '4()', 'Epochs'], keep='last')
+        if os.path.exists(RESULTS_PATH):
+            results_data.to_csv(RESULTS_PATH, mode='a', header=False, index=False)
+        else:
+            results_data.to_csv(RESULTS_PATH, index=False)
 
-# Save final results
-results_df.to_csv(results_file, index=False)
-log("All experiments completed. Results saved.")
+        log_message(f"[INFO] Results saved to {RESULTS_PATH}")
+
+        if best_rmse <= rmse_threshold:
+            log_message(f"[SUCCESS] RMSE {best_rmse:.5f} is within threshold!")
+            break
+        else:
+            log_message(f"[WARNING] RMSE {best_rmse:.5f} exceeds threshold. Retrying with new hyperparameters...")
+            
+            # ✅ Update hyperparameters for next attempt
+            learning_rate *= 1.1
+            dropout_rate *= 1.05
+            hidden_neurons = min(hidden_neurons+20, 150)
+            stacking_count += 1
+            epochs += 5
+            attempt += 1
+
+if __name__ == "__main__":
+    for traj_folder in os.listdir(DATA_DIR):
+        traj_path = os.path.join(DATA_DIR, traj_folder)
+        if not os.path.isdir(traj_path):
+            continue
+        for file in os.listdir(traj_path):
+            file_path = os.path.join(traj_path, file)
+            trajectory_id, a, b = parse_filename(file_path)
+            if trajectory_id is not None and a is not None and b is not None:
+                train_model(trajectory_id, file_path, a, b)

@@ -1,14 +1,14 @@
 import torch
-import pandas as pd
-import numpy as np
 import os
-import glob
+import json
+import pandas as pd
 import time
 import re
+import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.metrics import mean_squared_error
-import sys
+import glob
 import random
+from sklearn.metrics import mean_squared_error
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -19,121 +19,128 @@ np.random.seed(0)
 random.seed(0)
 
 # Logging setup
-log_file = "../../Experiments/experiment_log_FAN.txt"
-def log(message):
+LOG_FILE = "../../Experiments/experiment_log_FAN.txt"
+def log_message(message):
+    timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    with open(LOG_FILE, "a", encoding="utf-8") as log:
+        log.write(f"[{timestamp}] {message}\n")
     print(message)
-    with open(log_file, "a") as f:
-        f.write(message + "\n")
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'Architecture_Codes')))
 from FAN import FAN
 
-ID = 0
-learning_rate = 1e-3
-epochs = 70
-stacking_count = 5
-log(f"Stacking count set to: {stacking_count}")
+CONFIG_PATH = "FAN.json"
+RESULTS_PATH = "../../Experiments/Results_New/FAN/Results_FAN.csv"
+CHECKPOINT_DIR = "../../Experiments/Results_New/FAN/Checkpoints_FAN/"
+PLOTS_DIR = "../../Experiments/Results_New/FAN/Plots/"
+DATA_DIR = "../../../Data"
 
-# Base paths
-base_path = "../../../Data"
-results_path = "../../Experiments/Results_New/FAN/Results.csv"
-checkpoint_base = "../../Experiments/Results_New/FAN/Checkpoints_FAN"
+# Load configuration
+log_message("[INFO] Loading configuration...")
+with open(CONFIG_PATH, "r") as f:
+    config = json.load(f)
+log_message("[INFO] Configuration loaded successfully.")
 
-# Create results DataFrame
-if os.path.exists(results_path):
-    results_df = pd.read_csv(results_path)
-else:
-    results_df = pd.DataFrame(columns=['ID', 'Trajectory', 'Learning Rate', 'Stacking Count', '6()', '4()', 'Best RMSE Loss', 'Time Taken', 'Epochs'])
+# Load hyperparameters
+learning_rate = config["learning_rate"]
+dropout_rate = config["dropout_rate"]
+hidden_neurons = config["hidden_neurons"]
+stacking_count = config["stacking_count"]
+epochs = config["epochs"]
+regularization = config["regularization"]
+rmse_threshold = config.get("Threshold")
+number_of_trials = config["Trials"]
 
-file_pattern = re.compile(r'combined_(\d+)_(\d+)\.csv')
-log("Starting FAN experiment script...")
+os.makedirs(CHECKPOINT_DIR, exist_ok=True)
+os.makedirs(PLOTS_DIR, exist_ok=True)
 
-for traj_folder in os.listdir(base_path):
-    traj_path = os.path.join(base_path, traj_folder)
-    log(f"Checking directory: {traj_path}")
+def check_duplicate(trajectory_id, a, b):
+    if os.path.exists(RESULTS_PATH):
+        df = pd.read_csv(RESULTS_PATH)
+        match = df[
+            (df["Learning Rate"] == learning_rate) & (df["Dropout Rate"] == dropout_rate) &
+            (df["Trajectory ID"] == trajectory_id) & (df["Number of Hidden Neurons"] == hidden_neurons) &
+            (df["Epochs"] == epochs) & (df["Stacking Count"] == stacking_count) &
+            (df["6()"] == a) & (df["4()"] == b)
+        ]
+        if not match.empty:
+            log_message("[WARNING] Duplicate experiment found. Skipping training.")
+            return True
+    return False
 
-    if not os.path.isdir(traj_path):
-        continue
+def train_model(trajectory_id, data_file, a, b):
+    global learning_rate, dropout_rate, hidden_neurons, stacking_count, epochs
+    if check_duplicate(trajectory_id, a, b):
+        return
 
-    trajectory_id = int(''.join(filter(str.isdigit, traj_folder)))
-    csv_files = glob.glob(os.path.join(traj_path, 'combined_*.csv'))
+    log_message(f"[INFO] Loading data for Trajectory: {trajectory_id}, a={a}, b={b}")
+    data = pd.read_csv(data_file)
+    num_inputs = (6 * a) + (4 * b)
+    input_data = data.iloc[:-1, :num_inputs].values
+    target_data = data.iloc[1:, -3:].values
 
-    for file_path in csv_files:
-        log(f"Processing file: {file_path}")
-        match = file_pattern.search(os.path.basename(file_path))
-        if not match:
-            continue
+    attempt, best_rmse = 0, float("inf")
+    start_time = time.time()
 
-        a, b = int(match.group(1)), int(match.group(2))
-        num_inputs = (6 * a) + (4 * b)
-        log(f"Parsed values - a: {a}, b: {b}, input size: {num_inputs}")
+    while attempt < number_of_trials:
+        fan = FAN(
+            number_of_input_neurons=num_inputs,
+            number_of_output_neurons=3,
+            learning_rate=learning_rate,
+            lambda_reg=regularization
+        ).to("cuda")
 
-        fan = FAN(number_of_input_neurons=num_inputs, number_of_output_neurons=3, learning_rate=learning_rate)
+        optimizer = torch.optim.AdamW(fan.parameters(), lr=learning_rate, weight_decay=regularization)
+        loss_fn = torch.nn.MSELoss()
 
-        try:
-            df = pd.read_csv(file_path)
-        except Exception as e:
-            log(f"Error loading {file_path}: {e}")
-            continue
+        checkpoint_path = os.path.join(
+    CHECKPOINT_DIR, 
+    f"FAN_lr{learning_rate}_drop{dropout_rate}_{trajectory_id}_hid{hidden_neurons}_ep{epochs}_stack{stacking_count}_a{a}_b{b}.pth"
+)
+        fan.train()
+        rmse_per_epoch = []
 
-        input_columns = [f'ACC X_{i}' for i in range(a)] + [f'ACC Y_{i}' for i in range(a)] + [f'ACC Z_{i}' for i in range(a)] + \
-                        [f'GYRO X_{i}' for i in range(a)] + [f'GYRO Y_{i}' for i in range(a)] + [f'GYRO Z_{i}' for i in range(a)] + \
-                        [f'DVL{j}_1' for j in range(b)] + [f'DVL{j}_2' for j in range(b)] + [f'DVL{j}_3' for j in range(b)] + [f'DVL{j}_4' for j in range(b)]
-        output_columns = ['V North', 'V East', 'V Down']
-
-        if not set(input_columns).issubset(df.columns) or not set(output_columns).issubset(df.columns):
-            log(f"Skipping {file_path} due to missing columns")
-            continue
-
-        input_data = df[input_columns].values[:-1]
-        target_data = df[output_columns].shift(-1).dropna().values[:-1]
-
-        input_data_stacked = np.tile(input_data, (stacking_count, 1))
-        target_data_stacked = np.tile(target_data, (stacking_count, 1))
-        
-        train_samples = 2 * len(input_data_stacked) // 3
-        X_train, y_train = input_data_stacked[:train_samples], target_data_stacked[:train_samples]
-
-        best_rmse = float('inf')
-        losses = []
-        checkpoint_path = f"{checkpoint_base}/Trajectory{trajectory_id}/checkpoint_{a}_{b}.pth"
-        os.makedirs(os.path.dirname(checkpoint_path), exist_ok=True)
-
-        if os.path.exists(checkpoint_path):
-            checkpoint = torch.load(checkpoint_path)
-            if isinstance(checkpoint, dict) and 'model_state' in checkpoint:
-                fan.load_state_dict(checkpoint['model_state'])
-                best_rmse = checkpoint['best_rmse']
-                log(f"Resuming training from {checkpoint_path} with best RMSE: {best_rmse:.6f}")
-
-        start_time = time.time()
         for epoch in range(epochs):
-            error_sum = 0.0
-            for i in range(len(X_train)):
-                pred = fan.feedforward(torch.tensor(X_train[i, :], dtype=torch.float32))
-                fan.backpropagate(torch.tensor(X_train[i, :], dtype=torch.float32), torch.tensor(y_train[i, :], dtype=torch.float32))
-                mse = mean_squared_error(y_train[i, :], pred.cpu().detach().numpy())
-                error_sum += mse
+            epoch_loss = 0
+            for i in range(len(input_data)):
+                x = torch.tensor(input_data[i], dtype=torch.float32, device="cuda")
+                y = torch.tensor(target_data[i], dtype=torch.float32, device="cuda")
+                optimizer.zero_grad()
+                output = fan.feedforward(x)
+                loss = loss_fn(output, y)
+                loss.backward()
+                torch.nn.utils.clip_grad_norm_(fan.parameters(), max_norm=1.0)
+                optimizer.step()
+                epoch_loss += loss.item()
+            
+            avg_rmse = (epoch_loss / len(input_data)) ** 0.5
+            rmse_per_epoch.append(avg_rmse)
+            best_rmse = min(best_rmse, avg_rmse)
+            log_message(f"[INFO] Epoch {epoch + 1}: RMSE = {avg_rmse:.5f}")
+            torch.save(fan.state_dict(), checkpoint_path)
 
-            epoch_rmse = error_sum / len(X_train)
-            losses.append(epoch_rmse)
+            if best_rmse <= rmse_threshold:
+                log_message("[SUCCESS] RMSE within threshold! Stopping training.")
+                break
 
-            if epoch_rmse < best_rmse:
-                best_rmse = epoch_rmse
-                torch.save({'model_state': fan.state_dict(), 'best_rmse': best_rmse}, checkpoint_path)
-                log(f"Checkpoint saved: {checkpoint_path} (Best RMSE: {best_rmse:.6f})")
-
-        time_taken = time.time() - start_time
-        log(f"Training completed in {time_taken:.2f} seconds. Best RMSE: {best_rmse:.6f}")
-
+        total_time = time.time() - start_time
+        plot_path = os.path.join(PLOTS_DIR, f"FAN_{trajectory_id}_a{a}_b{b}.png")
         plt.figure()
-        plt.plot(range(len(losses)), losses, label='RMSE Loss')
-        plt.xlabel('Epoch')
-        plt.ylabel('Loss')
-        plt.title(f'Training Loss (Trajectory {trajectory_id}, a={a}, b={b})')
-        plt.legend()
-        plt.savefig(f"../../Experiments/Results_New/FAN/RMSE_Trajectory{trajectory_id}_{a}_{b}.png")
+        plt.plot(range(1, len(rmse_per_epoch) + 1), rmse_per_epoch, marker='o', linestyle='-', color='b')
+        plt.xlabel("Epochs")
+        plt.ylabel("RMSE")
+        plt.title(f"FAN RMSE - Trajectory {trajectory_id}, a={a}, b={b}, Attempt {attempt}")
+        plt.grid()
+        plt.savefig(plot_path)
         plt.close()
+        log_message(f"[INFO] Saved RMSE plot to {plot_path}")
 
-results_df.to_csv(results_path, index=False)
-log("All FAN experiments completed. Results saved.")
+if __name__ == "__main__":
+    for traj_folder in os.listdir(DATA_DIR):
+        traj_path = os.path.join(DATA_DIR, traj_folder)
+        if not os.path.isdir(traj_path):
+            continue
+        for file in os.listdir(traj_path):
+            file_path = os.path.join(traj_path, file)
+            trajectory_id, a, b = re.findall(r'\d+', file_path)[-3:]
+            train_model(int(trajectory_id), file_path, int(a), int(b))
