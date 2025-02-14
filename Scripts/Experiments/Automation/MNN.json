@@ -6,6 +6,7 @@
     "stacking_count": 2,
     "epochs": 1,
     "lipschitz_constant": 1.2,
+    "regularization": 0.01,
     "Threshold" : 0.05,
     "Trials" : 4
 }

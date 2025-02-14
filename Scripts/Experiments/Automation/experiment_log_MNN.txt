@@ -52,3 +52,20 @@
 [2025-02-13 12:11:27] [INFO] Epoch 1: RMSE = 12.27010
 [2025-02-13 12:13:05] [INFO] Epoch 1: RMSE = 13.26409
 [2025-02-13 12:15:13] [INFO] Epoch 2: RMSE = 9.03713
+[2025-02-13 12:39:26] [INFO] Loading data for Trajectory: 1, a=1, b=3
+[2025-02-13 12:40:24] [INFO] Loading data for Trajectory: 1, a=1, b=3
+[2025-02-13 12:40:57] [INFO] Epoch 1: RMSE = 10.89489
+[2025-02-13 12:40:57] [INFO] Saved RMSE plot to ../../Experiments/Results_New/MNN/Plots/MNN_lr0.001_drop0.25_1_hid80_ep1_stack2_a1_b3.png
+[2025-02-13 12:41:27] [INFO] Epoch 1: RMSE = 10.89489
+[2025-02-13 12:41:27] [INFO] Saved RMSE plot to ../../Experiments/Results_New/MNN/Plots/MNN_lr0.001_drop0.25_1_hid80_ep1_stack2_a1_b3.png
+[2025-02-13 14:02:37] [INFO] Loading data for Trajectory: 1, a=1, b=3
+[2025-02-13 14:03:11] [INFO] Epoch 1: RMSE = 10.89489
+[2025-02-13 14:03:11] [INFO] Saved RMSE plot to ../../Experiments/Results_New/MNN/Plots/MNN_lr0.001_drop0.25_1_hid80_ep1_stack2_a1_b3.png
+[2025-02-13 14:05:07] [INFO] Loading data for Trajectory: 1, a=1, b=3
+[2025-02-13 14:05:41] [INFO] Epoch 1: RMSE = 10.89489
+[2025-02-13 14:07:20] [INFO] Loading data for Trajectory: 1, a=1, b=3
+[2025-02-13 14:07:52] [INFO] Epoch 1: RMSE = 10.89489
+[2025-02-13 14:07:52] [INFO] Saved RMSE plot to ../../Experiments/Results_New/MNN/Plots/MNN_lr0.001_drop0.25_1_hid80_ep1_stack2_a1_b3.png
+[2025-02-13 14:07:52] [INFO] Results saved to ../../Experiments/Results_New/MNN/Results_MNN.csv
+[2025-02-13 14:07:52] [WARNING] RMSE 10.89489 exceeds threshold. Retrying with new hyperparameters...
+[2025-02-13 14:08:23] [INFO] Epoch 1: RMSE = 11.82520

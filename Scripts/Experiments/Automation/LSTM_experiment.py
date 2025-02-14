@@ -178,7 +178,6 @@ def train_model(trajectory_id, data_file, a, b):
             stacking_count += 1
             epochs += 5
             attempt += 1
-        
 
 if __name__ == "__main__":
     for traj_folder in os.listdir(DATA_DIR):

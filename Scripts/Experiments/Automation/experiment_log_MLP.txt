@@ -1,0 +1,23 @@
+[2025-02-13 16:54:34] [INFO] Loading data for Trajectory: 1, a=1, b=3
+[2025-02-13 16:55:46] [INFO] Loading data for Trajectory: 1, a=1, b=3
+[2025-02-13 16:55:51] [INFO] Epoch 1: RMSE = 0.95755
+[2025-02-13 16:55:52] [INFO] Epoch 2: RMSE = 0.99835
+[2025-02-13 16:55:52] [INFO] Saved RMSE plot to ../../Experiments/Results_New/MLP/Plots/MLP_lr0.001_drop0.3_1_hid60_ep2_stack2_a1_b3.png
+[2025-02-13 16:55:52] [INFO] Results saved to ../../Experiments/Results_New/MLP/Results_MLP.csv
+[2025-02-13 16:55:52] [WARNING] RMSE 0.95755 exceeds threshold. Retrying with new hyperparameters...
+[2025-02-13 16:55:53] [INFO] Epoch 1: RMSE = 0.99644
+[2025-02-13 16:55:54] [INFO] Epoch 2: RMSE = 1.01794
+[2025-02-13 16:55:55] [INFO] Epoch 3: RMSE = 1.00720
+[2025-02-13 16:55:56] [INFO] Epoch 4: RMSE = 1.11298
+[2025-02-13 16:55:56] [INFO] Epoch 5: RMSE = 1.03938
+[2025-02-13 16:55:57] [INFO] Epoch 6: RMSE = 1.05035
+[2025-02-13 16:55:58] [INFO] Epoch 7: RMSE = 0.99584
+[2025-02-13 16:55:58] [INFO] Saved RMSE plot to ../../Experiments/Results_New/MLP/Plots/MLP_lr0.0011_drop0.315_1_hid80_ep7_stack3_a1_b3.png
+[2025-02-13 16:55:58] [INFO] Results saved to ../../Experiments/Results_New/MLP/Results_MLP.csv
+[2025-02-13 16:55:58] [WARNING] RMSE 0.95755 exceeds threshold. Retrying with new hyperparameters...
+[2025-02-13 16:55:59] [INFO] Epoch 1: RMSE = 1.02748
+[2025-02-13 16:56:00] [INFO] Epoch 2: RMSE = 0.94645
+[2025-02-13 16:56:01] [INFO] Epoch 3: RMSE = 0.92486
+[2025-02-13 16:56:02] [INFO] Epoch 4: RMSE = 1.01189
+[2025-02-13 16:56:03] [INFO] Epoch 5: RMSE = 0.99088
+[2025-02-13 16:56:04] [INFO] Epoch 6: RMSE = 0.95368
