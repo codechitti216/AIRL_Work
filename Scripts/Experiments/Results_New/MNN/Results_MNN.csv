@@ -1,0 +1,2 @@
+Trajectory ID,6(),4(),Learning Rate,Dropout Rate,Number of Hidden Neurons,Epochs,Stacking Count,Time Taken,Best RMSE
+9,1,5,0.001,0.0,60,70,2,1739637231.48,0.23248916653056392
