@@ -1,10 +1,13 @@
 {
     "learning_rate": 0.001,
     "learning_rate_2": 0.0005,
-    "dropout_rate": 0.25,
-    "hidden_neurons": 80,
+    "dropout_rate": 0.0,
+    "hidden_neurons": 60,
     "stacking_count": 2,
-    "epochs": 1,
+    "epochs": 70,
     "lipschitz_constant": 1.2,
-    "Threshold" : 0.05
+    "regularization": 0.00,
+    "Threshold" : 0.05,
+    "Trials" : 3
+    
 }

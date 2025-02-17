@@ -30,6 +30,10 @@ dropout_rate = config["dropout_rate"]
 hidden_neurons = config["hidden_neurons"]
 stacking_count = config["stacking_count"]
 epochs = config["epochs"]
+initial_epochs = epochs
+initial_learning_rate = learning_rate
+initial_hidden_neurons = hidden_neurons
+initial_stacking_count = stacking_count
 regularization = config["regularization"]
 rmse_threshold = config.get("Threshold")
 number_of_trials = config["Trials"]
@@ -173,13 +177,16 @@ def train_model(trajectory_id, data_file, a, b):
             
             # ✅ Update hyperparameters for next attempt
             learning_rate *= 1.1
-            dropout_rate *= 1.05
+            dropout_rate *= 0.9
             hidden_neurons = min(hidden_neurons+20, 150)
             stacking_count += 1
             epochs += 5
             attempt += 1
         
-
+    epochs = initial_epochs
+    learning_rate = initial_learning_rate
+    hidden_neurons = initial_hidden_neurons
+    stacking_count = initial_stacking_count
 if __name__ == "__main__":
     for traj_folder in os.listdir(DATA_DIR):
         traj_path = os.path.join(DATA_DIR, traj_folder)
