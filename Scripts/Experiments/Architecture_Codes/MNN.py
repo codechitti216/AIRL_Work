@@ -48,12 +48,13 @@ class MemoryNeuralNetwork(nn.Module):
         return 15 * torch.tanh(x / 15)
 
     def forward(self, input_array):
-        self.input_nn = input_array.clone().detach().to(self.device).requires_grad_(True)
-        
+        self.input_nn = input_array.to(self.device)
+                
         self.output_of_hidden_layer_nn = self.activation_function(
-            torch.matmul(self.input_nn, self.weights_input_to_hidden_nn.clone()) +
-            torch.matmul(self.input_nn, self.weights_input_to_hidden_mn.clone())
+            torch.matmul(self.input_nn, self.weights_input_to_hidden_nn) +
+            torch.matmul(self.input_nn, self.weights_input_to_hidden_mn)
         )
+
         self.output_of_hidden_layer_nn = self.dropout(self.output_of_hidden_layer_nn)
         
         self.input_to_last_layer_nn = (
