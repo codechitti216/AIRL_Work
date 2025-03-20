@@ -1,0 +1,2 @@
+Trajectory,NumSamples,Test_RMSE_b1,Test_RMSE_b2,Test_RMSE_b3,Test_RMSE_b4,AvgTest_RMSE,TrainedOn
+Trajectory3,395,0.07353789845159263,0.20977933071245983,0.06004778981352173,0.21694040929486608,0.14007635706811006,"Trajectory1, Trajectory2, Trajectory3, Trajectory4"

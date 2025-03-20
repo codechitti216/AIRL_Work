@@ -1,0 +1,26 @@
+{
+    "learning_rate": 0.001,
+    "dropout_rate": 0.3,
+    "hidden_neurons": 100,
+    "number_of_layers": 2,
+    "regularization": 0.01,
+    "beam_fill_window": 3,
+    "num_past_beam_instances": 5,
+    "num_imu_instances": 1,
+    "partial_rmse": true,
+    "training_trajectories": [
+      ["Trajectory1", 30],
+      ["Trajectory2", 40],
+      ["Trajectory3", 40],
+      ["Trajectory4", 40],
+      ["Trajectory5", 40]
+    ],
+    "testing_trajectories": [
+      "Trajectory3"
+    ]
+  }
+  
+
+
+
+
