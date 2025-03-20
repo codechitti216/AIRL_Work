@@ -4,7 +4,7 @@
     "dropout_rate": 0.25,
     "hidden_neurons": 80,
     "stacking_count": 2,
-    "epochs": 1,
+    "epochs": 79,
     "lipschitz_constant": 1.2,
     "regularization": 0.01,
     "Threshold" : 0.05,
