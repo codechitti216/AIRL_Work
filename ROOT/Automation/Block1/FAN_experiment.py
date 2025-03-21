@@ -66,21 +66,30 @@ def generate_experiment_folder_name(config):
 
 def create_experiment_folder(config):
     folder_name = generate_experiment_folder_name(config)
+    # --- BEGIN WINDOWS-COMPATIBILITY FIX ---
+    # Replace forbidden characters with underscores.
+    folder_name = folder_name.replace(":", "_").replace("*", "_") \
+                               .replace("?", "_").replace("<", "_") \
+                               .replace(">", "_").replace("|", "_")
+    # Remove any trailing spaces or periods.
+    folder_name = folder_name.rstrip(" .")
+    # Optionally, convert to lowercase (Windows is case-insensitive)
+    folder_name = folder_name.lower()
+    # --- END WINDOWS-COMPATIBILITY FIX ---
     exp_folder = os.path.join(RESULTS_ROOT, folder_name)
-    print(f"[DEBUG] Checking if experiment folder exists: {exp_folder}")
     if os.path.exists(exp_folder):
         print(f"Duplicate experiment folder found: {exp_folder}. Aborting experiment run.")
         sys.exit(0)
     os.makedirs(exp_folder, exist_ok=True)
+    # Create subdirectories (e.g. Checkpoints, Summaries, etc.)
     subdirs = {
         "CHECKPOINTS_DIR": "Checkpoints",
         "TRAINING_SUMMARIES_DIR": "TrainingSummaries",
         "TEST_SUMMARIES_DIR": "TestSummaries",
         "PLOTS_DIR": "Plots",
-        "PREDICTIONS_DIR": "Predictions",
-        "TRAINING_VELOCITY_PLOTS_DIR": "TrainingVelocityPlots"
+        "PREDICTIONS_DIR": "Predictions"
     }
-    global CHECKPOINTS_DIR, TRAINING_SUMMARIES_DIR, TEST_SUMMARIES_DIR, PLOTS_DIR, PREDICTIONS_DIR, TRAINING_VELOCITY_PLOTS_DIR, GLOBAL_LOG_FILE
+    global CHECKPOINTS_DIR, TRAINING_SUMMARIES_DIR, TEST_SUMMARIES_DIR, PLOTS_DIR, PREDICTIONS_DIR, GLOBAL_LOG_FILE
     for key, sub in subdirs.items():
         path = os.path.join(exp_folder, sub)
         os.makedirs(path, exist_ok=True)
@@ -89,6 +98,7 @@ def create_experiment_folder(config):
     GLOBAL_LOG_FILE = os.path.join(exp_folder, "experiment_global_log.txt")
     print(f"[DEBUG] Global log file set to: {GLOBAL_LOG_FILE}")
     return exp_folder
+
 
 ##########################
 # Logging & Duplicate Check
