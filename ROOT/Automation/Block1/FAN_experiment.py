@@ -11,26 +11,27 @@ import torch.nn as nn
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 
-# Import the LSTM model from LSTM.py
-from LSTM import LSTMNetwork
+# Import the FAN model.
+from FAN import FourierAnalysisNetwork
 
 ##########################
 # Experiment Folder Setup
 ##########################
 
-RESULTS_ROOT = "LSTM_Results"
+RESULTS_ROOT = "FAN_results"  # Root folder for FAN experiments
 
+# Define abbreviations for common config keys.
 ABBREVIATIONS = {
-    "learning_rate": "lr",
-    "dropout_rate": "dr",
-    "hidden_neurons": "hn",  # used as hidden size
-    "num_layers": "nl",
-    "epochs": "ep",
-    "regularization": "reg",
     "beam_fill_window": "bfw",
-    "num_past_beam_instances": "npbi",
-    "num_imu_instances": "niu",
-    "partial_rmse": "prmse",
+    "dropout_rate": "dr",
+    "hidden_neurons": "hn",
+    "learning_rate": "lr",  # For naming only
+    "learning_rate_2": "lr2",
+    "lipschitz_constant": "lc",
+    "regularization": "reg",
+    "num_past_beam_instances": "npb",
+    "num_imu_instances": "nimu",
+    "partial_rmse": "pr",
     "training_trajectories": "trtraj",
     "testing_trajectories": "ttraj"
 }
@@ -76,9 +77,10 @@ def create_experiment_folder(config):
         "TRAINING_SUMMARIES_DIR": "TrainingSummaries",
         "TEST_SUMMARIES_DIR": "TestSummaries",
         "PLOTS_DIR": "Plots",
-        "PREDICTIONS_DIR": "Predictions"
+        "PREDICTIONS_DIR": "Predictions",
+        "TRAINING_VELOCITY_PLOTS_DIR": "TrainingVelocityPlots"
     }
-    global CHECKPOINTS_DIR, TRAINING_SUMMARIES_DIR, TEST_SUMMARIES_DIR, PLOTS_DIR, PREDICTIONS_DIR, GLOBAL_LOG_FILE
+    global CHECKPOINTS_DIR, TRAINING_SUMMARIES_DIR, TEST_SUMMARIES_DIR, PLOTS_DIR, PREDICTIONS_DIR, TRAINING_VELOCITY_PLOTS_DIR, GLOBAL_LOG_FILE
     for key, sub in subdirs.items():
         path = os.path.join(exp_folder, sub)
         os.makedirs(path, exist_ok=True)
@@ -129,14 +131,12 @@ def load_csv_files(traj_path):
     if not imu_files:
         raise ValueError(f"No IMU file found in {traj_path}")
     imu = pd.read_csv(os.path.join(traj_path, imu_files[0]))
-    log_global(f"DEBUG: IMU columns: {imu.columns.tolist()}")
     beams_gt.sort_values("Time", inplace=True)
     beams_training.sort_values("Time", inplace=True)
     imu.sort_values("Time [s]", inplace=True)
     beams_gt.reset_index(drop=True, inplace=True)
     beams_training.reset_index(drop=True, inplace=True)
     imu.reset_index(drop=True, inplace=True)
-    log_global(f"DEBUG: beams_training length: {len(beams_training)}, beams_gt length: {len(beams_gt)}, imu length: {len(imu)}")
     return beams_gt, beams_training, imu
 
 def fill_missing_beams(beams_df, beam_fill_window, beam_cols=["b1", "b2", "b3", "b4"]):
@@ -161,49 +161,18 @@ def fill_missing_beams(beams_df, beam_fill_window, beam_cols=["b1", "b2", "b3", 
                 filled.loc[i, col] = avg_val
     return filled, start_index
 
-# For LSTM, we use the target from columns b1, b2, b3, b4 (predicting all 4 beams)
 def construct_input_target(filled_beams, beams_gt, imu, t, num_past_beam_instances, num_imu_instances):
-    if t < num_past_beam_instances or t < (num_imu_instances - 1):
-        raise ValueError(f"Index {t} does not have enough history.")
-    try:
-        current_beams = filled_beams.loc[t, ["b1", "b2", "b3", "b4"]].values.astype(float)
-    except Exception as e:
-        log_global(f"Error at index {t} while fetching current beams: {e}")
-        raise e
+    current_beams = filled_beams.loc[t, ["b1", "b2", "b3", "b4"]].values.astype(float)
     past_beams = []
     for i in range(1, num_past_beam_instances + 1):
-        idx = t - i
-        if idx < 0:
-            raise ValueError(f"Index {t} results in negative history index.")
-        try:
-            past_row = filled_beams.loc[idx, ["b1", "b2", "b3", "b4"]].values.astype(float)
-            past_beams.extend(past_row)
-        except Exception as e:
-            log_global(f"Error at index {idx} while fetching past beams: {e}")
-            raise e
+        past_beams.extend(filled_beams.loc[t - i, ["b1", "b2", "b3", "b4"]].values.astype(float))
     imu_cols = ['ACC X [m/s^2]', 'ACC Y [m/s^2]', 'ACC Z [m/s^2]',
                 'GYRO X [rad/s]', 'GYRO Y [rad/s]', 'GYRO Z [rad/s]']
-    for col in imu_cols:
-        if col not in imu.columns:
-            log_global(f"ERROR: Expected IMU column {col} not found. Available columns: {imu.columns.tolist()}")
-            raise ValueError(f"IMU column {col} not found.")
     past_imu = []
     for i in range(num_imu_instances - 1, -1, -1):
-        idx = t - i
-        if idx < 0:
-            raise ValueError(f"Index {t} results in negative IMU index.")
-        try:
-            imu_row = imu.loc[idx, imu_cols].values.astype(float)
-            past_imu.extend(imu_row)
-        except Exception as e:
-            log_global(f"Error at index {idx} while fetching IMU data: {e}")
-            raise e
+        past_imu.extend(imu.loc[t - i, imu_cols].values.astype(float))
     input_vector = np.concatenate([current_beams, np.array(past_beams), np.array(past_imu)])
-    try:
-        target_vector = beams_gt.loc[t, ["b1", "b2", "b3", "b4"]].values.astype(float)
-    except Exception as e:
-        log_global(f"Error at index {t} while fetching target: {e}")
-        raise e
+    target_vector = beams_gt.loc[t, ["b1", "b2", "b3", "b4"]].values.astype(float)
     return input_vector, target_vector
 
 def get_missing_mask(beams_training, t, target_cols=["b1", "b2", "b3", "b4"]):
@@ -222,7 +191,7 @@ def plot_velocity_predictions(predictions, traj, title_suffix=""):
         axes[i].legend(loc="upper right")
         axes[i].grid(True)
     axes[-1].set_xlabel("Sample Index")
-    fig.suptitle(f"Predicted vs Ground Truth Outputs for {traj} {title_suffix}")
+    fig.suptitle(f"Predicted vs Ground Truth Beam Velocities for {traj} {title_suffix}")
     return fig
 
 ##########################
@@ -264,13 +233,12 @@ def sequential_train(training_trajectory_pairs, config, model):
         if orig_missing == 0:
             log_global(f"[Train] No missing beams in {traj}. Skipping training on this trajectory.")
             continue
-        filled_beams, _ = fill_missing_beams(beams_training, config["beam_fill_window"])
-        min_history = find_first_valid_index(filled_beams, beams_gt, imu, config["num_past_beam_instances"], config["num_imu_instances"])
-        if min_history is None:
-            log_global("Not enough training data in the first trajectory to determine input size.")
-            return global_training_summary, processed_training_info
-        log_global(f"Using starting index {min_history} for constructing input-target pairs.")
-        
+        filled_beams, start_missing = fill_missing_beams(beams_training, config["beam_fill_window"])
+        if start_missing is None:
+            log_global(f"[Train] No missing beams detected after filling in {traj}. Skipping trajectory.")
+            continue
+        log_global(f"Using filled beams starting from index {start_missing} in {traj}")
+        min_history = max(start_missing, config["num_past_beam_instances"], config["num_imu_instances"] - 1)
         inputs, targets, masks = [], [], []
         for t in range(min_history, len(filled_beams)):
             try:
@@ -283,8 +251,8 @@ def sequential_train(training_trajectory_pairs, config, model):
                 log_global(f"Skipping index {t}: {e}")
                 continue
         if len(inputs) == 0:
-            log_global("Not enough training data in the first trajectory to determine input size.")
-            return global_training_summary, processed_training_info
+            log_global(f"[Train] Not enough data in {traj} after history constraints. Skipping trajectory.")
+            continue
         inputs = np.array(inputs)
         targets = np.array(targets)
         masks = np.array(masks)
@@ -300,16 +268,14 @@ def sequential_train(training_trajectory_pairs, config, model):
         for epoch in range(1, traj_epochs + 1):
             optimizer.zero_grad()
             losses = []
-            epoch_squared_errors = np.zeros(4)  # 4 outputs (b1, b2, b3, b4)
+            epoch_squared_errors = np.zeros(4)
             for i in range(num_samples):
                 model.train()
                 x = torch.tensor(inputs[i], dtype=torch.float32, device=model.device).unsqueeze(0).unsqueeze(0)
                 y = torch.tensor(targets[i], dtype=torch.float32, device=model.device)
-                y_pred = model(x).squeeze()
-                y_pred = y_pred.view(-1)  # shape [4]
+                y_pred = model(x).squeeze().view(-1)
                 y = y.view(-1)
                 mask = get_missing_mask(beams_training, i, target_cols=["b1", "b2", "b3", "b4"])
-                assert len(mask) == len(y), f"Mask length {len(mask)} != target length {len(y)}"
                 if config.get("partial_rmse", False) and mask.any():
                     indices = torch.tensor(np.where(mask)[0], dtype=torch.long, device=model.device)
                     if indices.numel() > 0:
@@ -328,18 +294,16 @@ def sequential_train(training_trajectory_pairs, config, model):
             optimizer.step()
             epoch_rmse = np.sqrt(epoch_squared_errors / num_samples)
             evolution.append([epoch] + epoch_rmse.tolist())
-            log_global(f"[{traj}] Epoch {epoch}: RMSE per output: {epoch_rmse}, Avg RMSE: {np.mean(epoch_rmse):.5f}")
+            log_global(f"[{traj}] Epoch {epoch}: RMSE per beam: {epoch_rmse}, Avg RMSE: {np.mean(epoch_rmse):.5f}")
         training_time = time.time() - t0
         
-        # Evaluate final epoch predictions on training data and plot.
         model.eval()
         final_predictions = []
         for i in range(num_samples):
             x = torch.tensor(inputs[i], dtype=torch.float32, device=model.device).unsqueeze(0).unsqueeze(0)
             y = torch.tensor(targets[i], dtype=torch.float32, device=model.device)
             with torch.no_grad():
-                y_pred = model(x).squeeze(0)
-            y_pred = y_pred.view(-1)
+                y_pred = model(x).squeeze().view(-1)
             y = y.view(-1)
             final_predictions.append({
                 "Sample": i,
@@ -352,11 +316,11 @@ def sequential_train(training_trajectory_pairs, config, model):
                 "GT_b3": y[2].item(),
                 "GT_b4": y[3].item()
             })
-        final_fig = plot_velocity_predictions(final_predictions, traj, title_suffix="(Training)")
-        final_plot_path = os.path.join(PLOTS_DIR, f"FinalOutputPredictions_{traj}.png")
+        final_fig = plot_velocity_predictions(final_predictions, traj)
+        final_plot_path = os.path.join(PLOTS_DIR, f"FinalBeamPredictions_{traj}.png")
         final_fig.savefig(final_plot_path)
         plt.close(final_fig)
-        log_global(f"[{traj}] Final epoch output predictions plot saved to {final_plot_path}")
+        log_global(f"[{traj}] Final epoch beam predictions plot saved to {final_plot_path}")
         
         summary = {
             "Trajectory": traj,
@@ -374,21 +338,14 @@ def sequential_train(training_trajectory_pairs, config, model):
 def test_on_trajectory(traj, config, checkpoint_filename, trained_on):
     traj_path = os.path.join(DATA_DIR, traj)
     beams_gt, beams_training, imu = load_csv_files(traj_path)
-    filled_beams, start_missing = fill_missing_beams(beams_training, config["beam_fill_window"])
-    if start_missing is None:
-        log_global(f"[Test] No missing beams in {traj}. Skipping testing.")
-        return None
-    min_history = max(start_missing, config["num_past_beam_instances"], config["num_imu_instances"] - 1)
+    filled_beams, _ = fill_missing_beams(beams_training, config["beam_fill_window"])
+    min_history = max(_, config["num_past_beam_instances"], config["num_imu_instances"] - 1)
     inputs, targets, masks = [], [], []
     for t in range(min_history, len(filled_beams)):
-        try:
-            inp, tar = construct_input_target(filled_beams, beams_gt, imu, t, config["num_past_beam_instances"], config["num_imu_instances"])
-            inputs.append(inp)
-            targets.append(tar)
-            masks.append(get_missing_mask(beams_training, t, target_cols=["b1", "b2", "b3", "b4"]))
-        except Exception as e:
-            log_global(f"Skipping index {t} in testing: {e}")
-            continue
+        inp, tar = construct_input_target(filled_beams, beams_gt, imu, t, config["num_past_beam_instances"], config["num_imu_instances"])
+        inputs.append(inp)
+        targets.append(tar)
+        masks.append(get_missing_mask(beams_training, t, target_cols=["b1", "b2", "b3", "b4"]))
     if len(inputs) == 0:
         log_global(f"[Test] Not enough test data in {traj} after history constraints. Skipping.")
         return None
@@ -398,10 +355,10 @@ def test_on_trajectory(traj, config, checkpoint_filename, trained_on):
     input_size = inputs.shape[1]
     log_global(f"[{traj}] Testing Samples: {num_samples}, Input size: {input_size}")
     
-    model = LSTMNetwork(number_of_input_neurons=input_size,
-                        number_of_hidden_neurons=config["hidden_neurons"],
-                        number_of_output_neurons=4,
-                        dropout_rate=config["dropout_rate"])
+    model = FourierAnalysisNetwork(number_of_input_neurons=input_size,
+                                   number_of_hidden_neurons=config["hidden_neurons"],
+                                   number_of_output_neurons=4,
+                                   dropout_rate=config["dropout_rate"])
     cp_full_path = os.path.join(CHECKPOINTS_DIR, checkpoint_filename)
     try:
         state = torch.load(cp_full_path, map_location=model.device, weights_only=True)
@@ -417,7 +374,7 @@ def test_on_trajectory(traj, config, checkpoint_filename, trained_on):
         x = torch.tensor(inputs[i], dtype=torch.float32, device=model.device).unsqueeze(0).unsqueeze(0)
         y = torch.tensor(targets[i], dtype=torch.float32, device=model.device)
         with torch.no_grad():
-            y_pred = model(x).view(-1)
+            y_pred = model(x).squeeze().view(-1)
         predictions.append({
             "Sample": i,
             "Pred_b1": y_pred[0].item(),
@@ -432,7 +389,7 @@ def test_on_trajectory(traj, config, checkpoint_filename, trained_on):
         err = (y_pred - y.view(-1)).detach().cpu().numpy() ** 2
         squared_errors += err
     test_rmse = np.sqrt(squared_errors / num_samples)
-    log_global(f"[{traj}] Test RMSE per output: {test_rmse}")
+    log_global(f"[{traj}] Test RMSE per beam: {test_rmse}")
     
     pred_df = pd.DataFrame(predictions)
     test_pred_csv = os.path.join(PREDICTIONS_DIR, f"TestPredictions_{traj}.csv")
@@ -461,7 +418,7 @@ def main():
     with open(GLOBAL_LOG_FILE, "w") as f:
         f.write("Experiment Log\n")
     
-    with open("LSTM.json", "r") as f:
+    with open("FAN.json", "r") as f:
         config = json.load(f)
     
     training_trajectory_pairs = config.get("training_trajectories", [])
@@ -476,13 +433,11 @@ def main():
     first_traj = training_trajectory_pairs[0][0]
     first_traj_path = os.path.join(DATA_DIR, first_traj)
     beams_gt, beams_training, imu = load_csv_files(first_traj_path)
-    filled_beams, _ = fill_missing_beams(beams_training, config["beam_fill_window"])
-    min_history = find_first_valid_index(filled_beams, beams_gt, imu, config["num_past_beam_instances"], config["num_imu_instances"])
-    if min_history is None:
-        log_global("Not enough training data in the first trajectory to determine input size.")
+    filled_beams, start_missing = fill_missing_beams(beams_training, config["beam_fill_window"])
+    if start_missing is None:
+        log_global("Not enough missing data in the first trajectory to determine input size.")
         return
-    log_global(f"Using starting index {min_history} from the first trajectory.")
-    
+    min_history = max(start_missing, config["num_past_beam_instances"], config["num_imu_instances"] - 1)
     inputs = []
     for t in range(min_history, len(filled_beams)):
         try:
@@ -496,10 +451,10 @@ def main():
         log_global("Not enough training data in the first trajectory to determine input size.")
         return
     input_size = np.array(inputs).shape[1]
-    model = LSTMNetwork(number_of_input_neurons=input_size,
-                        number_of_hidden_neurons=config["hidden_neurons"],
-                        number_of_output_neurons=4,
-                        dropout_rate=config["dropout_rate"])
+    model = FourierAnalysisNetwork(number_of_input_neurons=input_size,
+                                   number_of_hidden_neurons=config["hidden_neurons"],
+                                   number_of_output_neurons=4,
+                                   dropout_rate=config["dropout_rate"])
     
     log_global("=== Sequential Training Phase ===")
     processed_training_info = []
@@ -520,9 +475,9 @@ def main():
         return
     
     final_checkpoint_filename = (
-        f"LSTM_{'_'.join(cumulative_trained_on)}_lr{config['learning_rate']}_dr{config['dropout_rate']}_"
-        f"hn{config['hidden_neurons']}_reg{config['regularization']}_trtraj{str(training_trajectory_pairs)}_"
-        f"ttraj{str(testing_list)}_final.pth"
+        f"FAN_{'_'.join(cumulative_trained_on)}_lr{config['learning_rate']}_drop{config['dropout_rate']}_"
+        f"hn{config['hidden_neurons']}_reg{config['regularization']}_bfw{config['beam_fill_window']}_"
+        f"npb{config['num_past_beam_instances']}_nimu{config['num_imu_instances']}_pr{str(config['partial_rmse'])}_final.pth"
     )
     final_checkpoint_path = os.path.join(CHECKPOINTS_DIR, final_checkpoint_filename)
     check_duplicate(final_checkpoint_path)
@@ -550,16 +505,19 @@ def main():
         log_global(f"Global test summary saved to {test_summary_csv}")
 
 if __name__ == "__main__":
-    with open("LSTM.json", "r") as f:
+    with open("FAN.json", "r") as f:
         config = json.load(f)
-    arch_folder = "LSTM_results"
+    arch_folder = "FAN_results"
+    if not os.path.exists(arch_folder):
+        os.makedirs(arch_folder, exist_ok=True)
     EXPERIMENT_FOLDER = create_experiment_folder(config)
-    global CHECKPOINTS_DIR, TRAINING_SUMMARIES_DIR, TEST_SUMMARIES_DIR, PLOTS_DIR, PREDICTIONS_DIR, GLOBAL_LOG_FILE
+    global CHECKPOINTS_DIR, TRAINING_SUMMARIES_DIR, TEST_SUMMARIES_DIR, PLOTS_DIR, PREDICTIONS_DIR, TRAINING_VELOCITY_PLOTS_DIR, GLOBAL_LOG_FILE
     CHECKPOINTS_DIR = os.path.join(EXPERIMENT_FOLDER, "Checkpoints")
     TRAINING_SUMMARIES_DIR = os.path.join(EXPERIMENT_FOLDER, "TrainingSummaries")
     TEST_SUMMARIES_DIR = os.path.join(EXPERIMENT_FOLDER, "TestSummaries")
     PLOTS_DIR = os.path.join(EXPERIMENT_FOLDER, "Plots")
     PREDICTIONS_DIR = os.path.join(EXPERIMENT_FOLDER, "Predictions")
+    TRAINING_VELOCITY_PLOTS_DIR = os.path.join(EXPERIMENT_FOLDER, "TrainingVelocityPlots")
     GLOBAL_LOG_FILE = os.path.join(EXPERIMENT_FOLDER, "experiment_global_log.txt")
     
     log_global(f"Experiment folder created: {EXPERIMENT_FOLDER}")

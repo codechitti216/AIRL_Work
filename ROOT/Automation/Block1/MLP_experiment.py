@@ -111,6 +111,8 @@ def check_duplicate(file_path):
 
 DATA_DIR = "../../Data"
 
+
+
 def load_csv_files(traj_path):
     beams_gt_path = os.path.join(traj_path, "beams_gt.csv")
     beams_training_path = os.path.join(traj_path, "beams_training.csv")
@@ -128,12 +130,14 @@ def load_csv_files(traj_path):
     if not imu_files:
         raise ValueError(f"No IMU file found in {traj_path}")
     imu = pd.read_csv(os.path.join(traj_path, imu_files[0]))
+    log_global(f"DEBUG: IMU columns: {imu.columns.tolist()}")
     beams_gt.sort_values("Time", inplace=True)
     beams_training.sort_values("Time", inplace=True)
     imu.sort_values("Time [s]", inplace=True)
     beams_gt.reset_index(drop=True, inplace=True)
     beams_training.reset_index(drop=True, inplace=True)
     imu.reset_index(drop=True, inplace=True)
+    log_global(f"DEBUG: beams_training length: {len(beams_training)}, beams_gt length: {len(beams_gt)}, imu length: {len(imu)}")
     return beams_gt, beams_training, imu
 
 def fill_missing_beams(beams_df, beam_fill_window, beam_cols=["b1", "b2", "b3", "b4"]):
@@ -158,34 +162,64 @@ def fill_missing_beams(beams_df, beam_fill_window, beam_cols=["b1", "b2", "b3", 
                 filled.loc[i, col] = avg_val
     return filled, start_index
 
-# For MLP, the target vector will have 3 elements (using columns b2, b3, b4)
+# For MLP, we now predict all 4 beams (target: b1, b2, b3, b4)
 def construct_input_target(filled_beams, beams_gt, imu, t, num_past_beam_instances, num_imu_instances):
-    current_beams = filled_beams.loc[t, ["b1", "b2", "b3", "b4"]].values.astype(float)
+    # Ensure enough history exists
+    if t < num_past_beam_instances or t < (num_imu_instances - 1):
+        raise ValueError(f"Index {t} does not have enough history.")
+    try:
+        current_beams = filled_beams.loc[t, ["b1", "b2", "b3", "b4"]].values.astype(float)
+    except Exception as e:
+        log_global(f"Error at index {t} while fetching current beams: {e}")
+        raise e
     past_beams = []
     for i in range(1, num_past_beam_instances + 1):
-        past_beams.extend(filled_beams.loc[t - i, ["b1", "b2", "b3", "b4"]].values.astype(float))
+        idx = t - i
+        if idx < 0:
+            raise ValueError(f"Index {t} results in negative history index.")
+        try:
+            past_row = filled_beams.loc[idx, ["b1", "b2", "b3", "b4"]].values.astype(float)
+            past_beams.extend(past_row)
+        except Exception as e:
+            log_global(f"Error at index {idx} while fetching past beams: {e}")
+            raise e
     imu_cols = ['ACC X [m/s^2]', 'ACC Y [m/s^2]', 'ACC Z [m/s^2]',
-                'GYRO X [rad/s]', 'GYRO Y [m/s^2]', 'GYRO Z [rad/s]']
+                'GYRO X [rad/s]', 'GYRO Y [rad/s]', 'GYRO Z [rad/s]']
+    for col in imu_cols:
+        if col not in imu.columns:
+            log_global(f"ERROR: Expected IMU column {col} not found. Available columns: {imu.columns.tolist()}")
+            raise ValueError(f"IMU column {col} not found.")
     past_imu = []
     for i in range(num_imu_instances - 1, -1, -1):
-        past_imu.extend(imu.loc[t - i, imu_cols].values.astype(float))
+        idx = t - i
+        if idx < 0:
+            raise ValueError(f"Index {t} results in negative IMU index.")
+        try:
+            imu_row = imu.loc[idx, imu_cols].values.astype(float)
+            past_imu.extend(imu_row)
+        except Exception as e:
+            log_global(f"Error at index {idx} while fetching IMU data: {e}")
+            raise e
     input_vector = np.concatenate([current_beams, np.array(past_beams), np.array(past_imu)])
-    target_vector = beams_gt.loc[t, ["b2", "b3", "b4"]].values.astype(float)
+    try:
+        target_vector = beams_gt.loc[t, ["b1", "b2", "b3", "b4"]].values.astype(float)
+    except Exception as e:
+        log_global(f"Error at index {t} while fetching target: {e}")
+        raise e
     return input_vector, target_vector
 
-def get_missing_mask(beams_training, t, beam_cols=["b1", "b2", "b3", "b4"]):
-    row = beams_training.loc[t, beam_cols]
+def get_missing_mask(beams_training, t, target_cols=["b1", "b2", "b3", "b4"]):
+    row = beams_training.loc[t, target_cols]
     return row.isna().values
 
 def plot_velocity_predictions(predictions, traj, title_suffix=""):
-    # For MLP outputs, we expect 3 values.
-    fig, axes = plt.subplots(3, 1, figsize=(10, 12), sharex=True)
+    fig, axes = plt.subplots(4, 1, figsize=(10, 12), sharex=True)
     samples = [pred["Sample"] for pred in predictions]
-    for i, out in enumerate(["out1", "out2", "out3"]):
-        pred_vals = [pred[f"Pred_{out}"] for pred in predictions]
-        gt_vals = [pred[f"GT_{out}"] for pred in predictions]
-        axes[i].plot(samples, pred_vals, label=f"Predicted {out}", marker='o')
-        axes[i].plot(samples, gt_vals, label=f"Ground Truth {out}", marker='x')
+    for i, beam in enumerate(["b1", "b2", "b3", "b4"]):
+        pred_vals = [pred[f"Pred_{beam}"] for pred in predictions]
+        gt_vals = [pred[f"GT_{beam}"] for pred in predictions]
+        axes[i].plot(samples, pred_vals, label=f"Predicted {beam}", marker='o')
+        axes[i].plot(samples, gt_vals, label=f"Ground Truth {beam}", marker='x')
         axes[i].set_ylabel("Value")
         axes[i].legend(loc="upper right")
         axes[i].grid(True)
@@ -194,18 +228,19 @@ def plot_velocity_predictions(predictions, traj, title_suffix=""):
     return fig
 
 ##########################
-# Determining Starting Index
+# Finding the Starting Index
 ##########################
 
 def find_first_valid_index(filled_beams, beams_gt, imu, num_past_beam_instances, num_imu_instances):
-    """
-    Find the first index t in filled_beams for which construct_input_target returns a valid pair.
-    """
-    for t in range(len(filled_beams)):
+    start = max(num_past_beam_instances, num_imu_instances - 1)
+    log_global(f"Starting search from index {start}")
+    for t in range(start, len(filled_beams)):
         try:
-            _ , _ = construct_input_target(filled_beams, beams_gt, imu, t, num_past_beam_instances, num_imu_instances)
+            inp, tar = construct_input_target(filled_beams, beams_gt, imu, t, num_past_beam_instances, num_imu_instances)
+            log_global(f"Valid input-target pair found at index {t}.")
             return t
         except Exception as e:
+            log_global(f"Index {t} invalid: {e}")
             continue
     return None
 
@@ -227,11 +262,11 @@ def sequential_train(training_trajectory_pairs, config, model):
             continue
         beam_cols = ["b1", "b2", "b3", "b4"]
         orig_missing = beams_training[beam_cols].isna().sum().sum()
+        log_global(f"Original missing count in {traj}: {orig_missing}")
         if orig_missing == 0:
             log_global(f"[Train] No missing beams in {traj}. Skipping training on this trajectory.")
             continue
         filled_beams, _ = fill_missing_beams(beams_training, config["beam_fill_window"])
-        # Determine the first valid index where input can be constructed
         min_history = find_first_valid_index(filled_beams, beams_gt, imu, config["num_past_beam_instances"], config["num_imu_instances"])
         if min_history is None:
             log_global("Not enough training data in the first trajectory to determine input size.")
@@ -245,7 +280,9 @@ def sequential_train(training_trajectory_pairs, config, model):
                 inputs.append(inp)
                 targets.append(tar)
                 masks.append(get_missing_mask(beams_training, t))
+                log_global(f"Constructed sample at index {t}.")
             except Exception as e:
+                log_global(f"Skipping index {t}: {e}")
                 continue
         if len(inputs) == 0:
             log_global("Not enough training data in the first trajectory to determine input size.")
@@ -265,20 +302,22 @@ def sequential_train(training_trajectory_pairs, config, model):
         for epoch in range(1, traj_epochs + 1):
             optimizer.zero_grad()
             losses = []
-            epoch_squared_errors = np.zeros(3)  # 3 outputs
+            epoch_squared_errors = np.zeros(4)  # 4 outputs now
             for i in range(num_samples):
                 model.train()
                 x = torch.tensor(inputs[i], dtype=torch.float32, device=model.device).unsqueeze(0).unsqueeze(0)
                 y = torch.tensor(targets[i], dtype=torch.float32, device=model.device)
                 y_pred = model(x).squeeze()
-                y_pred = y_pred.view(-1)  # shape [3]
+                y_pred = y_pred.view(-1)  # shape [4]
                 y = y.view(-1)
-                mask = masks[i]
+                mask = get_missing_mask(beams_training, i, target_cols=["b1","b2","b3","b4"])
+                # Ensure mask length equals target length
+                assert len(mask) == len(y), f"Mask length {len(mask)} != target length {len(y)}"
                 if config.get("partial_rmse", False) and mask.any():
                     indices = torch.tensor(np.where(mask)[0], dtype=torch.long, device=model.device)
                     if indices.numel() > 0:
-                        y_pred_masked = torch.index_select(y_pred, 0, indices)
-                        y_masked = torch.index_select(y, 0, indices)
+                        y_pred_masked = y_pred[indices]
+                        y_masked = y[indices]
                         sample_loss = loss_fn(y_pred_masked, y_masked)
                     else:
                         sample_loss = loss_fn(y_pred, y)
@@ -307,14 +346,16 @@ def sequential_train(training_trajectory_pairs, config, model):
             y = y.view(-1)
             final_predictions.append({
                 "Sample": i,
-                "Pred_out1": y_pred[0].item(),
-                "Pred_out2": y_pred[1].item(),
-                "Pred_out3": y_pred[2].item(),
-                "GT_out1": y[0].item(),
-                "GT_out2": y[1].item(),
-                "GT_out3": y[2].item()
+                "Pred_b1": y_pred[0].item(),
+                "Pred_b2": y_pred[1].item(),
+                "Pred_b3": y_pred[2].item(),
+                "Pred_b4": y_pred[3].item(),
+                "GT_b1": y[0].item(),
+                "GT_b2": y[1].item(),
+                "GT_b3": y[2].item(),
+                "GT_b4": y[3].item()
             })
-        final_fig = plot_velocity_predictions(final_predictions, traj)
+        final_fig = plot_velocity_predictions(final_predictions, traj, title_suffix="(Training)")
         final_plot_path = os.path.join(PLOTS_DIR, f"FinalOutputPredictions_{traj}.png")
         final_fig.savefig(final_plot_path)
         plt.close(final_fig)
@@ -330,7 +371,7 @@ def sequential_train(training_trajectory_pairs, config, model):
             "TrainedOn": ""  # To be set in main()
         }
         global_training_summary.append(summary)
-        processed_training_info.append(f"{traj}-{traj_epochs}")
+        processed_training_info.append(f"{traj}:{traj_epochs}")
     return global_training_summary, processed_training_info
 
 def test_on_trajectory(traj, config, checkpoint_filename, trained_on):
@@ -347,8 +388,9 @@ def test_on_trajectory(traj, config, checkpoint_filename, trained_on):
             inp, tar = construct_input_target(filled_beams, beams_gt, imu, t, config["num_past_beam_instances"], config["num_imu_instances"])
             inputs.append(inp)
             targets.append(tar)
-            masks.append(get_missing_mask(beams_training, t))
+            masks.append(get_missing_mask(beams_training, t, target_cols=["b1","b2","b3","b4"]))
         except Exception as e:
+            log_global(f"Skipping index {t} in testing: {e}")
             continue
     if len(inputs) == 0:
         log_global(f"[Test] Not enough test data in {traj} after history constraints. Skipping.")
@@ -361,7 +403,7 @@ def test_on_trajectory(traj, config, checkpoint_filename, trained_on):
     
     model = MLPNetwork(number_of_input_neurons=input_size,
                        number_of_hidden_neurons=config["hidden_neurons"],
-                       number_of_output_neurons=3,
+                       number_of_output_neurons=4,
                        number_of_layers=config["number_of_layers"],
                        dropout_rate=config["dropout_rate"])
     cp_full_path = os.path.join(CHECKPOINTS_DIR, checkpoint_filename)
@@ -374,7 +416,7 @@ def test_on_trajectory(traj, config, checkpoint_filename, trained_on):
     model.eval()
     
     predictions = []
-    squared_errors = np.zeros(3)
+    squared_errors = np.zeros(4)
     for i in range(num_samples):
         x = torch.tensor(inputs[i], dtype=torch.float32, device=model.device).unsqueeze(0)
         y = torch.tensor(targets[i], dtype=torch.float32, device=model.device)
@@ -382,12 +424,14 @@ def test_on_trajectory(traj, config, checkpoint_filename, trained_on):
             y_pred = model(x).view(-1)
         predictions.append({
             "Sample": i,
-            "Pred_out1": y_pred[0].item(),
-            "Pred_out2": y_pred[1].item(),
-            "Pred_out3": y_pred[2].item(),
-            "GT_out1": y[0].item(),
-            "GT_out2": y[1].item(),
-            "GT_out3": y[2].item()
+            "Pred_b1": y_pred[0].item(),
+            "Pred_b2": y_pred[1].item(),
+            "Pred_b3": y_pred[2].item(),
+            "Pred_b4": y_pred[3].item(),
+            "GT_b1": y[0].item(),
+            "GT_b2": y[1].item(),
+            "GT_b3": y[2].item(),
+            "GT_b4": y[3].item()
         })
         err = (y_pred - y.view(-1)).detach().cpu().numpy() ** 2
         squared_errors += err
@@ -408,9 +452,10 @@ def test_on_trajectory(traj, config, checkpoint_filename, trained_on):
     test_summary = {
         "Trajectory": traj,
         "NumSamples": num_samples,
-        "Test_RMSE_out1": test_rmse[0],
-        "Test_RMSE_out2": test_rmse[1],
-        "Test_RMSE_out3": test_rmse[2],
+        "Test_RMSE_b1": test_rmse[0],
+        "Test_RMSE_b2": test_rmse[1],
+        "Test_RMSE_b3": test_rmse[2],
+        "Test_RMSE_b4": test_rmse[3],
         "AvgTest_RMSE": np.mean(test_rmse),
         "TrainedOn": ", ".join(trained_on)
     }
@@ -427,7 +472,7 @@ def main():
     testing_list = config.get("testing_trajectories", [])
     
     global_training_summary = []
-    cumulative_trained_on = []  # List of trajectories processed so far
+    cumulative_trained_on = []  # This will store strings like "Trajectory:Epochs"
     
     if not training_trajectory_pairs:
         log_global("No training trajectories provided.")
@@ -447,7 +492,9 @@ def main():
         try:
             inp, _ = construct_input_target(filled_beams, beams_gt, imu, t, config["num_past_beam_instances"], config["num_imu_instances"])
             inputs.append(inp)
+            log_global(f"Constructed sample at index {t}.")
         except Exception as e:
+            log_global(f"Skipping index {t} in main: {e}")
             continue
     if len(inputs) == 0:
         log_global("Not enough training data in the first trajectory to determine input size.")
@@ -455,7 +502,7 @@ def main():
     input_size = np.array(inputs).shape[1]
     model = MLPNetwork(number_of_input_neurons=input_size,
                        number_of_hidden_neurons=config["hidden_neurons"],
-                       number_of_output_neurons=3,
+                       number_of_output_neurons=4,
                        number_of_layers=config["number_of_layers"],
                        dropout_rate=config["dropout_rate"])
     
@@ -467,11 +514,13 @@ def main():
         current_trained_on = cumulative_trained_on.copy()
         traj_summary, processed = sequential_train([[traj, traj_epochs]], config, model)
         if traj_summary:
+            # In the summary, set TrainedOn to the cumulative string.
             row = traj_summary[0]
             row["TrainedOn"] = ", ".join(current_trained_on) if current_trained_on else "None"
             global_training_summary.append(row)
-            processed_training_info.append(f"{traj}-{traj_epochs}")
-            cumulative_trained_on.append(traj)
+            # Append trajectory and epoch info in the format "Trajectory:Epochs"
+            processed_training_info.append(f"{traj}:{traj_epochs}")
+            cumulative_trained_on.append(f"{traj}:{traj_epochs}")
     
     if not global_training_summary:
         log_global("No training trajectories processed; aborting.")
@@ -507,18 +556,6 @@ def main():
         check_duplicate(test_summary_csv)
         test_summary_df.to_csv(test_summary_csv, index=False)
         log_global(f"Global test summary saved to {test_summary_csv}")
-
-def find_first_valid_index(filled_beams, beams_gt, imu, num_past_beam_instances, num_imu_instances):
-    """
-    Returns the first index t where construct_input_target can be executed without error.
-    """
-    for t in range(len(filled_beams)):
-        try:
-            _ , _ = construct_input_target(filled_beams, beams_gt, imu, t, num_past_beam_instances, num_imu_instances)
-            return t
-        except Exception as e:
-            continue
-    return None
 
 if __name__ == "__main__":
     with open("MLP.json", "r") as f:

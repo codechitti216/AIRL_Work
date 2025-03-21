@@ -11,16 +11,16 @@ import torch.nn as nn
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 
-# Import the Memory Neural Network model from MNN.py (make sure to use the updated version)
+# Import the Memory Neural Network model from MNN.py
 from MNN import MemoryNeuralNetwork
 
 ##########################
 # Experiment Folder Setup
 ##########################
 
-RESULTS_ROOT = "MNN_results"  # Root folder
+RESULTS_ROOT = "MNN_results"  # Root folder for MNN experiments
 
-# Define abbreviations for common config keys.
+# Define abbreviations for config keys.
 ABBREVIATIONS = {
     "beam_fill_window": "bfw",
     "dropout_rate": "dr",
@@ -137,6 +137,7 @@ def load_csv_files(traj_path):
     beams_gt.reset_index(drop=True, inplace=True)
     beams_training.reset_index(drop=True, inplace=True)
     imu.reset_index(drop=True, inplace=True)
+    log_global(f"DEBUG: beams_training length: {len(beams_training)}, beams_gt length: {len(beams_gt)}, imu length: {len(imu)}")
     return beams_gt, beams_training, imu
 
 def fill_missing_beams(beams_df, beam_fill_window, beam_cols=["b1", "b2", "b3", "b4"]):
@@ -161,22 +162,51 @@ def fill_missing_beams(beams_df, beam_fill_window, beam_cols=["b1", "b2", "b3", 
                 filled.loc[i, col] = avg_val
     return filled, start_index
 
+# For MNN, we use the target from columns b1, b2, b3, b4 (predicting all 4 beams)
 def construct_input_target(filled_beams, beams_gt, imu, t, num_past_beam_instances, num_imu_instances):
-    current_beams = filled_beams.loc[t, ["b1", "b2", "b3", "b4"]].values.astype(float)
+    try:
+        current_beams = filled_beams.loc[t, ["b1", "b2", "b3", "b4"]].values.astype(float)
+    except Exception as e:
+        log_global(f"Error at index {t} while fetching current beams: {e}")
+        raise e
     past_beams = []
     for i in range(1, num_past_beam_instances + 1):
-        past_beams.extend(filled_beams.loc[t - i, ["b1", "b2", "b3", "b4"]].values.astype(float))
+        idx = t - i
+        if idx < 0:
+            raise ValueError(f"Index {t} results in negative history index.")
+        try:
+            past_row = filled_beams.loc[idx, ["b1", "b2", "b3", "b4"]].values.astype(float)
+            past_beams.extend(past_row)
+        except Exception as e:
+            log_global(f"Error at index {idx} while fetching past beams: {e}")
+            raise e
     imu_cols = ['ACC X [m/s^2]', 'ACC Y [m/s^2]', 'ACC Z [m/s^2]',
                 'GYRO X [rad/s]', 'GYRO Y [rad/s]', 'GYRO Z [rad/s]']
+    for col in imu_cols:
+        if col not in imu.columns:
+            log_global(f"ERROR: Expected IMU column {col} not found. Available columns: {imu.columns.tolist()}")
+            raise ValueError(f"IMU column {col} not found.")
     past_imu = []
     for i in range(num_imu_instances - 1, -1, -1):
-        past_imu.extend(imu.loc[t - i, imu_cols].values.astype(float))
+        idx = t - i
+        if idx < 0:
+            raise ValueError(f"Index {t} results in negative IMU index.")
+        try:
+            imu_row = imu.loc[idx, imu_cols].values.astype(float)
+            past_imu.extend(imu_row)
+        except Exception as e:
+            log_global(f"Error at index {idx} while fetching IMU data: {e}")
+            raise e
     input_vector = np.concatenate([current_beams, np.array(past_beams), np.array(past_imu)])
-    target_vector = beams_gt.loc[t, ["b1", "b2", "b3", "b4"]].values.astype(float)
+    try:
+        target_vector = beams_gt.loc[t, ["b1", "b2", "b3", "b4"]].values.astype(float)
+    except Exception as e:
+        log_global(f"Error at index {t} while fetching target: {e}")
+        raise e
     return input_vector, target_vector
 
-def get_missing_mask(beams_training, t, beam_cols=["b1", "b2", "b3", "b4"]):
-    row = beams_training.loc[t, beam_cols]
+def get_missing_mask(beams_training, t, target_cols=["b1", "b2", "b3", "b4"]):
+    row = beams_training.loc[t, target_cols]
     return row.isna().values
 
 def plot_velocity_predictions(predictions, traj, title_suffix=""):
@@ -187,12 +217,29 @@ def plot_velocity_predictions(predictions, traj, title_suffix=""):
         gt_vals = [pred[f"GT_{beam}"] for pred in predictions]
         axes[i].plot(samples, pred_vals, label=f"Predicted {beam}", marker='o')
         axes[i].plot(samples, gt_vals, label=f"Ground Truth {beam}", marker='x')
-        axes[i].set_ylabel("Velocity")
+        axes[i].set_ylabel("Value")
         axes[i].legend(loc="upper right")
         axes[i].grid(True)
     axes[-1].set_xlabel("Sample Index")
     fig.suptitle(f"Predicted vs Ground Truth Beam Velocities for {traj} {title_suffix}")
     return fig
+
+##########################
+# Finding the Starting Index
+##########################
+
+def find_first_valid_index(filled_beams, beams_gt, imu, num_past_beam_instances, num_imu_instances):
+    start = max(num_past_beam_instances, num_imu_instances - 1)
+    log_global(f"Starting search from index {start}")
+    for t in range(start, len(filled_beams)):
+        try:
+            inp, tar = construct_input_target(filled_beams, beams_gt, imu, t, num_past_beam_instances, num_imu_instances)
+            log_global(f"Valid input-target pair found at index {t}.")
+            return t
+        except Exception as e:
+            log_global(f"Index {t} invalid: {e}")
+            continue
+    return None
 
 ##########################
 # Sequential Training Routine
@@ -212,23 +259,24 @@ def sequential_train(training_trajectory_pairs, config, model):
             continue
         beam_cols = ["b1", "b2", "b3", "b4"]
         orig_missing = beams_training[beam_cols].isna().sum().sum()
+        log_global(f"Original missing count in {traj}: {orig_missing}")
         if orig_missing == 0:
             log_global(f"[Train] No missing beams in {traj}. Skipping training on this trajectory.")
             continue
-        filled_beams, start_missing = fill_missing_beams(beams_training, config["beam_fill_window"])
-        if start_missing is None:
-            log_global(f"[Train] No missing beams detected after filling in {traj}. Skipping trajectory.")
-            continue
-        log_global(f"DEBUG: Filled beams from index {start_missing} onward in {traj}")
-        min_history = max(start_missing, config["num_past_beam_instances"], config["num_imu_instances"] - 1)
+        filled_beams, _ = fill_missing_beams(beams_training, config["beam_fill_window"])
+        min_history = max(_, config["num_past_beam_instances"], config["num_imu_instances"] - 1)
+        # Alternatively, you could use find_first_valid_index; here we simply require a safe starting index.
         inputs, targets, masks = [], [], []
         for t in range(min_history, len(filled_beams)):
-            if t - config["num_past_beam_instances"] < 0 or t - (config["num_imu_instances"] - 1) < 0:
+            try:
+                inp, tar = construct_input_target(filled_beams, beams_gt, imu, t, config["num_past_beam_instances"], config["num_imu_instances"])
+                inputs.append(inp)
+                targets.append(tar)
+                masks.append(get_missing_mask(beams_training, t))
+                log_global(f"Constructed sample at index {t}.")
+            except Exception as e:
+                log_global(f"Skipping index {t}: {e}")
                 continue
-            inp, tar = construct_input_target(filled_beams, beams_gt, imu, t, config["num_past_beam_instances"], config["num_imu_instances"])
-            inputs.append(inp)
-            targets.append(tar)
-            masks.append(get_missing_mask(beams_training, t))
         if len(inputs) == 0:
             log_global(f"[Train] Not enough data in {traj} after history constraints. Skipping trajectory.")
             continue
@@ -247,20 +295,19 @@ def sequential_train(training_trajectory_pairs, config, model):
         for epoch in range(1, traj_epochs + 1):
             optimizer.zero_grad()
             losses = []
-            epoch_squared_errors = np.zeros(4)
+            epoch_squared_errors = np.zeros(4)  # 4 outputs (b1, b2, b3, b4)
             for i in range(num_samples):
                 model.train()
                 x = torch.tensor(inputs[i], dtype=torch.float32, device=model.device).unsqueeze(0).unsqueeze(0)
                 y = torch.tensor(targets[i], dtype=torch.float32, device=model.device)
-                y_pred = model(x).squeeze()
-                y_pred = y_pred.view(-1)
+                y_pred = model(x).squeeze().view(-1)
                 y = y.view(-1)
-                mask = masks[i]
-                if config["partial_rmse"] and mask.any():
+                mask = get_missing_mask(beams_training, i, target_cols=["b1", "b2", "b3", "b4"])
+                if config.get("partial_rmse", False) and mask.any():
                     indices = torch.tensor(np.where(mask)[0], dtype=torch.long, device=model.device)
                     if indices.numel() > 0:
-                        y_pred_masked = torch.index_select(y_pred, 0, indices)
-                        y_masked = torch.index_select(y, 0, indices)
+                        y_pred_masked = y_pred[indices]
+                        y_masked = y[indices]
                         sample_loss = loss_fn(y_pred_masked, y_masked)
                     else:
                         sample_loss = loss_fn(y_pred, y)
@@ -284,8 +331,7 @@ def sequential_train(training_trajectory_pairs, config, model):
             x = torch.tensor(inputs[i], dtype=torch.float32, device=model.device).unsqueeze(0).unsqueeze(0)
             y = torch.tensor(targets[i], dtype=torch.float32, device=model.device)
             with torch.no_grad():
-                y_pred = model(x).squeeze(0)
-            y_pred = y_pred.view(-1)
+                y_pred = model(x).squeeze().view(-1)
             y = y.view(-1)
             final_predictions.append({
                 "Sample": i,
@@ -298,7 +344,7 @@ def sequential_train(training_trajectory_pairs, config, model):
                 "GT_b3": y[2].item(),
                 "GT_b4": y[3].item()
             })
-        final_fig = plot_velocity_predictions(final_predictions, traj)
+        final_fig = plot_velocity_predictions(final_predictions, traj, title_suffix="(Training)")
         final_plot_path = os.path.join(PLOTS_DIR, f"FinalBeamPredictions_{traj}.png")
         final_fig.savefig(final_plot_path)
         plt.close(final_fig)
@@ -314,25 +360,20 @@ def sequential_train(training_trajectory_pairs, config, model):
             "TrainedOn": ""  # To be set in main()
         }
         global_training_summary.append(summary)
-        processed_training_info.append(f"{traj}-{traj_epochs}")
+        processed_training_info.append(f"{traj}:{traj_epochs}")
     return global_training_summary, processed_training_info
 
 def test_on_trajectory(traj, config, checkpoint_filename, trained_on):
     traj_path = os.path.join(DATA_DIR, traj)
     beams_gt, beams_training, imu = load_csv_files(traj_path)
-    filled_beams, start_missing = fill_missing_beams(beams_training, config["beam_fill_window"])
-    if start_missing is None:
-        log_global(f"[Test] No missing beams in {traj}. Skipping testing.")
-        return None
-    min_history = max(start_missing, config["num_past_beam_instances"], config["num_imu_instances"] - 1)
+    filled_beams, _ = fill_missing_beams(beams_training, config["beam_fill_window"])
+    min_history = max(_, config["num_past_beam_instances"], config["num_imu_instances"] - 1)
     inputs, targets, masks = [], [], []
     for t in range(min_history, len(filled_beams)):
-        if t - config["num_past_beam_instances"] < 0 or t - (config["num_imu_instances"] - 1) < 0:
-            continue
         inp, tar = construct_input_target(filled_beams, beams_gt, imu, t, config["num_past_beam_instances"], config["num_imu_instances"])
         inputs.append(inp)
         targets.append(tar)
-        masks.append(get_missing_mask(beams_training, t))
+        masks.append(get_missing_mask(beams_training, t, target_cols=["b1", "b2", "b3", "b4"]))
     if len(inputs) == 0:
         log_global(f"[Test] Not enough test data in {traj} after history constraints. Skipping.")
         return None
@@ -412,7 +453,7 @@ def main():
     testing_list = config.get("testing_trajectories", [])
     
     global_training_summary = []
-    cumulative_trained_on = []  # List of trajectories completed so far (excluding current)
+    cumulative_trained_on = []  # This will store strings like "Trajectory:Epochs" in order
     
     if not training_trajectory_pairs:
         log_global("No training trajectories provided.")
@@ -430,7 +471,9 @@ def main():
         try:
             inp, _ = construct_input_target(filled_beams, beams_gt, imu, t, config["num_past_beam_instances"], config["num_imu_instances"])
             inputs.append(inp)
+            log_global(f"Constructed sample at index {t}.")
         except Exception as e:
+            log_global(f"Skipping index {t} in main: {e}")
             continue
     if len(inputs) == 0:
         log_global("Not enough training data in the first trajectory to determine input size.")
@@ -438,23 +481,26 @@ def main():
     input_size = np.array(inputs).shape[1]
     model = MemoryNeuralNetwork(number_of_input_neurons=input_size,
                                 number_of_hidden_neurons=config["hidden_neurons"],
-                                number_of_output_neurons=4,
-                                dropout_rate=config["dropout_rate"])
+                                number_of_output_neurons=4,  # Force output to 4 beams.
+                                dropout_rate=config["dropout_rate"],
+                                learning_rate=config["learning_rate"],
+                                learning_rate_2=config["learning_rate_2"],
+                                lipschitz_constant=config["lipschitz_constant"])
     
     log_global("=== Sequential Training Phase ===")
     processed_training_info = []
     for traj_pair in training_trajectory_pairs:
         traj, traj_epochs = traj_pair
         log_global(f"Processing training trajectory: {traj} for {traj_epochs} epochs")
-        # Capture cumulative list (excluding current) before training current trajectory.
+        # Capture the cumulative list (excluding current) before processing current trajectory.
         current_trained_on = cumulative_trained_on.copy()
         traj_summary, processed = sequential_train([[traj, traj_epochs]], config, model)
         if traj_summary:
             row = traj_summary[0]
             row["TrainedOn"] = ", ".join(current_trained_on) if current_trained_on else "None"
             global_training_summary.append(row)
-            processed_training_info.append(f"{traj}-{traj_epochs}")
-            cumulative_trained_on.append(traj)
+            processed_training_info.append(f"{traj}:{traj_epochs}")
+            cumulative_trained_on.append(f"{traj}:{traj_epochs}")
     
     if not global_training_summary:
         log_global("No training trajectories processed; aborting.")
@@ -462,10 +508,8 @@ def main():
     
     final_checkpoint_filename = (
         f"MNN_{'_'.join(cumulative_trained_on)}_lr{config['learning_rate']}_drop{config['dropout_rate']}_"
-        f"hn{config['hidden_neurons']}_"
-        f"reg{config['regularization']}_bfw{config['beam_fill_window']}_"
-        f"npb{config['num_past_beam_instances']}_nimu{config['num_imu_instances']}_"
-        f"pr{str(config['partial_rmse'])}_final.pth"
+        f"hn{config['hidden_neurons']}_reg{config['regularization']}_bfw{config['beam_fill_window']}_"
+        f"npb{config['num_past_beam_instances']}_nimu{config['num_imu_instances']}_pr{str(config['partial_rmse'])}_final.pth"
     )
     final_checkpoint_path = os.path.join(CHECKPOINTS_DIR, final_checkpoint_filename)
     check_duplicate(final_checkpoint_path)

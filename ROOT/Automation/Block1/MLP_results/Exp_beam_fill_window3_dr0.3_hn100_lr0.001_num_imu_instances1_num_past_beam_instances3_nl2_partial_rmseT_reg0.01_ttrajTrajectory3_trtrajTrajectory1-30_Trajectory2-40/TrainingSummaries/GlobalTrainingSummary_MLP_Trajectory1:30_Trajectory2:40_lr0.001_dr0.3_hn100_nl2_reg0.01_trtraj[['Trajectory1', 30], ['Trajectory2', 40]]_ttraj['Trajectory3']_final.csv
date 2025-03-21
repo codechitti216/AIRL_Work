@@ -1,0 +1,3 @@
+Trajectory,NumSamples,InputSize,EpochsTrained,AvgBestRMSE,TrainingTime,TrainedOn
+Trajectory1,397,22,30,0.1420720029345458,6.445690870285034,None
+Trajectory2,397,22,40,0.06966491000173758,8.359697341918945,Trajectory1:30
