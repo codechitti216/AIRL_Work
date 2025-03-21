@@ -18,7 +18,7 @@ from FAN import FourierAnalysisNetwork
 # Experiment Folder Setup
 ##########################
 
-RESULTS_ROOT = "FAN_results"  # Root folder for FAN experiments
+RESULTS_ROOT = "Results/FAN_results"  # Root folder for FAN experiments
 
 # Define abbreviations for common config keys.
 ABBREVIATIONS = {

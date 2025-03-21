@@ -18,7 +18,7 @@ from LSTM import LSTMNetwork
 # Experiment Folder Setup
 ##########################
 
-RESULTS_ROOT = "LSTM_Results"
+RESULTS_ROOT = "Results/LSTM_Results"
 
 ABBREVIATIONS = {
     "learning_rate": "lr",
