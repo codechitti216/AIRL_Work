@@ -6,7 +6,6 @@ class MLPNetwork(nn.Module):
     def __init__(self, number_of_input_neurons=15, number_of_hidden_neurons=100, 
                  number_of_output_neurons=3, number_of_layers=2, learning_rate=0.001, dropout_rate=0.25, seed_value=16981):
         super(MLPNetwork, self).__init__()
-        
         torch.manual_seed(seed_value)
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         

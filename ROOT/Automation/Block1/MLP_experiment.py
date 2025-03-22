@@ -18,23 +18,29 @@ from MLP import MLPNetwork
 # Experiment Folder Setup
 ##########################
 
-RESULTS_ROOT = "MLP_results"
+RESULTS_ROOT = "Results/MLP_Results"
 
+# Use the same core keys as in LSTM_experiment.py
+CORE_KEYS = ["learning_rate", "dropout_rate", "hidden_neurons", "regularization", "beam_fill_window"]
+
+# Run‐specific abbreviations (same as in LSTM_experiment.py)
 ABBREVIATIONS = {
     "learning_rate": "lr",
     "dropout_rate": "dr",
     "hidden_neurons": "hn",
-    "number_of_layers": "nl",
-    "stacking_count": "sc",
-    "epochs": "ep",
     "regularization": "reg",
-    "Threshold": "th",
-    "Trials": "tr",
+    "beam_fill_window": "bfw",
+    # Run‐specific parameters:
+    "epochs": "ep",
+    "num_past_beam_instances": "npbi",
+    "num_imu_instances": "niu",
+    "number_of_layers": "nl",
     "training_trajectories": "trtraj",
     "testing_trajectories": "ttraj"
 }
 
 def sanitize(text):
+    text = str(text).replace(":", "_")
     text = re.sub(r'\s+', '_', text)
     text = re.sub(r'[^\w\-_\.]', '', text)
     return text
@@ -51,25 +57,27 @@ def stringify_value(value):
         return str(value)
 
 def generate_experiment_folder_name(config):
-    sorted_items = sorted(config.items())
     parts = []
-    for key, value in sorted_items:
-        abbr_key = ABBREVIATIONS.get(key, sanitize(key))
-        value_str = stringify_value(value)
-        sanitized_value = sanitize(value_str)
-        parts.append(f"{abbr_key}{sanitized_value}")
+    for key in CORE_KEYS:
+        if key in config:
+            abbr_key = ABBREVIATIONS.get(key, sanitize(key))
+            value_str = stringify_value(config[key])
+            sanitized_value = sanitize(value_str)
+            parts.append(f"{abbr_key}{sanitized_value}")
     folder_name = "Exp_" + "_".join(parts)
     print(f"[DEBUG] Generated experiment folder name: {folder_name}")
     return folder_name
 
 def create_experiment_folder(config):
     folder_name = generate_experiment_folder_name(config)
+    folder_name = folder_name.replace(":", "_").replace("*", "_").replace("?", "_")\
+                              .replace("<", "_").replace(">", "_").replace("|", "_")
+    folder_name = folder_name.rstrip(" .").lower()
     exp_folder = os.path.join(RESULTS_ROOT, folder_name)
-    print(f"[DEBUG] Checking if experiment folder exists: {exp_folder}")
     if os.path.exists(exp_folder):
-        print(f"Duplicate experiment folder found: {exp_folder}. Aborting experiment run.")
-        sys.exit(0)
-    os.makedirs(exp_folder, exist_ok=True)
+        print(f"[DEBUG] Experiment folder already exists: {exp_folder}. Reusing this folder.")
+    else:
+        os.makedirs(exp_folder, exist_ok=True)
     subdirs = {
         "CHECKPOINTS_DIR": "Checkpoints",
         "TRAINING_SUMMARIES_DIR": "TrainingSummaries",
@@ -80,15 +88,52 @@ def create_experiment_folder(config):
     global CHECKPOINTS_DIR, TRAINING_SUMMARIES_DIR, TEST_SUMMARIES_DIR, PLOTS_DIR, PREDICTIONS_DIR, GLOBAL_LOG_FILE
     for key, sub in subdirs.items():
         path = os.path.join(exp_folder, sub)
-        os.makedirs(path, exist_ok=True)
+        if not os.path.exists(path):
+            os.makedirs(path, exist_ok=True)
         globals()[key] = path
-        print(f"[DEBUG] Created subdirectory: {key} -> {path}")
+        print(f"[DEBUG] Subdirectory for {key}: {path}")
     GLOBAL_LOG_FILE = os.path.join(exp_folder, "experiment_global_log.txt")
     print(f"[DEBUG] Global log file set to: {GLOBAL_LOG_FILE}")
     return exp_folder
 
 ##########################
-# Logging & Duplicate Check
+# Run-Specific Identifier
+##########################
+
+def generate_run_specific_identifier(config):
+    train_parts = []
+    for idx, pair in enumerate(config.get("training_trajectories", []), start=1):
+        ep = str(pair[1])
+        train_parts.append(f"T{idx}-{ep}")
+    trtraj_str = "-".join(train_parts) if train_parts else "None"
+    ttraj_list = config.get("testing_trajectories", [])
+    ttraj_str = "-".join([sanitize(t) for t in ttraj_list]) if ttraj_list else "None"
+    npbi = config.get("num_past_beam_instances", "NA")
+    niu = config.get("num_imu_instances", "NA")
+    nl = config.get("number_of_layers", "NA")
+    raw_run_id = f"{ABBREVIATIONS.get('num_past_beam_instances','npbi')}{npbi}_" \
+                 f"{ABBREVIATIONS.get('num_imu_instances','niu')}{niu}_" \
+                 f"{ABBREVIATIONS.get('number_of_layers','nl')}{nl}_" \
+                 f"trtraj{trtraj_str}_ttraj{ttraj_str}"
+    run_id = sanitize(raw_run_id)
+    return run_id
+
+##########################
+# Duplicate Check Function
+##########################
+
+def check_duplicate_file(subfolder, filename):
+    file_path = os.path.join(subfolder, filename)
+    print(f"[DEBUG] Checking duplicate for file: {file_path}")
+    if os.path.exists(file_path):
+        log_global(f"Duplicate file found for configuration: {file_path}. Aborting experiment run.")
+        sys.exit(0)
+    else:
+        print(f"[DEBUG] No duplicate file found: {file_path}")
+    return file_path
+
+##########################
+# Logging
 ##########################
 
 def log_global(message):
@@ -97,27 +142,16 @@ def log_global(message):
         f.write(f"[{timestamp}] {message}\n")
     print(message)
 
-def check_duplicate(file_path):
-    print(f"[DEBUG] Checking duplicate for file: {file_path}")
-    if os.path.exists(file_path):
-        log_global(f"Duplicate file found: {file_path}. Aborting experiment.")
-        sys.exit(0)
-    else:
-        print(f"[DEBUG] No duplicate found for file: {file_path}")
-
 ##########################
 # Data Loading & Preprocessing
 ##########################
 
 DATA_DIR = "../../Data"
 
-
-
 def load_csv_files(traj_path):
     beams_gt_path = os.path.join(traj_path, "beams_gt.csv")
-    beams_training_path = os.path.join(traj_path, "beams_training.csv")
     beams_gt = pd.read_csv(beams_gt_path, na_values=[''])
-    beams_training = pd.read_csv(beams_training_path, na_values=[''])
+    beams_training = pd.read_csv(os.path.join(traj_path, "beams_training.csv"), na_values=[''])
     log_global(f"DEBUG: beams_gt columns: {beams_gt.columns.tolist()}")
     log_global(f"DEBUG: beams_training columns: {beams_training.columns.tolist()}")
     log_global("DEBUG: beams_training head:")
@@ -142,35 +176,27 @@ def load_csv_files(traj_path):
 
 def fill_missing_beams(beams_df, beam_fill_window, beam_cols=["b1", "b2", "b3", "b4"]):
     filled = beams_df.copy()
-    missing_mask = filled[beam_cols].isna().any(axis=1)
-    missing_count = missing_mask.sum()
-    log_global(f"DEBUG: Total rows with missing beams: {missing_count}")
-    if missing_count == 0:
-        log_global("DEBUG: No missing beams detected.")
-        return filled, None
-    start_index = missing_mask.idxmax()
-    log_global(f"DEBUG: First row with missing beam detected at index: {start_index}")
-    for i in range(start_index, len(filled)):
+    for i in range(beam_fill_window, len(filled)):
         for col in beam_cols:
             if pd.isna(filled.loc[i, col]):
-                if i < beam_fill_window:
-                    log_global(f"DEBUG: Not enough history to fill {col} at row {i}")
-                    continue
-                prev_vals = filled.loc[i - beam_fill_window:i - 1, col]
-                avg_val = prev_vals.mean()
-                log_global(f"DEBUG: Filling missing {col} at row {i} with average value {avg_val} from rows {i - beam_fill_window} to {i - 1}")
-                filled.loc[i, col] = avg_val
-    return filled, start_index
+                window = filled.loc[i - beam_fill_window:i - 1, col]
+                if window.isna().all():
+                    last_val = filled[col].ffill().iloc[i - 1]
+                    log_global(f"DEBUG: All previous values missing for {col} at row {i}; using last valid value {last_val}")
+                    filled.loc[i, col] = last_val
+                else:
+                    avg_val = window.mean()
+                    log_global(f"DEBUG: Filling missing {col} at row {i} with moving average {avg_val}")
+                    filled.loc[i, col] = avg_val
+    return filled, beam_fill_window
 
-# For MLP, we now predict all 4 beams (target: b1, b2, b3, b4)
 def construct_input_target(filled_beams, beams_gt, imu, t, num_past_beam_instances, num_imu_instances):
-    # Ensure enough history exists
     if t < num_past_beam_instances or t < (num_imu_instances - 1):
         raise ValueError(f"Index {t} does not have enough history.")
     try:
         current_beams = filled_beams.loc[t, ["b1", "b2", "b3", "b4"]].values.astype(float)
     except Exception as e:
-        log_global(f"Error at index {t} while fetching current beams: {e}")
+        log_global(f"ERROR at index {t} fetching current beams: {e}")
         raise e
     past_beams = []
     for i in range(1, num_past_beam_instances + 1):
@@ -181,13 +207,13 @@ def construct_input_target(filled_beams, beams_gt, imu, t, num_past_beam_instanc
             past_row = filled_beams.loc[idx, ["b1", "b2", "b3", "b4"]].values.astype(float)
             past_beams.extend(past_row)
         except Exception as e:
-            log_global(f"Error at index {idx} while fetching past beams: {e}")
+            log_global(f"ERROR at index {idx} fetching past beams: {e}")
             raise e
     imu_cols = ['ACC X [m/s^2]', 'ACC Y [m/s^2]', 'ACC Z [m/s^2]',
                 'GYRO X [rad/s]', 'GYRO Y [rad/s]', 'GYRO Z [rad/s]']
     for col in imu_cols:
         if col not in imu.columns:
-            log_global(f"ERROR: Expected IMU column {col} not found. Available columns: {imu.columns.tolist()}")
+            log_global(f"ERROR: Expected IMU column {col} not found.")
             raise ValueError(f"IMU column {col} not found.")
     past_imu = []
     for i in range(num_imu_instances - 1, -1, -1):
@@ -198,13 +224,13 @@ def construct_input_target(filled_beams, beams_gt, imu, t, num_past_beam_instanc
             imu_row = imu.loc[idx, imu_cols].values.astype(float)
             past_imu.extend(imu_row)
         except Exception as e:
-            log_global(f"Error at index {idx} while fetching IMU data: {e}")
+            log_global(f"ERROR at index {idx} fetching IMU data: {e}")
             raise e
     input_vector = np.concatenate([current_beams, np.array(past_beams), np.array(past_imu)])
     try:
         target_vector = beams_gt.loc[t, ["b1", "b2", "b3", "b4"]].values.astype(float)
     except Exception as e:
-        log_global(f"Error at index {t} while fetching target: {e}")
+        log_global(f"ERROR at index {t} fetching target: {e}")
         raise e
     return input_vector, target_vector
 
@@ -212,24 +238,39 @@ def get_missing_mask(beams_training, t, target_cols=["b1", "b2", "b3", "b4"]):
     row = beams_training.loc[t, target_cols]
     return row.isna().values
 
-def plot_velocity_predictions(predictions, traj, title_suffix=""):
+def plot_velocity_predictions(predictions, traj, beam_fill_window, title_suffix=""):
     fig, axes = plt.subplots(4, 1, figsize=(10, 12), sharex=True)
     samples = [pred["Sample"] for pred in predictions]
     for i, beam in enumerate(["b1", "b2", "b3", "b4"]):
         pred_vals = [pred[f"Pred_{beam}"] for pred in predictions]
         gt_vals = [pred[f"GT_{beam}"] for pred in predictions]
+        gt_series = pd.Series(gt_vals)
+        moving_avg = gt_series.rolling(window=beam_fill_window, min_periods=1).mean().tolist()
+        print(f"[DEBUG Plot] Beam {beam}: First 5 Predicted: {pred_vals[:5]}")
+        print(f"[DEBUG Plot] Beam {beam}: First 5 Ground Truth: {gt_vals[:5]}")
+        print(f"[DEBUG Plot] Beam {beam}: First 5 Moving Avg: {moving_avg[:5]}")
         axes[i].plot(samples, pred_vals, label=f"Predicted {beam}", marker='o')
         axes[i].plot(samples, gt_vals, label=f"Ground Truth {beam}", marker='x')
+        axes[i].plot(samples, moving_avg, label=f"Moving Avg {beam}", linewidth=2, color='purple')
         axes[i].set_ylabel("Value")
         axes[i].legend(loc="upper right")
         axes[i].grid(True)
     axes[-1].set_xlabel("Sample Index")
-    fig.suptitle(f"Predicted vs Ground Truth Outputs for {traj} {title_suffix}")
+    fig.suptitle(f"Predicted vs Ground Truth & Moving Avg for {traj} {title_suffix}")
     return fig
 
-##########################
-# Finding the Starting Index
-##########################
+def plot_missing_beams_frequency(beams_training, traj, run_id):
+    probs = config.get("missing_beam_probability", {})
+    missing_percentages = {beam: int(round(probs.get(beam, 0)*100)) for beam in sorted(probs.keys())}
+    fig, ax = plt.subplots(figsize=(8, 6))
+    ax.bar(missing_percentages.keys(), missing_percentages.values(), color='salmon')
+    ax.set_xlabel("Beam")
+    ax.set_ylabel("Missing Percentage")
+    ax.set_title(f"Missing Beams Percentage for {traj}")
+    plot_path = os.path.join(PLOTS_DIR, f"MissingBeamsPercentage_{sanitize(traj)}_{run_id}.png")
+    fig.savefig(plot_path)
+    plt.close(fig)
+    log_global(f"[{traj}] Missing beams percentage plot saved to {plot_path}")
 
 def find_first_valid_index(filled_beams, beams_gt, imu, num_past_beam_instances, num_imu_instances):
     start = max(num_past_beam_instances, num_imu_instances - 1)
@@ -244,13 +285,13 @@ def find_first_valid_index(filled_beams, beams_gt, imu, num_past_beam_instances,
             continue
     return None
 
-##########################
-# Sequential Training Routine
-##########################
-
-def sequential_train(training_trajectory_pairs, config, model):
+def sequential_train(training_trajectory_pairs, config, model, run_id, trained_list):
     global_training_summary = []
     processed_training_info = []
+    probs = config.get("missing_beam_probability", {})
+    missing_freq_str = "-".join([f"{beam}_{int(round(probs.get(beam, 0)*100))}" for beam in sorted(probs.keys())])
+    log_global(f"[DEBUG] Missing percentage string: {missing_freq_str}")
+    
     for traj_pair in training_trajectory_pairs:
         traj, traj_epochs = traj_pair
         traj_path = os.path.join(DATA_DIR, traj)
@@ -260,8 +301,9 @@ def sequential_train(training_trajectory_pairs, config, model):
         except Exception as e:
             log_global(f"Error loading files in {traj}: {e}")
             continue
-        beam_cols = ["b1", "b2", "b3", "b4"]
-        orig_missing = beams_training[beam_cols].isna().sum().sum()
+
+        beams_training = apply_random_removal(beams_training, config)
+        orig_missing = beams_training[["b1", "b2", "b3", "b4"]].isna().sum().sum()
         log_global(f"Original missing count in {traj}: {orig_missing}")
         if orig_missing == 0:
             log_global(f"[Train] No missing beams in {traj}. Skipping training on this trajectory.")
@@ -269,8 +311,8 @@ def sequential_train(training_trajectory_pairs, config, model):
         filled_beams, _ = fill_missing_beams(beams_training, config["beam_fill_window"])
         min_history = find_first_valid_index(filled_beams, beams_gt, imu, config["num_past_beam_instances"], config["num_imu_instances"])
         if min_history is None:
-            log_global("Not enough training data in the first trajectory to determine input size.")
-            return global_training_summary, processed_training_info
+            log_global("Not enough training data in the trajectory to determine input size.")
+            continue
         log_global(f"Using starting index {min_history} for constructing input-target pairs.")
         
         inputs, targets, masks = [], [], []
@@ -285,8 +327,8 @@ def sequential_train(training_trajectory_pairs, config, model):
                 log_global(f"Skipping index {t}: {e}")
                 continue
         if len(inputs) == 0:
-            log_global("Not enough training data in the first trajectory to determine input size.")
-            return global_training_summary, processed_training_info
+            log_global("Not enough training data in the trajectory to determine input size.")
+            continue
         inputs = np.array(inputs)
         targets = np.array(targets)
         masks = np.array(masks)
@@ -302,27 +344,18 @@ def sequential_train(training_trajectory_pairs, config, model):
         for epoch in range(1, traj_epochs + 1):
             optimizer.zero_grad()
             losses = []
-            epoch_squared_errors = np.zeros(4)  # 4 outputs now
+            epoch_squared_errors = np.zeros(4)
             for i in range(num_samples):
                 model.train()
-                x = torch.tensor(inputs[i], dtype=torch.float32, device=model.device).unsqueeze(0).unsqueeze(0)
+                # For MLP, mimic LSTM_experiment.py exactly except that MLP expects a 2D input.
+                x = torch.tensor(inputs[i], dtype=torch.float32, device=model.device).unsqueeze(0)
                 y = torch.tensor(targets[i], dtype=torch.float32, device=model.device)
-                y_pred = model(x).squeeze()
-                y_pred = y_pred.view(-1)  # shape [4]
+                y_pred = model(x).view(-1)
                 y = y.view(-1)
-                mask = get_missing_mask(beams_training, i, target_cols=["b1","b2","b3","b4"])
-                # Ensure mask length equals target length
-                assert len(mask) == len(y), f"Mask length {len(mask)} != target length {len(y)}"
-                if config.get("partial_rmse", False) and mask.any():
-                    indices = torch.tensor(np.where(mask)[0], dtype=torch.long, device=model.device)
-                    if indices.numel() > 0:
-                        y_pred_masked = y_pred[indices]
-                        y_masked = y[indices]
-                        sample_loss = loss_fn(y_pred_masked, y_masked)
-                    else:
-                        sample_loss = loss_fn(y_pred, y)
-                else:
-                    sample_loss = loss_fn(y_pred, y)
+                mask = get_missing_mask(beams_training, i, target_cols=["b1", "b2", "b3", "b4"])
+                if len(mask) != len(y):
+                    log_global(f"WARNING: Mismatch in mask and target lengths at sample {i}")
+                sample_loss = loss_fn(y_pred, y)
                 losses.append(sample_loss)
                 error = (y_pred - y).detach().cpu().numpy() ** 2
                 epoch_squared_errors += error
@@ -334,15 +367,13 @@ def sequential_train(training_trajectory_pairs, config, model):
             log_global(f"[{traj}] Epoch {epoch}: RMSE per output: {epoch_rmse}, Avg RMSE: {np.mean(epoch_rmse):.5f}")
         training_time = time.time() - t0
         
-        # Evaluate final epoch predictions on training data and plot.
         model.eval()
         final_predictions = []
         for i in range(num_samples):
-            x = torch.tensor(inputs[i], dtype=torch.float32, device=model.device).unsqueeze(0).unsqueeze(0)
+            x = torch.tensor(inputs[i], dtype=torch.float32, device=model.device).unsqueeze(0)
             y = torch.tensor(targets[i], dtype=torch.float32, device=model.device)
             with torch.no_grad():
-                y_pred = model(x).squeeze(0)
-            y_pred = y_pred.view(-1)
+                y_pred = model(x).view(-1)
             y = y.view(-1)
             final_predictions.append({
                 "Sample": i,
@@ -355,12 +386,14 @@ def sequential_train(training_trajectory_pairs, config, model):
                 "GT_b3": y[2].item(),
                 "GT_b4": y[3].item()
             })
-        final_fig = plot_velocity_predictions(final_predictions, traj, title_suffix="(Training)")
-        final_plot_path = os.path.join(PLOTS_DIR, f"FinalOutputPredictions_{traj}.png")
-        final_fig.savefig(final_plot_path)
-        plt.close(final_fig)
-        log_global(f"[{traj}] Final epoch output predictions plot saved to {final_plot_path}")
+        print(f"[DEBUG] Final predictions for {traj} (first 5 samples): {final_predictions[:5]}")
+        train_plot_path = os.path.join(PLOTS_DIR, f"FinalOutputPredictions_{sanitize(traj)}_{run_id}_{missing_freq_str}.png")
+        train_fig = plot_velocity_predictions(final_predictions, traj, config["beam_fill_window"], title_suffix="(Training)")
+        train_fig.savefig(train_plot_path)
+        plt.close(train_fig)
+        log_global(f"[{traj}] Training predictions plot saved to {train_plot_path}")
         
+        current_trained_on = ",".join(trained_list) if trained_list else "NONE"
         summary = {
             "Trajectory": traj,
             "NumSamples": num_samples,
@@ -368,15 +401,18 @@ def sequential_train(training_trajectory_pairs, config, model):
             "EpochsTrained": traj_epochs,
             "AvgBestRMSE": np.mean(evolution[-1][1:]),
             "TrainingTime": training_time,
-            "TrainedOn": ""  # To be set in main()
+            "TrainedOn": current_trained_on,
+            "MissingPercentage": missing_freq_str
         }
         global_training_summary.append(summary)
+        trained_list.append(f"{traj}:{traj_epochs}")
         processed_training_info.append(f"{traj}:{traj_epochs}")
     return global_training_summary, processed_training_info
 
-def test_on_trajectory(traj, config, checkpoint_filename, trained_on):
+def test_on_trajectory(traj, config, checkpoint_filename, run_id, base_trained_on, missing_freq_str):
     traj_path = os.path.join(DATA_DIR, traj)
     beams_gt, beams_training, imu = load_csv_files(traj_path)
+    # For testing, do not apply random removal.
     filled_beams, start_missing = fill_missing_beams(beams_training, config["beam_fill_window"])
     if start_missing is None:
         log_global(f"[Test] No missing beams in {traj}. Skipping testing.")
@@ -388,7 +424,7 @@ def test_on_trajectory(traj, config, checkpoint_filename, trained_on):
             inp, tar = construct_input_target(filled_beams, beams_gt, imu, t, config["num_past_beam_instances"], config["num_imu_instances"])
             inputs.append(inp)
             targets.append(tar)
-            masks.append(get_missing_mask(beams_training, t, target_cols=["b1","b2","b3","b4"]))
+            masks.append(get_missing_mask(beams_training, t, target_cols=["b1", "b2", "b3", "b4"]))
         except Exception as e:
             log_global(f"Skipping index {t} in testing: {e}")
             continue
@@ -433,18 +469,17 @@ def test_on_trajectory(traj, config, checkpoint_filename, trained_on):
             "GT_b3": y[2].item(),
             "GT_b4": y[3].item()
         })
-        err = (y_pred - y.view(-1)).detach().cpu().numpy() ** 2
+        err = (y_pred - y).detach().cpu().numpy() ** 2
         squared_errors += err
     test_rmse = np.sqrt(squared_errors / num_samples)
     log_global(f"[{traj}] Test RMSE per output: {test_rmse}")
     
-    pred_df = pd.DataFrame(predictions)
-    test_pred_csv = os.path.join(PREDICTIONS_DIR, f"TestPredictions_{traj}.csv")
-    pred_df.to_csv(test_pred_csv, index=False)
+    test_pred_csv = os.path.join(PREDICTIONS_DIR, f"TestPredictions_{sanitize(traj)}_{run_id}_{missing_freq_str}.csv")
+    pd.DataFrame(predictions).to_csv(test_pred_csv, index=False)
     log_global(f"[{traj}] Test predictions saved to {test_pred_csv}")
     
-    fig = plot_velocity_predictions(predictions, traj, title_suffix="(Testing Data)")
-    plot_file = os.path.join(PLOTS_DIR, f"VelocityPredictions_{traj}.png")
+    plot_file = os.path.join(PLOTS_DIR, f"VelocityPredictions_{sanitize(traj)}_{run_id}_{missing_freq_str}.png")
+    fig = plot_velocity_predictions(predictions, traj, config["beam_fill_window"], title_suffix="(Testing Data)")
     fig.savefig(plot_file)
     plt.close(fig)
     log_global(f"[{traj}] Velocity predictions plot saved to {plot_file}")
@@ -457,7 +492,8 @@ def test_on_trajectory(traj, config, checkpoint_filename, trained_on):
         "Test_RMSE_b3": test_rmse[2],
         "Test_RMSE_b4": test_rmse[3],
         "AvgTest_RMSE": np.mean(test_rmse),
-        "TrainedOn": ", ".join(trained_on)
+        "TrainedOn": base_trained_on,
+        "MissingPercentage": missing_freq_str
     }
     return test_summary
 
@@ -471,12 +507,18 @@ def main():
     training_trajectory_pairs = config.get("training_trajectories", [])
     testing_list = config.get("testing_trajectories", [])
     
-    global_training_summary = []
-    cumulative_trained_on = []  # This will store strings like "Trajectory:Epochs"
-    
     if not training_trajectory_pairs:
         log_global("No training trajectories provided.")
         return
+
+    probs = config.get("missing_beam_probability", {})
+    missing_freq_str = "-".join([f"{beam}_{int(round(probs.get(beam, 0)*100))}" for beam in sorted(probs.keys())])
+    print(f"[DEBUG] Missing percentage string from JSON: {missing_freq_str}")
+    
+    cumulative_trained_on = []
+    global_training_summary = []
+    processed_training_info = []
+    
     first_traj = training_trajectory_pairs[0][0]
     first_traj_path = os.path.join(DATA_DIR, first_traj)
     beams_gt, beams_training, imu = load_csv_files(first_traj_path)
@@ -506,42 +548,33 @@ def main():
                        number_of_layers=config["number_of_layers"],
                        dropout_rate=config["dropout_rate"])
     
+    run_id = generate_run_specific_identifier(config)
+    
     log_global("=== Sequential Training Phase ===")
-    processed_training_info = []
     for traj_pair in training_trajectory_pairs:
         traj, traj_epochs = traj_pair
         log_global(f"Processing training trajectory: {traj} for {traj_epochs} epochs")
-        current_trained_on = cumulative_trained_on.copy()
-        traj_summary, processed = sequential_train([[traj, traj_epochs]], config, model)
-        if traj_summary:
-            # In the summary, set TrainedOn to the cumulative string.
-            row = traj_summary[0]
-            row["TrainedOn"] = ", ".join(current_trained_on) if current_trained_on else "None"
-            global_training_summary.append(row)
-            # Append trajectory and epoch info in the format "Trajectory:Epochs"
-            processed_training_info.append(f"{traj}:{traj_epochs}")
-            cumulative_trained_on.append(f"{traj}:{traj_epochs}")
+        current_trained_on = ",".join(cumulative_trained_on) if cumulative_trained_on else "NONE"
+        summary, proc_info = sequential_train([traj_pair], config, model, run_id, cumulative_trained_on)
+        if summary:
+            summary[0]["TrainedOn"] = current_trained_on
+            global_training_summary.append(summary[0])
+        processed_training_info.extend(proc_info)
+        cumulative_trained_on.append(f"{traj}:{traj_epochs}")
     
     if not global_training_summary:
         log_global("No training trajectories processed; aborting.")
         return
+
+    final_checkpoint_filename = f"MLP_{run_id}_{missing_freq_str}_final.pth"
+    cp_path = check_duplicate_file(CHECKPOINTS_DIR, final_checkpoint_filename)
+    torch.save(model.state_dict(), cp_path)
+    log_global(f"Final checkpoint saved to {cp_path}")
     
-    final_checkpoint_filename = (
-        f"MLP_{'_'.join(cumulative_trained_on)}_lr{config['learning_rate']}_dr{config['dropout_rate']}_"
-        f"hn{config['hidden_neurons']}_nl{config['number_of_layers']}_"
-        f"reg{config['regularization']}_trtraj{str(training_trajectory_pairs)}_"
-        f"ttraj{str(testing_list)}_final.pth"
-    )
-    final_checkpoint_path = os.path.join(CHECKPOINTS_DIR, final_checkpoint_filename)
-    check_duplicate(final_checkpoint_path)
-    torch.save(model.state_dict(), final_checkpoint_path)
-    log_global(f"Final checkpoint saved to {final_checkpoint_path}")
-    
-    train_summary_df = pd.DataFrame(global_training_summary)
-    train_summary_csv = os.path.join(TRAINING_SUMMARIES_DIR, f"GlobalTrainingSummary_{final_checkpoint_filename[:-4]}.csv")
-    check_duplicate(train_summary_csv)
-    train_summary_df.to_csv(train_summary_csv, index=False)
-    log_global(f"Global training summary saved to {train_summary_csv}")
+    train_summary_filename = f"GlobalTrainingSummary_{run_id}_{missing_freq_str}.csv"
+    ts_path = check_duplicate_file(TRAINING_SUMMARIES_DIR, train_summary_filename)
+    pd.DataFrame(global_training_summary).to_csv(ts_path, index=False)
+    log_global(f"Global training summary saved to {ts_path}")
     
     log_global("=== Testing Phase ===")
     global_test_summary = []
@@ -551,18 +584,14 @@ def main():
         if test_summary:
             global_test_summary.append(test_summary)
     if global_test_summary:
-        test_summary_df = pd.DataFrame(global_test_summary)
-        test_summary_csv = os.path.join(TEST_SUMMARIES_DIR, f"GlobalTestSummary_{final_checkpoint_filename[:-4]}.csv")
-        check_duplicate(test_summary_csv)
-        test_summary_df.to_csv(test_summary_csv, index=False)
-        log_global(f"Global test summary saved to {test_summary_csv}")
+        test_summary_filename = f"GlobalTestSummary_{run_id}_{missing_freq_str}.csv"
+        tst_path = check_duplicate_file(TEST_SUMMARIES_DIR, test_summary_filename)
+        pd.DataFrame(global_test_summary).to_csv(tst_path, index=False)
+        log_global(f"Global test summary saved to {tst_path}")
 
 if __name__ == "__main__":
     with open("MLP.json", "r") as f:
         config = json.load(f)
-    arch_folder = "MLP_results"
-    if not os.path.exists(arch_folder):
-        os.makedirs(arch_folder, exist_ok=True)
     EXPERIMENT_FOLDER = create_experiment_folder(config)
     global CHECKPOINTS_DIR, TRAINING_SUMMARIES_DIR, TEST_SUMMARIES_DIR, PLOTS_DIR, PREDICTIONS_DIR, GLOBAL_LOG_FILE
     CHECKPOINTS_DIR = os.path.join(EXPERIMENT_FOLDER, "Checkpoints")
