@@ -5,7 +5,7 @@
   "hidden_neurons": 100,
   "num_layers": 2,
   "regularization": 0.1,
-  "beam_fill_window": 40,
+  "beam_fill_window": 3,
   "lipschitz_constant": 0.0,
   "num_past_beam_instances": 3,
   "num_imu_instances": 1,
