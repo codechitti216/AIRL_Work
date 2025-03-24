@@ -20,10 +20,8 @@ from MLP import MLPNetwork
 
 RESULTS_ROOT = "Results/MLP_Results"
 
-# Use the same core keys as in LSTM_experiment.py
 CORE_KEYS = ["learning_rate", "dropout_rate", "hidden_neurons", "regularization", "beam_fill_window"]
 
-# Run‐specific abbreviations (same as in LSTM_experiment.py)
 ABBREVIATIONS = {
     "learning_rate": "lr",
     "dropout_rate": "dr",
@@ -33,7 +31,7 @@ ABBREVIATIONS = {
     # Run‐specific parameters:
     "epochs": "ep",
     "num_past_beam_instances": "npbi",
-    "num_imu_instances": "niu",
+    "num_imu_instances": "nimu",
     "number_of_layers": "nl",
     "training_trajectories": "trtraj",
     "testing_trajectories": "ttraj"
@@ -64,7 +62,7 @@ def generate_experiment_folder_name(config):
             value_str = stringify_value(config[key])
             sanitized_value = sanitize(value_str)
             parts.append(f"{abbr_key}{sanitized_value}")
-    folder_name = "Exp_" + "_".join(parts)
+    folder_name = "exp_" + "_".join(parts)
     print(f"[DEBUG] Generated experiment folder name: {folder_name}")
     return folder_name
 
@@ -109,10 +107,10 @@ def generate_run_specific_identifier(config):
     ttraj_list = config.get("testing_trajectories", [])
     ttraj_str = "-".join([sanitize(t) for t in ttraj_list]) if ttraj_list else "None"
     npbi = config.get("num_past_beam_instances", "NA")
-    niu = config.get("num_imu_instances", "NA")
+    nimu = config.get("num_imu_instances", "NA")
     nl = config.get("number_of_layers", "NA")
     raw_run_id = f"{ABBREVIATIONS.get('num_past_beam_instances','npbi')}{npbi}_" \
-                 f"{ABBREVIATIONS.get('num_imu_instances','niu')}{niu}_" \
+                 f"{ABBREVIATIONS.get('num_imu_instances','nimu')}{nimu}_" \
                  f"{ABBREVIATIONS.get('number_of_layers','nl')}{nl}_" \
                  f"trtraj{trtraj_str}_ttraj{ttraj_str}"
     run_id = sanitize(raw_run_id)
@@ -149,22 +147,14 @@ def log_global(message):
 DATA_DIR = "../../Data"
 
 def load_csv_files(traj_path):
+    # Read beams_gt.csv and then make beams_training as a copy (replicating LSTM_experiment.py)
     beams_gt_path = os.path.join(traj_path, "beams_gt.csv")
     beams_gt = pd.read_csv(beams_gt_path, na_values=[''])
-    beams_training = pd.read_csv(os.path.join(traj_path, "beams_training.csv"), na_values=[''])
-    log_global(f"DEBUG: beams_gt columns: {beams_gt.columns.tolist()}")
-    log_global(f"DEBUG: beams_training columns: {beams_training.columns.tolist()}")
-    log_global("DEBUG: beams_training head:")
-    log_global(str(beams_training.head()))
-    beam_cols = ["b1", "b2", "b3", "b4"]
-    missing_counts = beams_training[beam_cols].isna().sum()
-    log_global("DEBUG: Missing counts in beams_training:")
-    log_global(str(missing_counts))
+    beams_training = beams_gt.copy()
     imu_files = [f for f in os.listdir(traj_path) if f.startswith("IMU_") and f.endswith(".csv")]
     if not imu_files:
         raise ValueError(f"No IMU file found in {traj_path}")
     imu = pd.read_csv(os.path.join(traj_path, imu_files[0]))
-    log_global(f"DEBUG: IMU columns: {imu.columns.tolist()}")
     beams_gt.sort_values("Time", inplace=True)
     beams_training.sort_values("Time", inplace=True)
     imu.sort_values("Time [s]", inplace=True)
@@ -173,6 +163,39 @@ def load_csv_files(traj_path):
     imu.reset_index(drop=True, inplace=True)
     log_global(f"DEBUG: beams_training length: {len(beams_training)}, beams_gt length: {len(beams_gt)}, imu length: {len(imu)}")
     return beams_gt, beams_training, imu
+
+##########################
+# New Functions for Missing Data
+##########################
+
+def apply_random_removal(beams_training, config):
+    """
+    Applies random removal of beam values based on beam-specific probabilities.
+    Random removal now starts at index = beam_fill_window.
+    """
+    probs = config.get("missing_beam_probability", {"b1": 0.0, "b2": 0.0, "b3": 0.0, "b4": 0.0})
+    start_idx = config.get("beam_fill_window", 40)
+    for idx in range(start_idx, beams_training.shape[0]):
+        for beam in ['b1', 'b2', 'b3', 'b4']:
+            if np.random.rand() < probs.get(beam, 0.0):
+                beams_training.loc[idx, beam] = np.nan
+    print(f"[DEBUG] Applied random removal from row {start_idx} onward.")
+    return beams_training
+
+def compute_missing_frequencies(config):
+    """
+    Computes the missing percentage string directly from the JSON.
+    For example, if missing_beam_probability is { "b1": 0.2, "b2": 0.15, "b3": 0.1, "b4": 0.05 }
+    then returns "b1_20-b2_15-b3_10-b4_5".
+    """
+    probs = config.get("missing_beam_probability", {})
+    missing_freq_str = "-".join([f"{beam}_{int(round(probs.get(beam, 0)*100))}" for beam in sorted(probs.keys())])
+    print(f"[DEBUG] Missing percentage string from JSON: {missing_freq_str}")
+    return missing_freq_str
+
+##########################
+# Fill Missing Values (Sequential Moving Average)
+##########################
 
 def fill_missing_beams(beams_df, beam_fill_window, beam_cols=["b1", "b2", "b3", "b4"]):
     filled = beams_df.copy()
@@ -189,6 +212,10 @@ def fill_missing_beams(beams_df, beam_fill_window, beam_cols=["b1", "b2", "b3", 
                     log_global(f"DEBUG: Filling missing {col} at row {i} with moving average {avg_val}")
                     filled.loc[i, col] = avg_val
     return filled, beam_fill_window
+
+##########################
+# Construct Input-Target
+##########################
 
 def construct_input_target(filled_beams, beams_gt, imu, t, num_past_beam_instances, num_imu_instances):
     if t < num_past_beam_instances or t < (num_imu_instances - 1):
@@ -238,7 +265,15 @@ def get_missing_mask(beams_training, t, target_cols=["b1", "b2", "b3", "b4"]):
     row = beams_training.loc[t, target_cols]
     return row.isna().values
 
+##########################
+# Plotting Functions
+##########################
+
 def plot_velocity_predictions(predictions, traj, beam_fill_window, title_suffix=""):
+    """
+    Plots ground truth, predicted values, and the moving average (with window=beam_fill_window) of ground truth.
+    Debug prints show first five values for each beam.
+    """
     fig, axes = plt.subplots(4, 1, figsize=(10, 12), sharex=True)
     samples = [pred["Sample"] for pred in predictions]
     for i, beam in enumerate(["b1", "b2", "b3", "b4"]):
@@ -249,8 +284,8 @@ def plot_velocity_predictions(predictions, traj, beam_fill_window, title_suffix=
         print(f"[DEBUG Plot] Beam {beam}: First 5 Predicted: {pred_vals[:5]}")
         print(f"[DEBUG Plot] Beam {beam}: First 5 Ground Truth: {gt_vals[:5]}")
         print(f"[DEBUG Plot] Beam {beam}: First 5 Moving Avg: {moving_avg[:5]}")
-        axes[i].plot(samples, pred_vals, label=f"Predicted {beam}", marker='o')
         axes[i].plot(samples, gt_vals, label=f"Ground Truth {beam}", marker='x')
+        axes[i].plot(samples, pred_vals, label=f"Predicted {beam}", marker='o')
         axes[i].plot(samples, moving_avg, label=f"Moving Avg {beam}", linewidth=2, color='purple')
         axes[i].set_ylabel("Value")
         axes[i].legend(loc="upper right")
@@ -260,6 +295,10 @@ def plot_velocity_predictions(predictions, traj, beam_fill_window, title_suffix=
     return fig
 
 def plot_missing_beams_frequency(beams_training, traj, run_id):
+    """
+    Plots a bar chart showing the missing percentage for each beam.
+    The percentages are taken directly from the JSON.
+    """
     probs = config.get("missing_beam_probability", {})
     missing_percentages = {beam: int(round(probs.get(beam, 0)*100)) for beam in sorted(probs.keys())}
     fig, ax = plt.subplots(figsize=(8, 6))
@@ -271,6 +310,10 @@ def plot_missing_beams_frequency(beams_training, traj, run_id):
     fig.savefig(plot_path)
     plt.close(fig)
     log_global(f"[{traj}] Missing beams percentage plot saved to {plot_path}")
+
+##########################
+# Finding the Starting Index
+##########################
 
 def find_first_valid_index(filled_beams, beams_gt, imu, num_past_beam_instances, num_imu_instances):
     start = max(num_past_beam_instances, num_imu_instances - 1)
@@ -285,9 +328,14 @@ def find_first_valid_index(filled_beams, beams_gt, imu, num_past_beam_instances,
             continue
     return None
 
+##########################
+# Sequential Training Routine
+##########################
+
 def sequential_train(training_trajectory_pairs, config, model, run_id, trained_list):
     global_training_summary = []
     processed_training_info = []
+    # Build missing percentage string from JSON probabilities
     probs = config.get("missing_beam_probability", {})
     missing_freq_str = "-".join([f"{beam}_{int(round(probs.get(beam, 0)*100))}" for beam in sorted(probs.keys())])
     log_global(f"[DEBUG] Missing percentage string: {missing_freq_str}")
@@ -347,7 +395,6 @@ def sequential_train(training_trajectory_pairs, config, model, run_id, trained_l
             epoch_squared_errors = np.zeros(4)
             for i in range(num_samples):
                 model.train()
-                # For MLP, mimic LSTM_experiment.py exactly except that MLP expects a 2D input.
                 x = torch.tensor(inputs[i], dtype=torch.float32, device=model.device).unsqueeze(0)
                 y = torch.tensor(targets[i], dtype=torch.float32, device=model.device)
                 y_pred = model(x).view(-1)
@@ -393,7 +440,7 @@ def sequential_train(training_trajectory_pairs, config, model, run_id, trained_l
         plt.close(train_fig)
         log_global(f"[{traj}] Training predictions plot saved to {train_plot_path}")
         
-        current_trained_on = ",".join(trained_list) if trained_list else "NONE"
+        current_trained_on = ", ".join(trained_list) if trained_list else "NONE"
         summary = {
             "Trajectory": traj,
             "NumSamples": num_samples,
@@ -438,10 +485,9 @@ def test_on_trajectory(traj, config, checkpoint_filename, run_id, base_trained_o
     log_global(f"[{traj}] Testing Samples: {num_samples}, Input size: {input_size}")
     
     model = MLPNetwork(number_of_input_neurons=input_size,
-                       number_of_hidden_neurons=config["hidden_neurons"],
-                       number_of_output_neurons=4,
-                       number_of_layers=config["number_of_layers"],
-                       dropout_rate=config["dropout_rate"])
+                        number_of_hidden_neurons=config["hidden_neurons"],
+                        number_of_output_neurons=4,
+                        dropout_rate=config["dropout_rate"])
     cp_full_path = os.path.join(CHECKPOINTS_DIR, checkpoint_filename)
     try:
         state = torch.load(cp_full_path, map_location=model.device, weights_only=True)
@@ -454,7 +500,7 @@ def test_on_trajectory(traj, config, checkpoint_filename, run_id, base_trained_o
     predictions = []
     squared_errors = np.zeros(4)
     for i in range(num_samples):
-        x = torch.tensor(inputs[i], dtype=torch.float32, device=model.device).unsqueeze(0)
+        x = torch.tensor(inputs[i], dtype=torch.float32, device=model.device).unsqueeze(0).unsqueeze(0)
         y = torch.tensor(targets[i], dtype=torch.float32, device=model.device)
         with torch.no_grad():
             y_pred = model(x).view(-1)
@@ -497,6 +543,10 @@ def test_on_trajectory(traj, config, checkpoint_filename, run_id, base_trained_o
     }
     return test_summary
 
+##########################
+# Main Routine
+##########################
+
 def main():
     with open(GLOBAL_LOG_FILE, "w") as f:
         f.write("Experiment Log\n")
@@ -511,6 +561,7 @@ def main():
         log_global("No training trajectories provided.")
         return
 
+    # Compute missing percentage string from JSON (e.g., "b1_20-b2_15-b3_10-b4_5")
     probs = config.get("missing_beam_probability", {})
     missing_freq_str = "-".join([f"{beam}_{int(round(probs.get(beam, 0)*100))}" for beam in sorted(probs.keys())])
     print(f"[DEBUG] Missing percentage string from JSON: {missing_freq_str}")
@@ -519,6 +570,7 @@ def main():
     global_training_summary = []
     processed_training_info = []
     
+    # Determine input size from first trajectory.
     first_traj = training_trajectory_pairs[0][0]
     first_traj_path = os.path.join(DATA_DIR, first_traj)
     beams_gt, beams_training, imu = load_csv_files(first_traj_path)
@@ -554,13 +606,14 @@ def main():
     for traj_pair in training_trajectory_pairs:
         traj, traj_epochs = traj_pair
         log_global(f"Processing training trajectory: {traj} for {traj_epochs} epochs")
-        current_trained_on = ",".join(cumulative_trained_on) if cumulative_trained_on else "NONE"
+        current_trained_on = ", ".join(cumulative_trained_on) if cumulative_trained_on else "NONE"
         summary, proc_info = sequential_train([traj_pair], config, model, run_id, cumulative_trained_on)
         if summary:
             summary[0]["TrainedOn"] = current_trained_on
             global_training_summary.append(summary[0])
-        processed_training_info.extend(proc_info)
-        cumulative_trained_on.append(f"{traj}:{traj_epochs}")
+        processed_training_info.extend([f"{traj}:{traj_epochs}"])
+        if f"{traj}:{traj_epochs}" not in cumulative_trained_on:
+            cumulative_trained_on.append(f"{traj}:{traj_epochs}")
     
     if not global_training_summary:
         log_global("No training trajectories processed; aborting.")
@@ -578,9 +631,10 @@ def main():
     
     log_global("=== Testing Phase ===")
     global_test_summary = []
+    base_trained_on = ", ".join(dict.fromkeys(cumulative_trained_on).keys()) if cumulative_trained_on else "NONE"
     for traj in testing_list:
         log_global(f"Processing testing trajectory: {traj}")
-        test_summary = test_on_trajectory(traj, config, final_checkpoint_filename, cumulative_trained_on)
+        test_summary = test_on_trajectory(traj, config, final_checkpoint_filename, run_id, base_trained_on, missing_freq_str)
         if test_summary:
             global_test_summary.append(test_summary)
     if global_test_summary:

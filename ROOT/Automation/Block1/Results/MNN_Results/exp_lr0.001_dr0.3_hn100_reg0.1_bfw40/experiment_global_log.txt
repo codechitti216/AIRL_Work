@@ -1,0 +1,1686 @@
+Experiment Log
+[2025-03-24 13:07:41] DEBUG: beams_training length: 400, beams_gt length: 400, imu length: 40000
+[2025-03-24 13:07:41] Starting search from index 3
+[2025-03-24 13:07:41] Valid input-target pair found at index 3.
+[2025-03-24 13:07:41] Using starting index 3 from the first trajectory.
+[2025-03-24 13:07:41] Constructed sample at index 3.
+[2025-03-24 13:07:41] Constructed sample at index 4.
+[2025-03-24 13:07:41] Constructed sample at index 5.
+[2025-03-24 13:07:41] Constructed sample at index 6.
+[2025-03-24 13:07:41] Constructed sample at index 7.
+[2025-03-24 13:07:41] Constructed sample at index 8.
+[2025-03-24 13:07:41] Constructed sample at index 9.
+[2025-03-24 13:07:41] Constructed sample at index 10.
+[2025-03-24 13:07:41] Constructed sample at index 11.
+[2025-03-24 13:07:41] Constructed sample at index 12.
+[2025-03-24 13:07:41] Constructed sample at index 13.
+[2025-03-24 13:07:41] Constructed sample at index 14.
+[2025-03-24 13:07:41] Constructed sample at index 15.
+[2025-03-24 13:07:41] Constructed sample at index 16.
+[2025-03-24 13:07:41] Constructed sample at index 17.
+[2025-03-24 13:07:41] Constructed sample at index 18.
+[2025-03-24 13:07:41] Constructed sample at index 19.
+[2025-03-24 13:07:41] Constructed sample at index 20.
+[2025-03-24 13:07:41] Constructed sample at index 21.
+[2025-03-24 13:07:41] Constructed sample at index 22.
+[2025-03-24 13:07:41] Constructed sample at index 23.
+[2025-03-24 13:07:41] Constructed sample at index 24.
+[2025-03-24 13:07:41] Constructed sample at index 25.
+[2025-03-24 13:07:41] Constructed sample at index 26.
+[2025-03-24 13:07:41] Constructed sample at index 27.
+[2025-03-24 13:07:41] Constructed sample at index 28.
+[2025-03-24 13:07:41] Constructed sample at index 29.
+[2025-03-24 13:07:41] Constructed sample at index 30.
+[2025-03-24 13:07:41] Constructed sample at index 31.
+[2025-03-24 13:07:41] Constructed sample at index 32.
+[2025-03-24 13:07:41] Constructed sample at index 33.
+[2025-03-24 13:07:41] Constructed sample at index 34.
+[2025-03-24 13:07:41] Constructed sample at index 35.
+[2025-03-24 13:07:41] Constructed sample at index 36.
+[2025-03-24 13:07:41] Constructed sample at index 37.
+[2025-03-24 13:07:41] Constructed sample at index 38.
+[2025-03-24 13:07:41] Constructed sample at index 39.
+[2025-03-24 13:07:41] Constructed sample at index 40.
+[2025-03-24 13:07:41] Constructed sample at index 41.
+[2025-03-24 13:07:41] Constructed sample at index 42.
+[2025-03-24 13:07:41] Constructed sample at index 43.
+[2025-03-24 13:07:41] Constructed sample at index 44.
+[2025-03-24 13:07:41] Constructed sample at index 45.
+[2025-03-24 13:07:41] Constructed sample at index 46.
+[2025-03-24 13:07:41] Constructed sample at index 47.
+[2025-03-24 13:07:41] Constructed sample at index 48.
+[2025-03-24 13:07:41] Constructed sample at index 49.
+[2025-03-24 13:07:41] Constructed sample at index 50.
+[2025-03-24 13:07:41] Constructed sample at index 51.
+[2025-03-24 13:07:41] Constructed sample at index 52.
+[2025-03-24 13:07:41] Constructed sample at index 53.
+[2025-03-24 13:07:41] Constructed sample at index 54.
+[2025-03-24 13:07:41] Constructed sample at index 55.
+[2025-03-24 13:07:41] Constructed sample at index 56.
+[2025-03-24 13:07:41] Constructed sample at index 57.
+[2025-03-24 13:07:41] Constructed sample at index 58.
+[2025-03-24 13:07:41] Constructed sample at index 59.
+[2025-03-24 13:07:41] Constructed sample at index 60.
+[2025-03-24 13:07:41] Constructed sample at index 61.
+[2025-03-24 13:07:41] Constructed sample at index 62.
+[2025-03-24 13:07:41] Constructed sample at index 63.
+[2025-03-24 13:07:41] Constructed sample at index 64.
+[2025-03-24 13:07:41] Constructed sample at index 65.
+[2025-03-24 13:07:41] Constructed sample at index 66.
+[2025-03-24 13:07:41] Constructed sample at index 67.
+[2025-03-24 13:07:41] Constructed sample at index 68.
+[2025-03-24 13:07:41] Constructed sample at index 69.
+[2025-03-24 13:07:41] Constructed sample at index 70.
+[2025-03-24 13:07:41] Constructed sample at index 71.
+[2025-03-24 13:07:41] Constructed sample at index 72.
+[2025-03-24 13:07:41] Constructed sample at index 73.
+[2025-03-24 13:07:41] Constructed sample at index 74.
+[2025-03-24 13:07:41] Constructed sample at index 75.
+[2025-03-24 13:07:41] Constructed sample at index 76.
+[2025-03-24 13:07:41] Constructed sample at index 77.
+[2025-03-24 13:07:41] Constructed sample at index 78.
+[2025-03-24 13:07:41] Constructed sample at index 79.
+[2025-03-24 13:07:41] Constructed sample at index 80.
+[2025-03-24 13:07:41] Constructed sample at index 81.
+[2025-03-24 13:07:41] Constructed sample at index 82.
+[2025-03-24 13:07:41] Constructed sample at index 83.
+[2025-03-24 13:07:41] Constructed sample at index 84.
+[2025-03-24 13:07:41] Constructed sample at index 85.
+[2025-03-24 13:07:41] Constructed sample at index 86.
+[2025-03-24 13:07:41] Constructed sample at index 87.
+[2025-03-24 13:07:41] Constructed sample at index 88.
+[2025-03-24 13:07:41] Constructed sample at index 89.
+[2025-03-24 13:07:41] Constructed sample at index 90.
+[2025-03-24 13:07:41] Constructed sample at index 91.
+[2025-03-24 13:07:41] Constructed sample at index 92.
+[2025-03-24 13:07:41] Constructed sample at index 93.
+[2025-03-24 13:07:41] Constructed sample at index 94.
+[2025-03-24 13:07:41] Constructed sample at index 95.
+[2025-03-24 13:07:41] Constructed sample at index 96.
+[2025-03-24 13:07:41] Constructed sample at index 97.
+[2025-03-24 13:07:41] Constructed sample at index 98.
+[2025-03-24 13:07:41] Constructed sample at index 99.
+[2025-03-24 13:07:41] Constructed sample at index 100.
+[2025-03-24 13:07:41] Constructed sample at index 101.
+[2025-03-24 13:07:41] Constructed sample at index 102.
+[2025-03-24 13:07:41] Constructed sample at index 103.
+[2025-03-24 13:07:41] Constructed sample at index 104.
+[2025-03-24 13:07:41] Constructed sample at index 105.
+[2025-03-24 13:07:41] Constructed sample at index 106.
+[2025-03-24 13:07:41] Constructed sample at index 107.
+[2025-03-24 13:07:41] Constructed sample at index 108.
+[2025-03-24 13:07:41] Constructed sample at index 109.
+[2025-03-24 13:07:41] Constructed sample at index 110.
+[2025-03-24 13:07:41] Constructed sample at index 111.
+[2025-03-24 13:07:41] Constructed sample at index 112.
+[2025-03-24 13:07:41] Constructed sample at index 113.
+[2025-03-24 13:07:41] Constructed sample at index 114.
+[2025-03-24 13:07:41] Constructed sample at index 115.
+[2025-03-24 13:07:41] Constructed sample at index 116.
+[2025-03-24 13:07:41] Constructed sample at index 117.
+[2025-03-24 13:07:41] Constructed sample at index 118.
+[2025-03-24 13:07:41] Constructed sample at index 119.
+[2025-03-24 13:07:41] Constructed sample at index 120.
+[2025-03-24 13:07:41] Constructed sample at index 121.
+[2025-03-24 13:07:41] Constructed sample at index 122.
+[2025-03-24 13:07:41] Constructed sample at index 123.
+[2025-03-24 13:07:41] Constructed sample at index 124.
+[2025-03-24 13:07:41] Constructed sample at index 125.
+[2025-03-24 13:07:41] Constructed sample at index 126.
+[2025-03-24 13:07:41] Constructed sample at index 127.
+[2025-03-24 13:07:41] Constructed sample at index 128.
+[2025-03-24 13:07:41] Constructed sample at index 129.
+[2025-03-24 13:07:41] Constructed sample at index 130.
+[2025-03-24 13:07:41] Constructed sample at index 131.
+[2025-03-24 13:07:41] Constructed sample at index 132.
+[2025-03-24 13:07:41] Constructed sample at index 133.
+[2025-03-24 13:07:41] Constructed sample at index 134.
+[2025-03-24 13:07:41] Constructed sample at index 135.
+[2025-03-24 13:07:41] Constructed sample at index 136.
+[2025-03-24 13:07:41] Constructed sample at index 137.
+[2025-03-24 13:07:41] Constructed sample at index 138.
+[2025-03-24 13:07:41] Constructed sample at index 139.
+[2025-03-24 13:07:41] Constructed sample at index 140.
+[2025-03-24 13:07:41] Constructed sample at index 141.
+[2025-03-24 13:07:41] Constructed sample at index 142.
+[2025-03-24 13:07:41] Constructed sample at index 143.
+[2025-03-24 13:07:41] Constructed sample at index 144.
+[2025-03-24 13:07:41] Constructed sample at index 145.
+[2025-03-24 13:07:41] Constructed sample at index 146.
+[2025-03-24 13:07:41] Constructed sample at index 147.
+[2025-03-24 13:07:41] Constructed sample at index 148.
+[2025-03-24 13:07:41] Constructed sample at index 149.
+[2025-03-24 13:07:41] Constructed sample at index 150.
+[2025-03-24 13:07:41] Constructed sample at index 151.
+[2025-03-24 13:07:41] Constructed sample at index 152.
+[2025-03-24 13:07:41] Constructed sample at index 153.
+[2025-03-24 13:07:41] Constructed sample at index 154.
+[2025-03-24 13:07:41] Constructed sample at index 155.
+[2025-03-24 13:07:41] Constructed sample at index 156.
+[2025-03-24 13:07:41] Constructed sample at index 157.
+[2025-03-24 13:07:41] Constructed sample at index 158.
+[2025-03-24 13:07:41] Constructed sample at index 159.
+[2025-03-24 13:07:41] Constructed sample at index 160.
+[2025-03-24 13:07:41] Constructed sample at index 161.
+[2025-03-24 13:07:41] Constructed sample at index 162.
+[2025-03-24 13:07:41] Constructed sample at index 163.
+[2025-03-24 13:07:41] Constructed sample at index 164.
+[2025-03-24 13:07:41] Constructed sample at index 165.
+[2025-03-24 13:07:41] Constructed sample at index 166.
+[2025-03-24 13:07:41] Constructed sample at index 167.
+[2025-03-24 13:07:41] Constructed sample at index 168.
+[2025-03-24 13:07:41] Constructed sample at index 169.
+[2025-03-24 13:07:41] Constructed sample at index 170.
+[2025-03-24 13:07:41] Constructed sample at index 171.
+[2025-03-24 13:07:41] Constructed sample at index 172.
+[2025-03-24 13:07:41] Constructed sample at index 173.
+[2025-03-24 13:07:41] Constructed sample at index 174.
+[2025-03-24 13:07:41] Constructed sample at index 175.
+[2025-03-24 13:07:41] Constructed sample at index 176.
+[2025-03-24 13:07:41] Constructed sample at index 177.
+[2025-03-24 13:07:41] Constructed sample at index 178.
+[2025-03-24 13:07:41] Constructed sample at index 179.
+[2025-03-24 13:07:41] Constructed sample at index 180.
+[2025-03-24 13:07:41] Constructed sample at index 181.
+[2025-03-24 13:07:41] Constructed sample at index 182.
+[2025-03-24 13:07:41] Constructed sample at index 183.
+[2025-03-24 13:07:41] Constructed sample at index 184.
+[2025-03-24 13:07:41] Constructed sample at index 185.
+[2025-03-24 13:07:41] Constructed sample at index 186.
+[2025-03-24 13:07:41] Constructed sample at index 187.
+[2025-03-24 13:07:41] Constructed sample at index 188.
+[2025-03-24 13:07:41] Constructed sample at index 189.
+[2025-03-24 13:07:41] Constructed sample at index 190.
+[2025-03-24 13:07:41] Constructed sample at index 191.
+[2025-03-24 13:07:41] Constructed sample at index 192.
+[2025-03-24 13:07:41] Constructed sample at index 193.
+[2025-03-24 13:07:41] Constructed sample at index 194.
+[2025-03-24 13:07:41] Constructed sample at index 195.
+[2025-03-24 13:07:41] Constructed sample at index 196.
+[2025-03-24 13:07:41] Constructed sample at index 197.
+[2025-03-24 13:07:41] Constructed sample at index 198.
+[2025-03-24 13:07:41] Constructed sample at index 199.
+[2025-03-24 13:07:41] Constructed sample at index 200.
+[2025-03-24 13:07:41] Constructed sample at index 201.
+[2025-03-24 13:07:41] Constructed sample at index 202.
+[2025-03-24 13:07:41] Constructed sample at index 203.
+[2025-03-24 13:07:41] Constructed sample at index 204.
+[2025-03-24 13:07:41] Constructed sample at index 205.
+[2025-03-24 13:07:41] Constructed sample at index 206.
+[2025-03-24 13:07:41] Constructed sample at index 207.
+[2025-03-24 13:07:41] Constructed sample at index 208.
+[2025-03-24 13:07:41] Constructed sample at index 209.
+[2025-03-24 13:07:41] Constructed sample at index 210.
+[2025-03-24 13:07:41] Constructed sample at index 211.
+[2025-03-24 13:07:41] Constructed sample at index 212.
+[2025-03-24 13:07:41] Constructed sample at index 213.
+[2025-03-24 13:07:41] Constructed sample at index 214.
+[2025-03-24 13:07:41] Constructed sample at index 215.
+[2025-03-24 13:07:41] Constructed sample at index 216.
+[2025-03-24 13:07:41] Constructed sample at index 217.
+[2025-03-24 13:07:41] Constructed sample at index 218.
+[2025-03-24 13:07:41] Constructed sample at index 219.
+[2025-03-24 13:07:41] Constructed sample at index 220.
+[2025-03-24 13:07:41] Constructed sample at index 221.
+[2025-03-24 13:07:41] Constructed sample at index 222.
+[2025-03-24 13:07:41] Constructed sample at index 223.
+[2025-03-24 13:07:41] Constructed sample at index 224.
+[2025-03-24 13:07:41] Constructed sample at index 225.
+[2025-03-24 13:07:41] Constructed sample at index 226.
+[2025-03-24 13:07:41] Constructed sample at index 227.
+[2025-03-24 13:07:41] Constructed sample at index 228.
+[2025-03-24 13:07:41] Constructed sample at index 229.
+[2025-03-24 13:07:41] Constructed sample at index 230.
+[2025-03-24 13:07:41] Constructed sample at index 231.
+[2025-03-24 13:07:41] Constructed sample at index 232.
+[2025-03-24 13:07:41] Constructed sample at index 233.
+[2025-03-24 13:07:41] Constructed sample at index 234.
+[2025-03-24 13:07:41] Constructed sample at index 235.
+[2025-03-24 13:07:41] Constructed sample at index 236.
+[2025-03-24 13:07:41] Constructed sample at index 237.
+[2025-03-24 13:07:41] Constructed sample at index 238.
+[2025-03-24 13:07:41] Constructed sample at index 239.
+[2025-03-24 13:07:41] Constructed sample at index 240.
+[2025-03-24 13:07:41] Constructed sample at index 241.
+[2025-03-24 13:07:41] Constructed sample at index 242.
+[2025-03-24 13:07:41] Constructed sample at index 243.
+[2025-03-24 13:07:41] Constructed sample at index 244.
+[2025-03-24 13:07:41] Constructed sample at index 245.
+[2025-03-24 13:07:41] Constructed sample at index 246.
+[2025-03-24 13:07:41] Constructed sample at index 247.
+[2025-03-24 13:07:41] Constructed sample at index 248.
+[2025-03-24 13:07:41] Constructed sample at index 249.
+[2025-03-24 13:07:41] Constructed sample at index 250.
+[2025-03-24 13:07:41] Constructed sample at index 251.
+[2025-03-24 13:07:41] Constructed sample at index 252.
+[2025-03-24 13:07:41] Constructed sample at index 253.
+[2025-03-24 13:07:41] Constructed sample at index 254.
+[2025-03-24 13:07:41] Constructed sample at index 255.
+[2025-03-24 13:07:41] Constructed sample at index 256.
+[2025-03-24 13:07:41] Constructed sample at index 257.
+[2025-03-24 13:07:41] Constructed sample at index 258.
+[2025-03-24 13:07:41] Constructed sample at index 259.
+[2025-03-24 13:07:41] Constructed sample at index 260.
+[2025-03-24 13:07:41] Constructed sample at index 261.
+[2025-03-24 13:07:41] Constructed sample at index 262.
+[2025-03-24 13:07:41] Constructed sample at index 263.
+[2025-03-24 13:07:41] Constructed sample at index 264.
+[2025-03-24 13:07:41] Constructed sample at index 265.
+[2025-03-24 13:07:41] Constructed sample at index 266.
+[2025-03-24 13:07:41] Constructed sample at index 267.
+[2025-03-24 13:07:41] Constructed sample at index 268.
+[2025-03-24 13:07:41] Constructed sample at index 269.
+[2025-03-24 13:07:41] Constructed sample at index 270.
+[2025-03-24 13:07:41] Constructed sample at index 271.
+[2025-03-24 13:07:41] Constructed sample at index 272.
+[2025-03-24 13:07:41] Constructed sample at index 273.
+[2025-03-24 13:07:41] Constructed sample at index 274.
+[2025-03-24 13:07:41] Constructed sample at index 275.
+[2025-03-24 13:07:41] Constructed sample at index 276.
+[2025-03-24 13:07:41] Constructed sample at index 277.
+[2025-03-24 13:07:41] Constructed sample at index 278.
+[2025-03-24 13:07:41] Constructed sample at index 279.
+[2025-03-24 13:07:41] Constructed sample at index 280.
+[2025-03-24 13:07:41] Constructed sample at index 281.
+[2025-03-24 13:07:41] Constructed sample at index 282.
+[2025-03-24 13:07:41] Constructed sample at index 283.
+[2025-03-24 13:07:41] Constructed sample at index 284.
+[2025-03-24 13:07:41] Constructed sample at index 285.
+[2025-03-24 13:07:41] Constructed sample at index 286.
+[2025-03-24 13:07:41] Constructed sample at index 287.
+[2025-03-24 13:07:41] Constructed sample at index 288.
+[2025-03-24 13:07:41] Constructed sample at index 289.
+[2025-03-24 13:07:41] Constructed sample at index 290.
+[2025-03-24 13:07:41] Constructed sample at index 291.
+[2025-03-24 13:07:41] Constructed sample at index 292.
+[2025-03-24 13:07:41] Constructed sample at index 293.
+[2025-03-24 13:07:41] Constructed sample at index 294.
+[2025-03-24 13:07:41] Constructed sample at index 295.
+[2025-03-24 13:07:41] Constructed sample at index 296.
+[2025-03-24 13:07:41] Constructed sample at index 297.
+[2025-03-24 13:07:41] Constructed sample at index 298.
+[2025-03-24 13:07:41] Constructed sample at index 299.
+[2025-03-24 13:07:41] Constructed sample at index 300.
+[2025-03-24 13:07:41] Constructed sample at index 301.
+[2025-03-24 13:07:41] Constructed sample at index 302.
+[2025-03-24 13:07:41] Constructed sample at index 303.
+[2025-03-24 13:07:41] Constructed sample at index 304.
+[2025-03-24 13:07:41] Constructed sample at index 305.
+[2025-03-24 13:07:41] Constructed sample at index 306.
+[2025-03-24 13:07:41] Constructed sample at index 307.
+[2025-03-24 13:07:41] Constructed sample at index 308.
+[2025-03-24 13:07:41] Constructed sample at index 309.
+[2025-03-24 13:07:41] Constructed sample at index 310.
+[2025-03-24 13:07:41] Constructed sample at index 311.
+[2025-03-24 13:07:41] Constructed sample at index 312.
+[2025-03-24 13:07:41] Constructed sample at index 313.
+[2025-03-24 13:07:41] Constructed sample at index 314.
+[2025-03-24 13:07:41] Constructed sample at index 315.
+[2025-03-24 13:07:41] Constructed sample at index 316.
+[2025-03-24 13:07:41] Constructed sample at index 317.
+[2025-03-24 13:07:41] Constructed sample at index 318.
+[2025-03-24 13:07:41] Constructed sample at index 319.
+[2025-03-24 13:07:41] Constructed sample at index 320.
+[2025-03-24 13:07:41] Constructed sample at index 321.
+[2025-03-24 13:07:41] Constructed sample at index 322.
+[2025-03-24 13:07:41] Constructed sample at index 323.
+[2025-03-24 13:07:41] Constructed sample at index 324.
+[2025-03-24 13:07:41] Constructed sample at index 325.
+[2025-03-24 13:07:41] Constructed sample at index 326.
+[2025-03-24 13:07:41] Constructed sample at index 327.
+[2025-03-24 13:07:41] Constructed sample at index 328.
+[2025-03-24 13:07:41] Constructed sample at index 329.
+[2025-03-24 13:07:41] Constructed sample at index 330.
+[2025-03-24 13:07:41] Constructed sample at index 331.
+[2025-03-24 13:07:41] Constructed sample at index 332.
+[2025-03-24 13:07:41] Constructed sample at index 333.
+[2025-03-24 13:07:41] Constructed sample at index 334.
+[2025-03-24 13:07:41] Constructed sample at index 335.
+[2025-03-24 13:07:41] Constructed sample at index 336.
+[2025-03-24 13:07:41] Constructed sample at index 337.
+[2025-03-24 13:07:41] Constructed sample at index 338.
+[2025-03-24 13:07:41] Constructed sample at index 339.
+[2025-03-24 13:07:41] Constructed sample at index 340.
+[2025-03-24 13:07:41] Constructed sample at index 341.
+[2025-03-24 13:07:41] Constructed sample at index 342.
+[2025-03-24 13:07:41] Constructed sample at index 343.
+[2025-03-24 13:07:41] Constructed sample at index 344.
+[2025-03-24 13:07:41] Constructed sample at index 345.
+[2025-03-24 13:07:41] Constructed sample at index 346.
+[2025-03-24 13:07:41] Constructed sample at index 347.
+[2025-03-24 13:07:41] Constructed sample at index 348.
+[2025-03-24 13:07:41] Constructed sample at index 349.
+[2025-03-24 13:07:41] Constructed sample at index 350.
+[2025-03-24 13:07:41] Constructed sample at index 351.
+[2025-03-24 13:07:41] Constructed sample at index 352.
+[2025-03-24 13:07:41] Constructed sample at index 353.
+[2025-03-24 13:07:41] Constructed sample at index 354.
+[2025-03-24 13:07:41] Constructed sample at index 355.
+[2025-03-24 13:07:41] Constructed sample at index 356.
+[2025-03-24 13:07:41] Constructed sample at index 357.
+[2025-03-24 13:07:41] Constructed sample at index 358.
+[2025-03-24 13:07:41] Constructed sample at index 359.
+[2025-03-24 13:07:41] Constructed sample at index 360.
+[2025-03-24 13:07:41] Constructed sample at index 361.
+[2025-03-24 13:07:41] Constructed sample at index 362.
+[2025-03-24 13:07:41] Constructed sample at index 363.
+[2025-03-24 13:07:41] Constructed sample at index 364.
+[2025-03-24 13:07:41] Constructed sample at index 365.
+[2025-03-24 13:07:41] Constructed sample at index 366.
+[2025-03-24 13:07:41] Constructed sample at index 367.
+[2025-03-24 13:07:41] Constructed sample at index 368.
+[2025-03-24 13:07:41] Constructed sample at index 369.
+[2025-03-24 13:07:41] Constructed sample at index 370.
+[2025-03-24 13:07:41] Constructed sample at index 371.
+[2025-03-24 13:07:41] Constructed sample at index 372.
+[2025-03-24 13:07:41] Constructed sample at index 373.
+[2025-03-24 13:07:41] Constructed sample at index 374.
+[2025-03-24 13:07:41] Constructed sample at index 375.
+[2025-03-24 13:07:41] Constructed sample at index 376.
+[2025-03-24 13:07:41] Constructed sample at index 377.
+[2025-03-24 13:07:41] Constructed sample at index 378.
+[2025-03-24 13:07:41] Constructed sample at index 379.
+[2025-03-24 13:07:41] Constructed sample at index 380.
+[2025-03-24 13:07:41] Constructed sample at index 381.
+[2025-03-24 13:07:41] Constructed sample at index 382.
+[2025-03-24 13:07:41] Constructed sample at index 383.
+[2025-03-24 13:07:41] Constructed sample at index 384.
+[2025-03-24 13:07:41] Constructed sample at index 385.
+[2025-03-24 13:07:41] Constructed sample at index 386.
+[2025-03-24 13:07:41] Constructed sample at index 387.
+[2025-03-24 13:07:41] Constructed sample at index 388.
+[2025-03-24 13:07:41] Constructed sample at index 389.
+[2025-03-24 13:07:41] Constructed sample at index 390.
+[2025-03-24 13:07:41] Constructed sample at index 391.
+[2025-03-24 13:07:41] Constructed sample at index 392.
+[2025-03-24 13:07:41] Constructed sample at index 393.
+[2025-03-24 13:07:41] Constructed sample at index 394.
+[2025-03-24 13:07:41] Constructed sample at index 395.
+[2025-03-24 13:07:41] Constructed sample at index 396.
+[2025-03-24 13:07:41] Constructed sample at index 397.
+[2025-03-24 13:07:41] Constructed sample at index 398.
+[2025-03-24 13:07:41] Constructed sample at index 399.
+[2025-03-24 13:07:41] === Sequential Training Phase ===
+[2025-03-24 13:07:41] Processing training trajectory: Trajectory1 for 30 epochs
+[2025-03-24 13:07:41] [DEBUG] Missing percentage string: b1_20-b2_15-b3_10-b4_5
+[2025-03-24 13:07:41] === Training on Trajectory: Trajectory1 for 30 epochs ===
+[2025-03-24 13:07:41] DEBUG: beams_training length: 400, beams_gt length: 400, imu length: 40000
+[2025-03-24 13:07:41] Original missing count in Trajectory1: 191
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 40 with moving average -0.5440228231872282
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 42 with moving average -0.4872775979933013
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 45 with moving average -0.49307384770990376
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 46 with moving average -0.49254109847514344
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 49 with moving average 0.5354850633795051
+[2025-03-24 13:07:41] DEBUG: Filling missing b4 at row 54 with moving average 0.46666515331786285
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 55 with moving average -0.46959230299549315
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 56 with moving average -0.5736087314297708
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 57 with moving average 0.5703644086531569
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 61 with moving average 0.5850580504398905
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 63 with moving average 0.5890319433781082
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 63 with moving average -0.6051999093990303
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 66 with moving average -0.60228049585475
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 68 with moving average -0.4440717710383483
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 69 with moving average 0.5690010333691388
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 79 with moving average 0.5224633977930281
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 81 with moving average 0.5148687081423727
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 81 with moving average -0.3679962309348155
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 81 with moving average -0.5522644472843913
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 83 with moving average 0.5169699358726417
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 83 with moving average -0.5571400983025028
+[2025-03-24 13:07:41] DEBUG: Filling missing b4 at row 84 with moving average 0.31416128056984566
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 85 with moving average 0.522340575070041
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 85 with moving average -0.3501992094989043
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 87 with moving average 0.5167690850373567
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 88 with moving average 0.5156661751014401
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 89 with moving average 0.5149071783401892
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 91 with moving average -0.33967326369126244
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 91 with moving average -0.5308496338368489
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 92 with moving average 0.5076836363987256
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 93 with moving average 0.5068507695417639
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 93 with moving average -0.3363567785129451
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 95 with moving average 0.5045334974729379
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 96 with moving average 0.5041628091764213
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 98 with moving average 0.499860217266254
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 100 with moving average 0.4971723296409897
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 104 with moving average 0.48746192305369596
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 105 with moving average -0.47080187615948105
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 106 with moving average 0.48472297361950645
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 107 with moving average 0.48471914511609493
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 110 with moving average -0.3095586649185128
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 111 with moving average -0.4425659492018942
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 112 with moving average -0.31926201546477706
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 113 with moving average 0.46796538074674005
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 114 with moving average 0.4670001351944199
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 114 with moving average -0.32982205204937404
+[2025-03-24 13:07:41] DEBUG: Filling missing b4 at row 115 with moving average 0.35378436672867813
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 116 with moving average -0.42497284386734435
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 121 with moving average 0.45629126615766424
+[2025-03-24 13:07:41] DEBUG: Filling missing b4 at row 121 with moving average 0.3653246356048401
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 123 with moving average -0.4130249326392474
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 129 with moving average 0.4430208054038875
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 138 with moving average -0.4119964238268684
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 140 with moving average -0.3120821934131473
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 142 with moving average 0.4197439404257838
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 142 with moving average -0.3128581974951491
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 146 with moving average -0.41313594687316907
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 152 with moving average -0.4110503094497117
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 154 with moving average 0.40003312000407687
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 155 with moving average -0.3280770041183777
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 156 with moving average -0.32878127544087415
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 159 with moving average -0.33292407301749727
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 160 with moving average 0.39097256819960113
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 161 with moving average -0.33576192193625476
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 162 with moving average 0.3876871928290523
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 162 with moving average -0.4042222499504299
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 164 with moving average 0.38595623660447054
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 164 with moving average -0.40280284729382954
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 166 with moving average 0.3839452940227638
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 168 with moving average 0.38171241999547895
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 168 with moving average -0.34662958345164785
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 170 with moving average 0.37872486130031013
+[2025-03-24 13:07:41] DEBUG: Filling missing b4 at row 171 with moving average 0.3335694513520433
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 173 with moving average -0.3950688581337232
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 175 with moving average -0.39341529468821956
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 178 with moving average 0.36644158501074764
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 179 with moving average 0.3659178169296264
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 180 with moving average 0.36552692991786573
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 182 with moving average -0.38576513501911724
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 183 with moving average -0.38528711862212417
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 184 with moving average 0.3614396200781559
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 184 with moving average -0.38492128669224457
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 185 with moving average 0.36104232968001815
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 186 with moving average -0.3833889861670757
+[2025-03-24 13:07:41] DEBUG: Filling missing b4 at row 187 with moving average 0.3544417560286414
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 195 with moving average -0.3884303807935665
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 196 with moving average -0.36624455106061954
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 198 with moving average -0.36384648567336003
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 201 with moving average -0.3972256497712655
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 202 with moving average -0.35722950886446797
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 203 with moving average 0.33616038829676365
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 207 with moving average 0.3303851930778117
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 209 with moving average -0.34396724933637707
+[2025-03-24 13:07:41] DEBUG: Filling missing b4 at row 212 with moving average 0.396518789737817
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 213 with moving average -0.4102556313890099
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 220 with moving average -0.3227073380231569
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 222 with moving average 0.3073527293871617
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 223 with moving average 0.30629112433013633
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 224 with moving average -0.3148415179672171
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 229 with moving average -0.4268018457860617
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 230 with moving average 0.28454447203863364
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 230 with moving average -0.42787744915942894
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 236 with moving average 0.27121766161882255
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 238 with moving average 0.27487531354779465
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 238 with moving average -0.3352906053559047
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 239 with moving average 0.274211546464052
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 241 with moving average 0.28128419779173186
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 241 with moving average -0.47681254736699863
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 242 with moving average 0.28074041448083475
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 244 with moving average 0.28690983239144074
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 245 with moving average 0.2866300883005996
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 245 with moving average -0.3535367227438578
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 249 with moving average -0.37596832368371674
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 253 with moving average -0.5564486564571189
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 254 with moving average 0.338579113825515
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 254 with moving average -0.5601034820838217
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 255 with moving average 0.3400297689925812
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 255 with moving average -0.5632880712088818
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 257 with moving average 0.3485379772776225
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 258 with moving average -0.43790482026055894
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 259 with moving average -0.5901073104035668
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 259 with moving average -0.44166842604469514
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 260 with moving average 0.36354782297442084
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 261 with moving average 0.3657519486555794
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 263 with moving average 0.37451287223748625
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 268 with moving average 0.37893215330703744
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 269 with moving average -0.6577691580219571
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 271 with moving average -0.6671143234050645
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 272 with moving average 0.39577041203082164
+[2025-03-24 13:07:41] DEBUG: Filling missing b4 at row 274 with moving average 0.692534685271972
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 277 with moving average -0.6506110702295949
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 281 with moving average 0.4082675378437524
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 281 with moving average -0.6503631134114735
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 283 with moving average 0.41686224424016116
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 286 with moving average 0.42512496819667733
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 290 with moving average 0.42029933160295974
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 291 with moving average 0.41689727282657874
+[2025-03-24 13:07:41] DEBUG: Filling missing b4 at row 293 with moving average 0.6128784293554264
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 294 with moving average 0.41164176074365655
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 304 with moving average 0.4341166072752106
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 307 with moving average -0.5667023534283533
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 311 with moving average 0.47679733995448165
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 312 with moving average 0.48199156911860525
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 315 with moving average -0.5370951266167501
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 316 with moving average 0.5050511525809688
+[2025-03-24 13:07:41] DEBUG: Filling missing b4 at row 316 with moving average 0.5384828516159246
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 320 with moving average 0.5177047697428363
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 322 with moving average 0.5211622009927912
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 324 with moving average -0.5593621889713087
+[2025-03-24 13:07:41] DEBUG: Filling missing b4 at row 324 with moving average 0.5107277649279307
+[2025-03-24 13:07:41] DEBUG: Filling missing b4 at row 325 with moving average 0.5110878059875942
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 326 with moving average 0.5256475169870466
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 327 with moving average 0.5281605807068058
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 328 with moving average -0.5135912303611259
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 329 with moving average -0.5127848894648793
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 331 with moving average -0.5159082916022225
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 335 with moving average -0.5390904473721639
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 338 with moving average 0.5124766307936557
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 340 with moving average -0.5410362764428089
+[2025-03-24 13:07:41] DEBUG: Filling missing b4 at row 341 with moving average 0.561629463276812
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 342 with moving average 0.507475544046416
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 342 with moving average -0.5219869604231384
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 343 with moving average 0.5064918044493114
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 343 with moving average -0.5445805433868219
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 345 with moving average 0.5025240507135921
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 346 with moving average 0.5017066338024011
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 346 with moving average -0.5499189108671632
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 348 with moving average -0.54649504326273
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 350 with moving average -0.4480940599226043
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 353 with moving average 0.4520405345638593
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 354 with moving average -0.4171054480630684
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 355 with moving average 0.44503312600542755
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 356 with moving average -0.4094730320136706
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 359 with moving average -0.5306248406053067
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 359 with moving average -0.4002252748488025
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 366 with moving average -0.5407895693098533
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 368 with moving average -0.4057835261692394
+[2025-03-24 13:07:41] DEBUG: Filling missing b4 at row 368 with moving average 0.5691850944299752
+[2025-03-24 13:07:41] DEBUG: Filling missing b4 at row 369 with moving average 0.5681781295257562
+[2025-03-24 13:07:41] DEBUG: Filling missing b4 at row 371 with moving average 0.5608545357362568
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 372 with moving average 0.4410213817214875
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 379 with moving average 0.4449911314126835
+[2025-03-24 13:07:41] DEBUG: Filling missing b4 at row 380 with moving average 0.5316844005487923
+[2025-03-24 13:07:41] DEBUG: Filling missing b1 at row 382 with moving average 0.4325001399463792
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 382 with moving average -0.5025296729702404
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 385 with moving average -0.48685958155586134
+[2025-03-24 13:07:41] DEBUG: Filling missing b3 at row 386 with moving average -0.3862063905816232
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 387 with moving average -0.47987669318802906
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 392 with moving average -0.48143998292088125
+[2025-03-24 13:07:41] DEBUG: Filling missing b4 at row 396 with moving average 0.47691920111959263
+[2025-03-24 13:07:41] DEBUG: Filling missing b2 at row 398 with moving average -0.48166642557380906
+[2025-03-24 13:07:41] Starting search from index 3
+[2025-03-24 13:07:41] Valid input-target pair found at index 3.
+[2025-03-24 13:07:41] Using starting index 3 for constructing input-target pairs.
+[2025-03-24 13:07:41] Constructed sample at index 3.
+[2025-03-24 13:07:41] Constructed sample at index 4.
+[2025-03-24 13:07:41] Constructed sample at index 5.
+[2025-03-24 13:07:41] Constructed sample at index 6.
+[2025-03-24 13:07:41] Constructed sample at index 7.
+[2025-03-24 13:07:41] Constructed sample at index 8.
+[2025-03-24 13:07:41] Constructed sample at index 9.
+[2025-03-24 13:07:41] Constructed sample at index 10.
+[2025-03-24 13:07:41] Constructed sample at index 11.
+[2025-03-24 13:07:41] Constructed sample at index 12.
+[2025-03-24 13:07:41] Constructed sample at index 13.
+[2025-03-24 13:07:41] Constructed sample at index 14.
+[2025-03-24 13:07:41] Constructed sample at index 15.
+[2025-03-24 13:07:41] Constructed sample at index 16.
+[2025-03-24 13:07:41] Constructed sample at index 17.
+[2025-03-24 13:07:41] Constructed sample at index 18.
+[2025-03-24 13:07:41] Constructed sample at index 19.
+[2025-03-24 13:07:41] Constructed sample at index 20.
+[2025-03-24 13:07:41] Constructed sample at index 21.
+[2025-03-24 13:07:41] Constructed sample at index 22.
+[2025-03-24 13:07:41] Constructed sample at index 23.
+[2025-03-24 13:07:41] Constructed sample at index 24.
+[2025-03-24 13:07:41] Constructed sample at index 25.
+[2025-03-24 13:07:41] Constructed sample at index 26.
+[2025-03-24 13:07:41] Constructed sample at index 27.
+[2025-03-24 13:07:41] Constructed sample at index 28.
+[2025-03-24 13:07:41] Constructed sample at index 29.
+[2025-03-24 13:07:41] Constructed sample at index 30.
+[2025-03-24 13:07:41] Constructed sample at index 31.
+[2025-03-24 13:07:41] Constructed sample at index 32.
+[2025-03-24 13:07:41] Constructed sample at index 33.
+[2025-03-24 13:07:41] Constructed sample at index 34.
+[2025-03-24 13:07:41] Constructed sample at index 35.
+[2025-03-24 13:07:41] Constructed sample at index 36.
+[2025-03-24 13:07:41] Constructed sample at index 37.
+[2025-03-24 13:07:41] Constructed sample at index 38.
+[2025-03-24 13:07:41] Constructed sample at index 39.
+[2025-03-24 13:07:41] Constructed sample at index 40.
+[2025-03-24 13:07:41] Constructed sample at index 41.
+[2025-03-24 13:07:41] Constructed sample at index 42.
+[2025-03-24 13:07:41] Constructed sample at index 43.
+[2025-03-24 13:07:41] Constructed sample at index 44.
+[2025-03-24 13:07:41] Constructed sample at index 45.
+[2025-03-24 13:07:41] Constructed sample at index 46.
+[2025-03-24 13:07:41] Constructed sample at index 47.
+[2025-03-24 13:07:41] Constructed sample at index 48.
+[2025-03-24 13:07:41] Constructed sample at index 49.
+[2025-03-24 13:07:41] Constructed sample at index 50.
+[2025-03-24 13:07:41] Constructed sample at index 51.
+[2025-03-24 13:07:41] Constructed sample at index 52.
+[2025-03-24 13:07:41] Constructed sample at index 53.
+[2025-03-24 13:07:41] Constructed sample at index 54.
+[2025-03-24 13:07:41] Constructed sample at index 55.
+[2025-03-24 13:07:41] Constructed sample at index 56.
+[2025-03-24 13:07:41] Constructed sample at index 57.
+[2025-03-24 13:07:41] Constructed sample at index 58.
+[2025-03-24 13:07:41] Constructed sample at index 59.
+[2025-03-24 13:07:41] Constructed sample at index 60.
+[2025-03-24 13:07:41] Constructed sample at index 61.
+[2025-03-24 13:07:41] Constructed sample at index 62.
+[2025-03-24 13:07:41] Constructed sample at index 63.
+[2025-03-24 13:07:41] Constructed sample at index 64.
+[2025-03-24 13:07:41] Constructed sample at index 65.
+[2025-03-24 13:07:41] Constructed sample at index 66.
+[2025-03-24 13:07:41] Constructed sample at index 67.
+[2025-03-24 13:07:41] Constructed sample at index 68.
+[2025-03-24 13:07:41] Constructed sample at index 69.
+[2025-03-24 13:07:41] Constructed sample at index 70.
+[2025-03-24 13:07:41] Constructed sample at index 71.
+[2025-03-24 13:07:41] Constructed sample at index 72.
+[2025-03-24 13:07:41] Constructed sample at index 73.
+[2025-03-24 13:07:41] Constructed sample at index 74.
+[2025-03-24 13:07:41] Constructed sample at index 75.
+[2025-03-24 13:07:41] Constructed sample at index 76.
+[2025-03-24 13:07:41] Constructed sample at index 77.
+[2025-03-24 13:07:41] Constructed sample at index 78.
+[2025-03-24 13:07:41] Constructed sample at index 79.
+[2025-03-24 13:07:41] Constructed sample at index 80.
+[2025-03-24 13:07:41] Constructed sample at index 81.
+[2025-03-24 13:07:41] Constructed sample at index 82.
+[2025-03-24 13:07:41] Constructed sample at index 83.
+[2025-03-24 13:07:41] Constructed sample at index 84.
+[2025-03-24 13:07:41] Constructed sample at index 85.
+[2025-03-24 13:07:41] Constructed sample at index 86.
+[2025-03-24 13:07:41] Constructed sample at index 87.
+[2025-03-24 13:07:41] Constructed sample at index 88.
+[2025-03-24 13:07:41] Constructed sample at index 89.
+[2025-03-24 13:07:42] Constructed sample at index 90.
+[2025-03-24 13:07:42] Constructed sample at index 91.
+[2025-03-24 13:07:42] Constructed sample at index 92.
+[2025-03-24 13:07:42] Constructed sample at index 93.
+[2025-03-24 13:07:42] Constructed sample at index 94.
+[2025-03-24 13:07:42] Constructed sample at index 95.
+[2025-03-24 13:07:42] Constructed sample at index 96.
+[2025-03-24 13:07:42] Constructed sample at index 97.
+[2025-03-24 13:07:42] Constructed sample at index 98.
+[2025-03-24 13:07:42] Constructed sample at index 99.
+[2025-03-24 13:07:42] Constructed sample at index 100.
+[2025-03-24 13:07:42] Constructed sample at index 101.
+[2025-03-24 13:07:42] Constructed sample at index 102.
+[2025-03-24 13:07:42] Constructed sample at index 103.
+[2025-03-24 13:07:42] Constructed sample at index 104.
+[2025-03-24 13:07:42] Constructed sample at index 105.
+[2025-03-24 13:07:42] Constructed sample at index 106.
+[2025-03-24 13:07:42] Constructed sample at index 107.
+[2025-03-24 13:07:42] Constructed sample at index 108.
+[2025-03-24 13:07:42] Constructed sample at index 109.
+[2025-03-24 13:07:42] Constructed sample at index 110.
+[2025-03-24 13:07:42] Constructed sample at index 111.
+[2025-03-24 13:07:42] Constructed sample at index 112.
+[2025-03-24 13:07:42] Constructed sample at index 113.
+[2025-03-24 13:07:42] Constructed sample at index 114.
+[2025-03-24 13:07:42] Constructed sample at index 115.
+[2025-03-24 13:07:42] Constructed sample at index 116.
+[2025-03-24 13:07:42] Constructed sample at index 117.
+[2025-03-24 13:07:42] Constructed sample at index 118.
+[2025-03-24 13:07:42] Constructed sample at index 119.
+[2025-03-24 13:07:42] Constructed sample at index 120.
+[2025-03-24 13:07:42] Constructed sample at index 121.
+[2025-03-24 13:07:42] Constructed sample at index 122.
+[2025-03-24 13:07:42] Constructed sample at index 123.
+[2025-03-24 13:07:42] Constructed sample at index 124.
+[2025-03-24 13:07:42] Constructed sample at index 125.
+[2025-03-24 13:07:42] Constructed sample at index 126.
+[2025-03-24 13:07:42] Constructed sample at index 127.
+[2025-03-24 13:07:42] Constructed sample at index 128.
+[2025-03-24 13:07:42] Constructed sample at index 129.
+[2025-03-24 13:07:42] Constructed sample at index 130.
+[2025-03-24 13:07:42] Constructed sample at index 131.
+[2025-03-24 13:07:42] Constructed sample at index 132.
+[2025-03-24 13:07:42] Constructed sample at index 133.
+[2025-03-24 13:07:42] Constructed sample at index 134.
+[2025-03-24 13:07:42] Constructed sample at index 135.
+[2025-03-24 13:07:42] Constructed sample at index 136.
+[2025-03-24 13:07:42] Constructed sample at index 137.
+[2025-03-24 13:07:42] Constructed sample at index 138.
+[2025-03-24 13:07:42] Constructed sample at index 139.
+[2025-03-24 13:07:42] Constructed sample at index 140.
+[2025-03-24 13:07:42] Constructed sample at index 141.
+[2025-03-24 13:07:42] Constructed sample at index 142.
+[2025-03-24 13:07:42] Constructed sample at index 143.
+[2025-03-24 13:07:42] Constructed sample at index 144.
+[2025-03-24 13:07:42] Constructed sample at index 145.
+[2025-03-24 13:07:42] Constructed sample at index 146.
+[2025-03-24 13:07:42] Constructed sample at index 147.
+[2025-03-24 13:07:42] Constructed sample at index 148.
+[2025-03-24 13:07:42] Constructed sample at index 149.
+[2025-03-24 13:07:42] Constructed sample at index 150.
+[2025-03-24 13:07:42] Constructed sample at index 151.
+[2025-03-24 13:07:42] Constructed sample at index 152.
+[2025-03-24 13:07:42] Constructed sample at index 153.
+[2025-03-24 13:07:42] Constructed sample at index 154.
+[2025-03-24 13:07:42] Constructed sample at index 155.
+[2025-03-24 13:07:42] Constructed sample at index 156.
+[2025-03-24 13:07:42] Constructed sample at index 157.
+[2025-03-24 13:07:42] Constructed sample at index 158.
+[2025-03-24 13:07:42] Constructed sample at index 159.
+[2025-03-24 13:07:42] Constructed sample at index 160.
+[2025-03-24 13:07:42] Constructed sample at index 161.
+[2025-03-24 13:07:42] Constructed sample at index 162.
+[2025-03-24 13:07:42] Constructed sample at index 163.
+[2025-03-24 13:07:42] Constructed sample at index 164.
+[2025-03-24 13:07:42] Constructed sample at index 165.
+[2025-03-24 13:07:42] Constructed sample at index 166.
+[2025-03-24 13:07:42] Constructed sample at index 167.
+[2025-03-24 13:07:42] Constructed sample at index 168.
+[2025-03-24 13:07:42] Constructed sample at index 169.
+[2025-03-24 13:07:42] Constructed sample at index 170.
+[2025-03-24 13:07:42] Constructed sample at index 171.
+[2025-03-24 13:07:42] Constructed sample at index 172.
+[2025-03-24 13:07:42] Constructed sample at index 173.
+[2025-03-24 13:07:42] Constructed sample at index 174.
+[2025-03-24 13:07:42] Constructed sample at index 175.
+[2025-03-24 13:07:42] Constructed sample at index 176.
+[2025-03-24 13:07:42] Constructed sample at index 177.
+[2025-03-24 13:07:42] Constructed sample at index 178.
+[2025-03-24 13:07:42] Constructed sample at index 179.
+[2025-03-24 13:07:42] Constructed sample at index 180.
+[2025-03-24 13:07:42] Constructed sample at index 181.
+[2025-03-24 13:07:42] Constructed sample at index 182.
+[2025-03-24 13:07:42] Constructed sample at index 183.
+[2025-03-24 13:07:42] Constructed sample at index 184.
+[2025-03-24 13:07:42] Constructed sample at index 185.
+[2025-03-24 13:07:42] Constructed sample at index 186.
+[2025-03-24 13:07:42] Constructed sample at index 187.
+[2025-03-24 13:07:42] Constructed sample at index 188.
+[2025-03-24 13:07:42] Constructed sample at index 189.
+[2025-03-24 13:07:42] Constructed sample at index 190.
+[2025-03-24 13:07:42] Constructed sample at index 191.
+[2025-03-24 13:07:42] Constructed sample at index 192.
+[2025-03-24 13:07:42] Constructed sample at index 193.
+[2025-03-24 13:07:42] Constructed sample at index 194.
+[2025-03-24 13:07:42] Constructed sample at index 195.
+[2025-03-24 13:07:42] Constructed sample at index 196.
+[2025-03-24 13:07:42] Constructed sample at index 197.
+[2025-03-24 13:07:42] Constructed sample at index 198.
+[2025-03-24 13:07:42] Constructed sample at index 199.
+[2025-03-24 13:07:42] Constructed sample at index 200.
+[2025-03-24 13:07:42] Constructed sample at index 201.
+[2025-03-24 13:07:42] Constructed sample at index 202.
+[2025-03-24 13:07:42] Constructed sample at index 203.
+[2025-03-24 13:07:42] Constructed sample at index 204.
+[2025-03-24 13:07:42] Constructed sample at index 205.
+[2025-03-24 13:07:42] Constructed sample at index 206.
+[2025-03-24 13:07:42] Constructed sample at index 207.
+[2025-03-24 13:07:42] Constructed sample at index 208.
+[2025-03-24 13:07:42] Constructed sample at index 209.
+[2025-03-24 13:07:42] Constructed sample at index 210.
+[2025-03-24 13:07:42] Constructed sample at index 211.
+[2025-03-24 13:07:42] Constructed sample at index 212.
+[2025-03-24 13:07:42] Constructed sample at index 213.
+[2025-03-24 13:07:42] Constructed sample at index 214.
+[2025-03-24 13:07:42] Constructed sample at index 215.
+[2025-03-24 13:07:42] Constructed sample at index 216.
+[2025-03-24 13:07:42] Constructed sample at index 217.
+[2025-03-24 13:07:42] Constructed sample at index 218.
+[2025-03-24 13:07:42] Constructed sample at index 219.
+[2025-03-24 13:07:42] Constructed sample at index 220.
+[2025-03-24 13:07:42] Constructed sample at index 221.
+[2025-03-24 13:07:42] Constructed sample at index 222.
+[2025-03-24 13:07:42] Constructed sample at index 223.
+[2025-03-24 13:07:42] Constructed sample at index 224.
+[2025-03-24 13:07:42] Constructed sample at index 225.
+[2025-03-24 13:07:42] Constructed sample at index 226.
+[2025-03-24 13:07:42] Constructed sample at index 227.
+[2025-03-24 13:07:42] Constructed sample at index 228.
+[2025-03-24 13:07:42] Constructed sample at index 229.
+[2025-03-24 13:07:42] Constructed sample at index 230.
+[2025-03-24 13:07:42] Constructed sample at index 231.
+[2025-03-24 13:07:42] Constructed sample at index 232.
+[2025-03-24 13:07:42] Constructed sample at index 233.
+[2025-03-24 13:07:42] Constructed sample at index 234.
+[2025-03-24 13:07:42] Constructed sample at index 235.
+[2025-03-24 13:07:42] Constructed sample at index 236.
+[2025-03-24 13:07:42] Constructed sample at index 237.
+[2025-03-24 13:07:42] Constructed sample at index 238.
+[2025-03-24 13:07:42] Constructed sample at index 239.
+[2025-03-24 13:07:42] Constructed sample at index 240.
+[2025-03-24 13:07:42] Constructed sample at index 241.
+[2025-03-24 13:07:42] Constructed sample at index 242.
+[2025-03-24 13:07:42] Constructed sample at index 243.
+[2025-03-24 13:07:42] Constructed sample at index 244.
+[2025-03-24 13:07:42] Constructed sample at index 245.
+[2025-03-24 13:07:42] Constructed sample at index 246.
+[2025-03-24 13:07:42] Constructed sample at index 247.
+[2025-03-24 13:07:42] Constructed sample at index 248.
+[2025-03-24 13:07:42] Constructed sample at index 249.
+[2025-03-24 13:07:42] Constructed sample at index 250.
+[2025-03-24 13:07:42] Constructed sample at index 251.
+[2025-03-24 13:07:42] Constructed sample at index 252.
+[2025-03-24 13:07:42] Constructed sample at index 253.
+[2025-03-24 13:07:42] Constructed sample at index 254.
+[2025-03-24 13:07:42] Constructed sample at index 255.
+[2025-03-24 13:07:42] Constructed sample at index 256.
+[2025-03-24 13:07:42] Constructed sample at index 257.
+[2025-03-24 13:07:42] Constructed sample at index 258.
+[2025-03-24 13:07:42] Constructed sample at index 259.
+[2025-03-24 13:07:42] Constructed sample at index 260.
+[2025-03-24 13:07:42] Constructed sample at index 261.
+[2025-03-24 13:07:42] Constructed sample at index 262.
+[2025-03-24 13:07:42] Constructed sample at index 263.
+[2025-03-24 13:07:42] Constructed sample at index 264.
+[2025-03-24 13:07:42] Constructed sample at index 265.
+[2025-03-24 13:07:42] Constructed sample at index 266.
+[2025-03-24 13:07:42] Constructed sample at index 267.
+[2025-03-24 13:07:42] Constructed sample at index 268.
+[2025-03-24 13:07:42] Constructed sample at index 269.
+[2025-03-24 13:07:42] Constructed sample at index 270.
+[2025-03-24 13:07:42] Constructed sample at index 271.
+[2025-03-24 13:07:42] Constructed sample at index 272.
+[2025-03-24 13:07:42] Constructed sample at index 273.
+[2025-03-24 13:07:42] Constructed sample at index 274.
+[2025-03-24 13:07:42] Constructed sample at index 275.
+[2025-03-24 13:07:42] Constructed sample at index 276.
+[2025-03-24 13:07:42] Constructed sample at index 277.
+[2025-03-24 13:07:42] Constructed sample at index 278.
+[2025-03-24 13:07:42] Constructed sample at index 279.
+[2025-03-24 13:07:42] Constructed sample at index 280.
+[2025-03-24 13:07:42] Constructed sample at index 281.
+[2025-03-24 13:07:42] Constructed sample at index 282.
+[2025-03-24 13:07:42] Constructed sample at index 283.
+[2025-03-24 13:07:42] Constructed sample at index 284.
+[2025-03-24 13:07:42] Constructed sample at index 285.
+[2025-03-24 13:07:42] Constructed sample at index 286.
+[2025-03-24 13:07:42] Constructed sample at index 287.
+[2025-03-24 13:07:42] Constructed sample at index 288.
+[2025-03-24 13:07:42] Constructed sample at index 289.
+[2025-03-24 13:07:42] Constructed sample at index 290.
+[2025-03-24 13:07:42] Constructed sample at index 291.
+[2025-03-24 13:07:42] Constructed sample at index 292.
+[2025-03-24 13:07:42] Constructed sample at index 293.
+[2025-03-24 13:07:42] Constructed sample at index 294.
+[2025-03-24 13:07:42] Constructed sample at index 295.
+[2025-03-24 13:07:42] Constructed sample at index 296.
+[2025-03-24 13:07:42] Constructed sample at index 297.
+[2025-03-24 13:07:42] Constructed sample at index 298.
+[2025-03-24 13:07:42] Constructed sample at index 299.
+[2025-03-24 13:07:42] Constructed sample at index 300.
+[2025-03-24 13:07:42] Constructed sample at index 301.
+[2025-03-24 13:07:42] Constructed sample at index 302.
+[2025-03-24 13:07:42] Constructed sample at index 303.
+[2025-03-24 13:07:42] Constructed sample at index 304.
+[2025-03-24 13:07:42] Constructed sample at index 305.
+[2025-03-24 13:07:42] Constructed sample at index 306.
+[2025-03-24 13:07:42] Constructed sample at index 307.
+[2025-03-24 13:07:42] Constructed sample at index 308.
+[2025-03-24 13:07:42] Constructed sample at index 309.
+[2025-03-24 13:07:42] Constructed sample at index 310.
+[2025-03-24 13:07:42] Constructed sample at index 311.
+[2025-03-24 13:07:42] Constructed sample at index 312.
+[2025-03-24 13:07:42] Constructed sample at index 313.
+[2025-03-24 13:07:42] Constructed sample at index 314.
+[2025-03-24 13:07:42] Constructed sample at index 315.
+[2025-03-24 13:07:42] Constructed sample at index 316.
+[2025-03-24 13:07:42] Constructed sample at index 317.
+[2025-03-24 13:07:42] Constructed sample at index 318.
+[2025-03-24 13:07:42] Constructed sample at index 319.
+[2025-03-24 13:07:42] Constructed sample at index 320.
+[2025-03-24 13:07:42] Constructed sample at index 321.
+[2025-03-24 13:07:42] Constructed sample at index 322.
+[2025-03-24 13:07:42] Constructed sample at index 323.
+[2025-03-24 13:07:42] Constructed sample at index 324.
+[2025-03-24 13:07:42] Constructed sample at index 325.
+[2025-03-24 13:07:42] Constructed sample at index 326.
+[2025-03-24 13:07:42] Constructed sample at index 327.
+[2025-03-24 13:07:42] Constructed sample at index 328.
+[2025-03-24 13:07:42] Constructed sample at index 329.
+[2025-03-24 13:07:42] Constructed sample at index 330.
+[2025-03-24 13:07:42] Constructed sample at index 331.
+[2025-03-24 13:07:42] Constructed sample at index 332.
+[2025-03-24 13:07:42] Constructed sample at index 333.
+[2025-03-24 13:07:42] Constructed sample at index 334.
+[2025-03-24 13:07:42] Constructed sample at index 335.
+[2025-03-24 13:07:42] Constructed sample at index 336.
+[2025-03-24 13:07:42] Constructed sample at index 337.
+[2025-03-24 13:07:42] Constructed sample at index 338.
+[2025-03-24 13:07:42] Constructed sample at index 339.
+[2025-03-24 13:07:42] Constructed sample at index 340.
+[2025-03-24 13:07:42] Constructed sample at index 341.
+[2025-03-24 13:07:42] Constructed sample at index 342.
+[2025-03-24 13:07:42] Constructed sample at index 343.
+[2025-03-24 13:07:42] Constructed sample at index 344.
+[2025-03-24 13:07:42] Constructed sample at index 345.
+[2025-03-24 13:07:42] Constructed sample at index 346.
+[2025-03-24 13:07:42] Constructed sample at index 347.
+[2025-03-24 13:07:42] Constructed sample at index 348.
+[2025-03-24 13:07:42] Constructed sample at index 349.
+[2025-03-24 13:07:42] Constructed sample at index 350.
+[2025-03-24 13:07:42] Constructed sample at index 351.
+[2025-03-24 13:07:42] Constructed sample at index 352.
+[2025-03-24 13:07:42] Constructed sample at index 353.
+[2025-03-24 13:07:42] Constructed sample at index 354.
+[2025-03-24 13:07:42] Constructed sample at index 355.
+[2025-03-24 13:07:42] Constructed sample at index 356.
+[2025-03-24 13:07:42] Constructed sample at index 357.
+[2025-03-24 13:07:42] Constructed sample at index 358.
+[2025-03-24 13:07:42] Constructed sample at index 359.
+[2025-03-24 13:07:42] Constructed sample at index 360.
+[2025-03-24 13:07:42] Constructed sample at index 361.
+[2025-03-24 13:07:42] Constructed sample at index 362.
+[2025-03-24 13:07:42] Constructed sample at index 363.
+[2025-03-24 13:07:42] Constructed sample at index 364.
+[2025-03-24 13:07:42] Constructed sample at index 365.
+[2025-03-24 13:07:42] Constructed sample at index 366.
+[2025-03-24 13:07:42] Constructed sample at index 367.
+[2025-03-24 13:07:42] Constructed sample at index 368.
+[2025-03-24 13:07:42] Constructed sample at index 369.
+[2025-03-24 13:07:42] Constructed sample at index 370.
+[2025-03-24 13:07:42] Constructed sample at index 371.
+[2025-03-24 13:07:42] Constructed sample at index 372.
+[2025-03-24 13:07:42] Constructed sample at index 373.
+[2025-03-24 13:07:42] Constructed sample at index 374.
+[2025-03-24 13:07:42] Constructed sample at index 375.
+[2025-03-24 13:07:42] Constructed sample at index 376.
+[2025-03-24 13:07:42] Constructed sample at index 377.
+[2025-03-24 13:07:42] Constructed sample at index 378.
+[2025-03-24 13:07:42] Constructed sample at index 379.
+[2025-03-24 13:07:42] Constructed sample at index 380.
+[2025-03-24 13:07:42] Constructed sample at index 381.
+[2025-03-24 13:07:42] Constructed sample at index 382.
+[2025-03-24 13:07:42] Constructed sample at index 383.
+[2025-03-24 13:07:42] Constructed sample at index 384.
+[2025-03-24 13:07:42] Constructed sample at index 385.
+[2025-03-24 13:07:42] Constructed sample at index 386.
+[2025-03-24 13:07:42] Constructed sample at index 387.
+[2025-03-24 13:07:42] Constructed sample at index 388.
+[2025-03-24 13:07:42] Constructed sample at index 389.
+[2025-03-24 13:07:42] Constructed sample at index 390.
+[2025-03-24 13:07:42] Constructed sample at index 391.
+[2025-03-24 13:07:42] Constructed sample at index 392.
+[2025-03-24 13:07:42] Constructed sample at index 393.
+[2025-03-24 13:07:42] Constructed sample at index 394.
+[2025-03-24 13:07:42] Constructed sample at index 395.
+[2025-03-24 13:07:42] Constructed sample at index 396.
+[2025-03-24 13:07:42] Constructed sample at index 397.
+[2025-03-24 13:07:42] Constructed sample at index 398.
+[2025-03-24 13:07:42] Constructed sample at index 399.
+[2025-03-24 13:07:42] [Trajectory1] Training Samples: 397, Input size: 22
+[2025-03-24 13:07:42] [Trajectory1] Epoch 1: RMSE per output: [0.59663803 0.57203527 0.61874309 1.12563195], Avg RMSE: 0.72826
+[2025-03-24 13:07:43] [Trajectory1] Epoch 2: RMSE per output: [0.43040485 0.51435693 0.57052883 0.87743416], Avg RMSE: 0.59818
+[2025-03-24 13:07:43] [Trajectory1] Epoch 3: RMSE per output: [0.43358057 0.49616532 0.603323   0.67906243], Avg RMSE: 0.55303
+[2025-03-24 13:07:43] [Trajectory1] Epoch 4: RMSE per output: [0.47269385 0.45826126 0.57575386 0.52672345], Avg RMSE: 0.50836
+[2025-03-24 13:07:43] [Trajectory1] Epoch 5: RMSE per output: [0.45722235 0.4260498  0.51165885 0.51630561], Avg RMSE: 0.47781
+[2025-03-24 13:07:43] [Trajectory1] Epoch 6: RMSE per output: [0.45099687 0.49258974 0.52014088 0.52637429], Avg RMSE: 0.49753
+[2025-03-24 13:07:44] [Trajectory1] Epoch 7: RMSE per output: [0.40150665 0.48532909 0.53657899 0.59775019], Avg RMSE: 0.50529
+[2025-03-24 13:07:44] [Trajectory1] Epoch 8: RMSE per output: [0.39080193 0.44957228 0.52674229 0.71668334], Avg RMSE: 0.52095
+[2025-03-24 13:07:44] [Trajectory1] Epoch 9: RMSE per output: [0.38589227 0.48766964 0.51405744 0.64173548], Avg RMSE: 0.50734
+[2025-03-24 13:07:44] [Trajectory1] Epoch 10: RMSE per output: [0.46696982 0.48865171 0.49535538 0.60889044], Avg RMSE: 0.51497
+[2025-03-24 13:07:44] [Trajectory1] Epoch 11: RMSE per output: [0.39929671 0.44412061 0.47206053 0.58177233], Avg RMSE: 0.47431
+[2025-03-24 13:07:45] [Trajectory1] Epoch 12: RMSE per output: [0.43262385 0.41476936 0.45674131 0.55035288], Avg RMSE: 0.46362
+[2025-03-24 13:07:45] [Trajectory1] Epoch 13: RMSE per output: [0.40059822 0.38696888 0.45491613 0.47485532], Avg RMSE: 0.42933
+[2025-03-24 13:07:45] [Trajectory1] Epoch 14: RMSE per output: [0.38737531 0.38626041 0.44802242 0.45966127], Avg RMSE: 0.42033
+[2025-03-24 13:07:45] [Trajectory1] Epoch 15: RMSE per output: [0.37519621 0.36882664 0.42560653 0.4328471 ], Avg RMSE: 0.40062
+[2025-03-24 13:07:45] [Trajectory1] Epoch 16: RMSE per output: [0.3828184  0.39038144 0.41955526 0.45709551], Avg RMSE: 0.41246
+[2025-03-24 13:07:46] [Trajectory1] Epoch 17: RMSE per output: [0.36761409 0.41189372 0.40271458 0.42633872], Avg RMSE: 0.40214
+[2025-03-24 13:07:46] [Trajectory1] Epoch 18: RMSE per output: [0.38792312 0.40963702 0.40072117 0.46739628], Avg RMSE: 0.41642
+[2025-03-24 13:07:46] [Trajectory1] Epoch 19: RMSE per output: [0.33999735 0.39273961 0.39715065 0.46619085], Avg RMSE: 0.39902
+[2025-03-24 13:07:46] [Trajectory1] Epoch 20: RMSE per output: [0.35049225 0.38470417 0.36515414 0.4490291 ], Avg RMSE: 0.38734
+[2025-03-24 13:07:46] [Trajectory1] Epoch 21: RMSE per output: [0.35038416 0.35168612 0.35176608 0.51389568], Avg RMSE: 0.39193
+[2025-03-24 13:07:47] [Trajectory1] Epoch 22: RMSE per output: [0.32303019 0.34287084 0.3581103  0.46548796], Avg RMSE: 0.37237
+[2025-03-24 13:07:47] [Trajectory1] Epoch 23: RMSE per output: [0.35798526 0.3376695  0.36449674 0.4513369 ], Avg RMSE: 0.37787
+[2025-03-24 13:07:47] [Trajectory1] Epoch 24: RMSE per output: [0.335327   0.33636916 0.31018029 0.44302597], Avg RMSE: 0.35623
+[2025-03-24 13:07:47] [Trajectory1] Epoch 25: RMSE per output: [0.32572447 0.35875789 0.34238421 0.41073288], Avg RMSE: 0.35940
+[2025-03-24 13:07:47] [Trajectory1] Epoch 26: RMSE per output: [0.32067588 0.32163653 0.31989117 0.38531716], Avg RMSE: 0.33688
+[2025-03-24 13:07:48] [Trajectory1] Epoch 27: RMSE per output: [0.29322475 0.33587295 0.29690906 0.42653394], Avg RMSE: 0.33814
+[2025-03-24 13:07:48] [Trajectory1] Epoch 28: RMSE per output: [0.31868165 0.33296909 0.33413686 0.40191911], Avg RMSE: 0.34693
+[2025-03-24 13:07:48] [Trajectory1] Epoch 29: RMSE per output: [0.2956623  0.30351763 0.30334764 0.39972842], Avg RMSE: 0.32556
+[2025-03-24 13:07:48] [Trajectory1] Epoch 30: RMSE per output: [0.28797095 0.28958119 0.32203912 0.37895728], Avg RMSE: 0.31964
+[2025-03-24 13:07:48] [Trajectory1] Training predictions plot saved to Results/MNN_Results/exp_lr0.001_dr0.3_hn100_reg0.1_bfw40/Plots/FinalOutputPredictions_Trajectory1_npbi3_niu1_nl2_trtrajT1-30-T2-40_ttrajTrajectory3_b1_20-b2_15-b3_10-b4_5.png
+[2025-03-24 13:07:48] Processing training trajectory: Trajectory2 for 40 epochs
+[2025-03-24 13:07:48] [DEBUG] Missing percentage string: b1_20-b2_15-b3_10-b4_5
+[2025-03-24 13:07:48] === Training on Trajectory: Trajectory2 for 40 epochs ===
+[2025-03-24 13:07:48] DEBUG: beams_training length: 400, beams_gt length: 400, imu length: 40000
+[2025-03-24 13:07:48] Original missing count in Trajectory2: 198
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 41 with moving average 0.43693834005257504
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 42 with moving average -0.5275991556626364
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 43 with moving average 0.4373498500857706
+[2025-03-24 13:07:48] DEBUG: Filling missing b4 at row 43 with moving average 0.529470479183584
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 47 with moving average -0.517543902834588
+[2025-03-24 13:07:48] DEBUG: Filling missing b3 at row 47 with moving average -0.43264885180368645
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 48 with moving average -0.5169348039621783
+[2025-03-24 13:07:48] DEBUG: Filling missing b3 at row 48 with moving average -0.43304560551874316
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 49 with moving average 0.43584814200785543
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 49 with moving average -0.5165276947304157
+[2025-03-24 13:07:48] DEBUG: Filling missing b3 at row 49 with moving average -0.43355660545869856
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 51 with moving average -0.5129586213429873
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 52 with moving average 0.43694749506500247
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 52 with moving average -0.5120491433875601
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 54 with moving average -0.5095112484895148
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 56 with moving average 0.4363145072098901
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 60 with moving average -0.4981985763459088
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 61 with moving average 0.43455189584840515
+[2025-03-24 13:07:48] DEBUG: Filling missing b3 at row 63 with moving average -0.42972963267055186
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 68 with moving average -0.4794350520500311
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 69 with moving average 0.43147940695191184
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 69 with moving average -0.4776613373795106
+[2025-03-24 13:07:48] DEBUG: Filling missing b3 at row 69 with moving average -0.42879050001282887
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 71 with moving average 0.4313235410431712
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 72 with moving average 0.43063137165992843
+[2025-03-24 13:07:48] DEBUG: Filling missing b3 at row 72 with moving average -0.4286459321600876
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 73 with moving average 0.43027117606714516
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 77 with moving average -0.4684971090130713
+[2025-03-24 13:07:48] DEBUG: Filling missing b3 at row 77 with moving average -0.40443534093788813
+[2025-03-24 13:07:48] DEBUG: Filling missing b4 at row 78 with moving average 0.4602365988493248
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 79 with moving average -0.46604766725225344
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 82 with moving average -0.4623877466344356
+[2025-03-24 13:07:48] DEBUG: Filling missing b4 at row 86 with moving average 0.46731579910478527
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 89 with moving average 0.3800305075270899
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 96 with moving average -0.4575213902842871
+[2025-03-24 13:07:48] DEBUG: Filling missing b3 at row 96 with moving average -0.36162560542887257
+[2025-03-24 13:07:48] DEBUG: Filling missing b3 at row 100 with moving average -0.37645358499499415
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 102 with moving average 0.4099815517072816
+[2025-03-24 13:07:48] DEBUG: Filling missing b3 at row 103 with moving average -0.38495144011665416
+[2025-03-24 13:07:48] DEBUG: Filling missing b3 at row 104 with moving average -0.38383198530280666
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 106 with moving average -0.3937123942583439
+[2025-03-24 13:07:48] DEBUG: Filling missing b3 at row 106 with moving average -0.3851758979992224
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 107 with moving average -0.3934173546814712
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 110 with moving average -0.3833787931807814
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 114 with moving average 0.4180431894060336
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 115 with moving average 0.4221677471570989
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 115 with moving average -0.3710690025351863
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 116 with moving average 0.42633649236025023
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 117 with moving average 0.4308158573495036
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 118 with moving average 0.4350464470163572
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 118 with moving average -0.3633187337542968
+[2025-03-24 13:07:48] DEBUG: Filling missing b3 at row 121 with moving average -0.42980933640424934
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 122 with moving average 0.4511120572595386
+[2025-03-24 13:07:48] DEBUG: Filling missing b3 at row 122 with moving average -0.43460630263169014
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 125 with moving average 0.45636862017505464
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 126 with moving average -0.33805207679289373
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 129 with moving average -0.3231416264692859
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 130 with moving average 0.46748454569222114
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 130 with moving average -0.3189688155559315
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 132 with moving average -0.30820359679431764
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 136 with moving average 0.4540350962327338
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 138 with moving average 0.4463819438133935
+[2025-03-24 13:07:48] DEBUG: Filling missing b3 at row 138 with moving average -0.47178841630997626
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 140 with moving average 0.4392789700785792
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 141 with moving average 0.43590671483788024
+[2025-03-24 13:07:48] DEBUG: Filling missing b4 at row 141 with moving average 0.25276863304363556
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 144 with moving average -0.3289658325997177
+[2025-03-24 13:07:48] DEBUG: Filling missing b4 at row 147 with moving average 0.29842172110849424
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 148 with moving average 0.40951225747626074
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 149 with moving average -0.3455209138486044
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 150 with moving average 0.40662203421224563
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 151 with moving average 0.40613357674045386
+[2025-03-24 13:07:48] DEBUG: Filling missing b3 at row 151 with moving average -0.42153187908930134
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 152 with moving average -0.3490109576242788
+[2025-03-24 13:07:48] DEBUG: Filling missing b3 at row 152 with moving average -0.4203297806491668
+[2025-03-24 13:07:48] DEBUG: Filling missing b3 at row 153 with moving average -0.4190507361272532
+[2025-03-24 13:07:48] DEBUG: Filling missing b3 at row 155 with moving average -0.414486114792774
+[2025-03-24 13:07:48] DEBUG: Filling missing b3 at row 158 with moving average -0.40435110129432034
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 162 with moving average 0.36870370011818066
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 163 with moving average 0.36664349118964673
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 164 with moving average 0.3665730515693912
+[2025-03-24 13:07:48] DEBUG: Filling missing b3 at row 165 with moving average -0.3772881434989979
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 166 with moving average 0.36380617769073254
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 169 with moving average -0.38467536376501976
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 171 with moving average -0.3870609986873287
+[2025-03-24 13:07:48] DEBUG: Filling missing b3 at row 173 with moving average -0.3455741148654473
+[2025-03-24 13:07:48] DEBUG: Filling missing b4 at row 173 with moving average 0.4000562291641515
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 174 with moving average 0.35098783472585227
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 175 with moving average 0.34897186927589063
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 177 with moving average -0.3952235087365595
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 178 with moving average 0.34531639869612923
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 180 with moving average 0.34369999534283047
+[2025-03-24 13:07:48] DEBUG: Filling missing b3 at row 183 with moving average -0.3469216922619347
+[2025-03-24 13:07:48] DEBUG: Filling missing b3 at row 185 with moving average -0.3486290723947996
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 187 with moving average 0.3487484670974491
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 187 with moving average -0.3862469065560202
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 191 with moving average -0.38253807195634565
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 193 with moving average 0.35351833316767267
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 194 with moving average 0.3555541014938868
+[2025-03-24 13:07:48] DEBUG: Filling missing b3 at row 196 with moving average -0.36875031840604544
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 198 with moving average 0.36582364215092367
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 199 with moving average 0.3683480855943981
+[2025-03-24 13:07:48] DEBUG: Filling missing b4 at row 201 with moving average 0.34202674922502146
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 202 with moving average -0.35491262996933925
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 203 with moving average -0.35334186911841303
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 206 with moving average -0.3478207217716216
+[2025-03-24 13:07:48] DEBUG: Filling missing b3 at row 206 with moving average -0.4002685306760366
+[2025-03-24 13:07:48] DEBUG: Filling missing b3 at row 207 with moving average -0.4024702380327219
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 209 with moving average -0.34361491683453144
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 212 with moving average 0.38406822075461156
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 213 with moving average 0.384027639367841
+[2025-03-24 13:07:48] DEBUG: Filling missing b4 at row 213 with moving average 0.30838835058158276
+[2025-03-24 13:07:48] DEBUG: Filling missing b4 at row 214 with moving average 0.30609665361701854
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 217 with moving average 0.3875847348243472
+[2025-03-24 13:07:48] DEBUG: Filling missing b4 at row 218 with moving average 0.3064246179062905
+[2025-03-24 13:07:48] DEBUG: Filling missing b4 at row 220 with moving average 0.30574100392920867
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 221 with moving average -0.3316128926123107
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 222 with moving average 0.39096817235721887
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 223 with moving average 0.39131478380156004
+[2025-03-24 13:07:48] DEBUG: Filling missing b4 at row 224 with moving average 0.3075943562993809
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 226 with moving average 0.3937872352088651
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 227 with moving average 0.3930294912488284
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 228 with moving average -0.3287369049265115
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 231 with moving average -0.3278547095511647
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 233 with moving average -0.3266083383315066
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 238 with moving average 0.39353229905462045
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 239 with moving average 0.3942250154772129
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 241 with moving average -0.32863024282865255
+[2025-03-24 13:07:48] DEBUG: Filling missing b3 at row 242 with moving average -0.412925301191488
+[2025-03-24 13:07:48] DEBUG: Filling missing b4 at row 242 with moving average 0.3060134252802828
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 243 with moving average -0.32801556132188103
+[2025-03-24 13:07:48] DEBUG: Filling missing b3 at row 245 with moving average -0.4127016912813598
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 247 with moving average 0.39257482080131273
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 248 with moving average 0.39308993728134
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 253 with moving average -0.3279841774727916
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 257 with moving average 0.391638693431757
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 258 with moving average 0.39174004239694227
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 259 with moving average -0.3295074959395157
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 260 with moving average -0.3294373943888358
+[2025-03-24 13:07:48] DEBUG: Filling missing b3 at row 260 with moving average -0.415656780735031
+[2025-03-24 13:07:48] DEBUG: Filling missing b3 at row 262 with moving average -0.41533897590159696
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 264 with moving average -0.3301870503626828
+[2025-03-24 13:07:48] DEBUG: Filling missing b3 at row 265 with moving average -0.41582212504687366
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 267 with moving average 0.388647660171544
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 268 with moving average 0.38853811439461194
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 269 with moving average -0.3314679247599475
+[2025-03-24 13:07:48] DEBUG: Filling missing b2 at row 272 with moving average -0.332650378145951
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 273 with moving average 0.3874781727788268
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 276 with moving average 0.3881512559444772
+[2025-03-24 13:07:48] DEBUG: Filling missing b1 at row 277 with moving average 0.38829060723778835
+[2025-03-24 13:07:48] DEBUG: Filling missing b4 at row 278 with moving average 0.31432809122148353
+[2025-03-24 13:07:48] DEBUG: Filling missing b4 at row 280 with moving average 0.3142654701640247
+[2025-03-24 13:07:49] DEBUG: Filling missing b4 at row 283 with moving average 0.31768810987696333
+[2025-03-24 13:07:49] DEBUG: Filling missing b2 at row 288 with moving average -0.33660633735609824
+[2025-03-24 13:07:49] DEBUG: Filling missing b1 at row 292 with moving average 0.38185965707518477
+[2025-03-24 13:07:49] DEBUG: Filling missing b3 at row 293 with moving average -0.39560807428601014
+[2025-03-24 13:07:49] DEBUG: Filling missing b3 at row 294 with moving average -0.39515869834393086
+[2025-03-24 13:07:49] DEBUG: Filling missing b1 at row 296 with moving average 0.3787920993027257
+[2025-03-24 13:07:49] DEBUG: Filling missing b1 at row 300 with moving average 0.37753803463178875
+[2025-03-24 13:07:49] DEBUG: Filling missing b2 at row 302 with moving average -0.3492907573586027
+[2025-03-24 13:07:49] DEBUG: Filling missing b1 at row 303 with moving average 0.3744331712594843
+[2025-03-24 13:07:49] DEBUG: Filling missing b1 at row 304 with moving average 0.3742621776656179
+[2025-03-24 13:07:49] DEBUG: Filling missing b1 at row 308 with moving average 0.3712932285541978
+[2025-03-24 13:07:49] DEBUG: Filling missing b4 at row 310 with moving average 0.3415457141196679
+[2025-03-24 13:07:49] DEBUG: Filling missing b1 at row 311 with moving average 0.3680091074080713
+[2025-03-24 13:07:49] DEBUG: Filling missing b1 at row 316 with moving average 0.36467330090246053
+[2025-03-24 13:07:49] DEBUG: Filling missing b1 at row 320 with moving average 0.36297014816671197
+[2025-03-24 13:07:49] DEBUG: Filling missing b2 at row 320 with moving average -0.37877241745144075
+[2025-03-24 13:07:49] DEBUG: Filling missing b2 at row 321 with moving average -0.37979203696017744
+[2025-03-24 13:07:49] DEBUG: Filling missing b3 at row 321 with moving average -0.38366435402635907
+[2025-03-24 13:07:49] DEBUG: Filling missing b1 at row 324 with moving average 0.36247882481726423
+[2025-03-24 13:07:49] DEBUG: Filling missing b1 at row 330 with moving average 0.3616199347727361
+[2025-03-24 13:07:49] DEBUG: Filling missing b3 at row 331 with moving average -0.38140562327540745
+[2025-03-24 13:07:49] DEBUG: Filling missing b1 at row 333 with moving average 0.35903569822022807
+[2025-03-24 13:07:49] DEBUG: Filling missing b4 at row 335 with moving average 0.39119043589116276
+[2025-03-24 13:07:49] DEBUG: Filling missing b4 at row 338 with moving average 0.398496067805017
+[2025-03-24 13:07:49] DEBUG: Filling missing b2 at row 339 with moving average -0.42601685372089015
+[2025-03-24 13:07:49] DEBUG: Filling missing b1 at row 342 with moving average 0.35969241895967397
+[2025-03-24 13:07:49] DEBUG: Filling missing b3 at row 344 with moving average -0.3800308443199093
+[2025-03-24 13:07:49] DEBUG: Filling missing b1 at row 347 with moving average 0.3601335549283539
+[2025-03-24 13:07:49] DEBUG: Filling missing b3 at row 348 with moving average -0.37976603447254764
+[2025-03-24 13:07:49] DEBUG: Filling missing b3 at row 354 with moving average -0.37876022453927477
+[2025-03-24 13:07:49] DEBUG: Filling missing b4 at row 354 with moving average 0.44978937686567244
+[2025-03-24 13:07:49] DEBUG: Filling missing b2 at row 356 with moving average -0.4716064059901625
+[2025-03-24 13:07:49] DEBUG: Filling missing b3 at row 358 with moving average -0.3777525343570762
+[2025-03-24 13:07:49] DEBUG: Filling missing b1 at row 359 with moving average 0.36477829886765417
+[2025-03-24 13:07:49] DEBUG: Filling missing b3 at row 363 with moving average -0.3766429328421644
+[2025-03-24 13:07:49] DEBUG: Filling missing b2 at row 366 with moving average -0.4994526967889912
+[2025-03-24 13:07:49] DEBUG: Filling missing b2 at row 369 with moving average -0.5061772850177682
+[2025-03-24 13:07:49] DEBUG: Filling missing b1 at row 370 with moving average 0.36804247019845865
+[2025-03-24 13:07:49] DEBUG: Filling missing b2 at row 370 with moving average -0.507504316420418
+[2025-03-24 13:07:49] DEBUG: Filling missing b3 at row 371 with moving average -0.379530754195694
+[2025-03-24 13:07:49] DEBUG: Filling missing b1 at row 381 with moving average 0.3771396636926124
+[2025-03-24 13:07:49] DEBUG: Filling missing b3 at row 381 with moving average -0.38332942537481196
+[2025-03-24 13:07:49] DEBUG: Filling missing b1 at row 384 with moving average 0.3796314469247745
+[2025-03-24 13:07:49] DEBUG: Filling missing b1 at row 391 with moving average 0.38722194580015906
+[2025-03-24 13:07:49] DEBUG: Filling missing b1 at row 393 with moving average 0.38887907594971083
+[2025-03-24 13:07:49] DEBUG: Filling missing b1 at row 397 with moving average 0.39338639158681704
+[2025-03-24 13:07:49] Starting search from index 3
+[2025-03-24 13:07:49] Valid input-target pair found at index 3.
+[2025-03-24 13:07:49] Using starting index 3 for constructing input-target pairs.
+[2025-03-24 13:07:49] Constructed sample at index 3.
+[2025-03-24 13:07:49] Constructed sample at index 4.
+[2025-03-24 13:07:49] Constructed sample at index 5.
+[2025-03-24 13:07:49] Constructed sample at index 6.
+[2025-03-24 13:07:49] Constructed sample at index 7.
+[2025-03-24 13:07:49] Constructed sample at index 8.
+[2025-03-24 13:07:49] Constructed sample at index 9.
+[2025-03-24 13:07:49] Constructed sample at index 10.
+[2025-03-24 13:07:49] Constructed sample at index 11.
+[2025-03-24 13:07:49] Constructed sample at index 12.
+[2025-03-24 13:07:49] Constructed sample at index 13.
+[2025-03-24 13:07:49] Constructed sample at index 14.
+[2025-03-24 13:07:49] Constructed sample at index 15.
+[2025-03-24 13:07:49] Constructed sample at index 16.
+[2025-03-24 13:07:49] Constructed sample at index 17.
+[2025-03-24 13:07:49] Constructed sample at index 18.
+[2025-03-24 13:07:49] Constructed sample at index 19.
+[2025-03-24 13:07:49] Constructed sample at index 20.
+[2025-03-24 13:07:49] Constructed sample at index 21.
+[2025-03-24 13:07:49] Constructed sample at index 22.
+[2025-03-24 13:07:49] Constructed sample at index 23.
+[2025-03-24 13:07:49] Constructed sample at index 24.
+[2025-03-24 13:07:49] Constructed sample at index 25.
+[2025-03-24 13:07:49] Constructed sample at index 26.
+[2025-03-24 13:07:49] Constructed sample at index 27.
+[2025-03-24 13:07:49] Constructed sample at index 28.
+[2025-03-24 13:07:49] Constructed sample at index 29.
+[2025-03-24 13:07:49] Constructed sample at index 30.
+[2025-03-24 13:07:49] Constructed sample at index 31.
+[2025-03-24 13:07:49] Constructed sample at index 32.
+[2025-03-24 13:07:49] Constructed sample at index 33.
+[2025-03-24 13:07:49] Constructed sample at index 34.
+[2025-03-24 13:07:49] Constructed sample at index 35.
+[2025-03-24 13:07:49] Constructed sample at index 36.
+[2025-03-24 13:07:49] Constructed sample at index 37.
+[2025-03-24 13:07:49] Constructed sample at index 38.
+[2025-03-24 13:07:49] Constructed sample at index 39.
+[2025-03-24 13:07:49] Constructed sample at index 40.
+[2025-03-24 13:07:49] Constructed sample at index 41.
+[2025-03-24 13:07:49] Constructed sample at index 42.
+[2025-03-24 13:07:49] Constructed sample at index 43.
+[2025-03-24 13:07:49] Constructed sample at index 44.
+[2025-03-24 13:07:49] Constructed sample at index 45.
+[2025-03-24 13:07:49] Constructed sample at index 46.
+[2025-03-24 13:07:49] Constructed sample at index 47.
+[2025-03-24 13:07:49] Constructed sample at index 48.
+[2025-03-24 13:07:49] Constructed sample at index 49.
+[2025-03-24 13:07:49] Constructed sample at index 50.
+[2025-03-24 13:07:49] Constructed sample at index 51.
+[2025-03-24 13:07:49] Constructed sample at index 52.
+[2025-03-24 13:07:49] Constructed sample at index 53.
+[2025-03-24 13:07:49] Constructed sample at index 54.
+[2025-03-24 13:07:49] Constructed sample at index 55.
+[2025-03-24 13:07:49] Constructed sample at index 56.
+[2025-03-24 13:07:49] Constructed sample at index 57.
+[2025-03-24 13:07:49] Constructed sample at index 58.
+[2025-03-24 13:07:49] Constructed sample at index 59.
+[2025-03-24 13:07:49] Constructed sample at index 60.
+[2025-03-24 13:07:49] Constructed sample at index 61.
+[2025-03-24 13:07:49] Constructed sample at index 62.
+[2025-03-24 13:07:49] Constructed sample at index 63.
+[2025-03-24 13:07:49] Constructed sample at index 64.
+[2025-03-24 13:07:49] Constructed sample at index 65.
+[2025-03-24 13:07:49] Constructed sample at index 66.
+[2025-03-24 13:07:49] Constructed sample at index 67.
+[2025-03-24 13:07:49] Constructed sample at index 68.
+[2025-03-24 13:07:49] Constructed sample at index 69.
+[2025-03-24 13:07:49] Constructed sample at index 70.
+[2025-03-24 13:07:49] Constructed sample at index 71.
+[2025-03-24 13:07:49] Constructed sample at index 72.
+[2025-03-24 13:07:49] Constructed sample at index 73.
+[2025-03-24 13:07:49] Constructed sample at index 74.
+[2025-03-24 13:07:49] Constructed sample at index 75.
+[2025-03-24 13:07:49] Constructed sample at index 76.
+[2025-03-24 13:07:49] Constructed sample at index 77.
+[2025-03-24 13:07:49] Constructed sample at index 78.
+[2025-03-24 13:07:49] Constructed sample at index 79.
+[2025-03-24 13:07:49] Constructed sample at index 80.
+[2025-03-24 13:07:49] Constructed sample at index 81.
+[2025-03-24 13:07:49] Constructed sample at index 82.
+[2025-03-24 13:07:49] Constructed sample at index 83.
+[2025-03-24 13:07:49] Constructed sample at index 84.
+[2025-03-24 13:07:49] Constructed sample at index 85.
+[2025-03-24 13:07:49] Constructed sample at index 86.
+[2025-03-24 13:07:49] Constructed sample at index 87.
+[2025-03-24 13:07:49] Constructed sample at index 88.
+[2025-03-24 13:07:49] Constructed sample at index 89.
+[2025-03-24 13:07:49] Constructed sample at index 90.
+[2025-03-24 13:07:49] Constructed sample at index 91.
+[2025-03-24 13:07:49] Constructed sample at index 92.
+[2025-03-24 13:07:49] Constructed sample at index 93.
+[2025-03-24 13:07:49] Constructed sample at index 94.
+[2025-03-24 13:07:49] Constructed sample at index 95.
+[2025-03-24 13:07:49] Constructed sample at index 96.
+[2025-03-24 13:07:49] Constructed sample at index 97.
+[2025-03-24 13:07:49] Constructed sample at index 98.
+[2025-03-24 13:07:49] Constructed sample at index 99.
+[2025-03-24 13:07:49] Constructed sample at index 100.
+[2025-03-24 13:07:49] Constructed sample at index 101.
+[2025-03-24 13:07:49] Constructed sample at index 102.
+[2025-03-24 13:07:49] Constructed sample at index 103.
+[2025-03-24 13:07:49] Constructed sample at index 104.
+[2025-03-24 13:07:49] Constructed sample at index 105.
+[2025-03-24 13:07:49] Constructed sample at index 106.
+[2025-03-24 13:07:49] Constructed sample at index 107.
+[2025-03-24 13:07:49] Constructed sample at index 108.
+[2025-03-24 13:07:49] Constructed sample at index 109.
+[2025-03-24 13:07:49] Constructed sample at index 110.
+[2025-03-24 13:07:49] Constructed sample at index 111.
+[2025-03-24 13:07:49] Constructed sample at index 112.
+[2025-03-24 13:07:49] Constructed sample at index 113.
+[2025-03-24 13:07:49] Constructed sample at index 114.
+[2025-03-24 13:07:49] Constructed sample at index 115.
+[2025-03-24 13:07:49] Constructed sample at index 116.
+[2025-03-24 13:07:49] Constructed sample at index 117.
+[2025-03-24 13:07:49] Constructed sample at index 118.
+[2025-03-24 13:07:49] Constructed sample at index 119.
+[2025-03-24 13:07:49] Constructed sample at index 120.
+[2025-03-24 13:07:49] Constructed sample at index 121.
+[2025-03-24 13:07:49] Constructed sample at index 122.
+[2025-03-24 13:07:49] Constructed sample at index 123.
+[2025-03-24 13:07:49] Constructed sample at index 124.
+[2025-03-24 13:07:49] Constructed sample at index 125.
+[2025-03-24 13:07:49] Constructed sample at index 126.
+[2025-03-24 13:07:49] Constructed sample at index 127.
+[2025-03-24 13:07:49] Constructed sample at index 128.
+[2025-03-24 13:07:49] Constructed sample at index 129.
+[2025-03-24 13:07:49] Constructed sample at index 130.
+[2025-03-24 13:07:49] Constructed sample at index 131.
+[2025-03-24 13:07:49] Constructed sample at index 132.
+[2025-03-24 13:07:49] Constructed sample at index 133.
+[2025-03-24 13:07:49] Constructed sample at index 134.
+[2025-03-24 13:07:49] Constructed sample at index 135.
+[2025-03-24 13:07:49] Constructed sample at index 136.
+[2025-03-24 13:07:49] Constructed sample at index 137.
+[2025-03-24 13:07:49] Constructed sample at index 138.
+[2025-03-24 13:07:49] Constructed sample at index 139.
+[2025-03-24 13:07:49] Constructed sample at index 140.
+[2025-03-24 13:07:49] Constructed sample at index 141.
+[2025-03-24 13:07:49] Constructed sample at index 142.
+[2025-03-24 13:07:49] Constructed sample at index 143.
+[2025-03-24 13:07:49] Constructed sample at index 144.
+[2025-03-24 13:07:49] Constructed sample at index 145.
+[2025-03-24 13:07:49] Constructed sample at index 146.
+[2025-03-24 13:07:49] Constructed sample at index 147.
+[2025-03-24 13:07:49] Constructed sample at index 148.
+[2025-03-24 13:07:49] Constructed sample at index 149.
+[2025-03-24 13:07:49] Constructed sample at index 150.
+[2025-03-24 13:07:49] Constructed sample at index 151.
+[2025-03-24 13:07:49] Constructed sample at index 152.
+[2025-03-24 13:07:49] Constructed sample at index 153.
+[2025-03-24 13:07:49] Constructed sample at index 154.
+[2025-03-24 13:07:49] Constructed sample at index 155.
+[2025-03-24 13:07:49] Constructed sample at index 156.
+[2025-03-24 13:07:49] Constructed sample at index 157.
+[2025-03-24 13:07:49] Constructed sample at index 158.
+[2025-03-24 13:07:49] Constructed sample at index 159.
+[2025-03-24 13:07:49] Constructed sample at index 160.
+[2025-03-24 13:07:49] Constructed sample at index 161.
+[2025-03-24 13:07:49] Constructed sample at index 162.
+[2025-03-24 13:07:49] Constructed sample at index 163.
+[2025-03-24 13:07:49] Constructed sample at index 164.
+[2025-03-24 13:07:49] Constructed sample at index 165.
+[2025-03-24 13:07:49] Constructed sample at index 166.
+[2025-03-24 13:07:49] Constructed sample at index 167.
+[2025-03-24 13:07:49] Constructed sample at index 168.
+[2025-03-24 13:07:49] Constructed sample at index 169.
+[2025-03-24 13:07:49] Constructed sample at index 170.
+[2025-03-24 13:07:49] Constructed sample at index 171.
+[2025-03-24 13:07:49] Constructed sample at index 172.
+[2025-03-24 13:07:49] Constructed sample at index 173.
+[2025-03-24 13:07:49] Constructed sample at index 174.
+[2025-03-24 13:07:49] Constructed sample at index 175.
+[2025-03-24 13:07:49] Constructed sample at index 176.
+[2025-03-24 13:07:49] Constructed sample at index 177.
+[2025-03-24 13:07:49] Constructed sample at index 178.
+[2025-03-24 13:07:49] Constructed sample at index 179.
+[2025-03-24 13:07:49] Constructed sample at index 180.
+[2025-03-24 13:07:49] Constructed sample at index 181.
+[2025-03-24 13:07:49] Constructed sample at index 182.
+[2025-03-24 13:07:49] Constructed sample at index 183.
+[2025-03-24 13:07:49] Constructed sample at index 184.
+[2025-03-24 13:07:49] Constructed sample at index 185.
+[2025-03-24 13:07:49] Constructed sample at index 186.
+[2025-03-24 13:07:49] Constructed sample at index 187.
+[2025-03-24 13:07:49] Constructed sample at index 188.
+[2025-03-24 13:07:49] Constructed sample at index 189.
+[2025-03-24 13:07:49] Constructed sample at index 190.
+[2025-03-24 13:07:49] Constructed sample at index 191.
+[2025-03-24 13:07:49] Constructed sample at index 192.
+[2025-03-24 13:07:49] Constructed sample at index 193.
+[2025-03-24 13:07:49] Constructed sample at index 194.
+[2025-03-24 13:07:49] Constructed sample at index 195.
+[2025-03-24 13:07:49] Constructed sample at index 196.
+[2025-03-24 13:07:49] Constructed sample at index 197.
+[2025-03-24 13:07:49] Constructed sample at index 198.
+[2025-03-24 13:07:49] Constructed sample at index 199.
+[2025-03-24 13:07:49] Constructed sample at index 200.
+[2025-03-24 13:07:49] Constructed sample at index 201.
+[2025-03-24 13:07:49] Constructed sample at index 202.
+[2025-03-24 13:07:49] Constructed sample at index 203.
+[2025-03-24 13:07:49] Constructed sample at index 204.
+[2025-03-24 13:07:49] Constructed sample at index 205.
+[2025-03-24 13:07:49] Constructed sample at index 206.
+[2025-03-24 13:07:49] Constructed sample at index 207.
+[2025-03-24 13:07:49] Constructed sample at index 208.
+[2025-03-24 13:07:49] Constructed sample at index 209.
+[2025-03-24 13:07:49] Constructed sample at index 210.
+[2025-03-24 13:07:49] Constructed sample at index 211.
+[2025-03-24 13:07:49] Constructed sample at index 212.
+[2025-03-24 13:07:49] Constructed sample at index 213.
+[2025-03-24 13:07:49] Constructed sample at index 214.
+[2025-03-24 13:07:49] Constructed sample at index 215.
+[2025-03-24 13:07:49] Constructed sample at index 216.
+[2025-03-24 13:07:49] Constructed sample at index 217.
+[2025-03-24 13:07:49] Constructed sample at index 218.
+[2025-03-24 13:07:49] Constructed sample at index 219.
+[2025-03-24 13:07:49] Constructed sample at index 220.
+[2025-03-24 13:07:49] Constructed sample at index 221.
+[2025-03-24 13:07:49] Constructed sample at index 222.
+[2025-03-24 13:07:49] Constructed sample at index 223.
+[2025-03-24 13:07:49] Constructed sample at index 224.
+[2025-03-24 13:07:49] Constructed sample at index 225.
+[2025-03-24 13:07:49] Constructed sample at index 226.
+[2025-03-24 13:07:49] Constructed sample at index 227.
+[2025-03-24 13:07:49] Constructed sample at index 228.
+[2025-03-24 13:07:49] Constructed sample at index 229.
+[2025-03-24 13:07:49] Constructed sample at index 230.
+[2025-03-24 13:07:49] Constructed sample at index 231.
+[2025-03-24 13:07:49] Constructed sample at index 232.
+[2025-03-24 13:07:49] Constructed sample at index 233.
+[2025-03-24 13:07:49] Constructed sample at index 234.
+[2025-03-24 13:07:49] Constructed sample at index 235.
+[2025-03-24 13:07:49] Constructed sample at index 236.
+[2025-03-24 13:07:49] Constructed sample at index 237.
+[2025-03-24 13:07:49] Constructed sample at index 238.
+[2025-03-24 13:07:49] Constructed sample at index 239.
+[2025-03-24 13:07:49] Constructed sample at index 240.
+[2025-03-24 13:07:49] Constructed sample at index 241.
+[2025-03-24 13:07:49] Constructed sample at index 242.
+[2025-03-24 13:07:49] Constructed sample at index 243.
+[2025-03-24 13:07:49] Constructed sample at index 244.
+[2025-03-24 13:07:49] Constructed sample at index 245.
+[2025-03-24 13:07:49] Constructed sample at index 246.
+[2025-03-24 13:07:49] Constructed sample at index 247.
+[2025-03-24 13:07:49] Constructed sample at index 248.
+[2025-03-24 13:07:49] Constructed sample at index 249.
+[2025-03-24 13:07:49] Constructed sample at index 250.
+[2025-03-24 13:07:49] Constructed sample at index 251.
+[2025-03-24 13:07:49] Constructed sample at index 252.
+[2025-03-24 13:07:49] Constructed sample at index 253.
+[2025-03-24 13:07:49] Constructed sample at index 254.
+[2025-03-24 13:07:49] Constructed sample at index 255.
+[2025-03-24 13:07:49] Constructed sample at index 256.
+[2025-03-24 13:07:49] Constructed sample at index 257.
+[2025-03-24 13:07:49] Constructed sample at index 258.
+[2025-03-24 13:07:49] Constructed sample at index 259.
+[2025-03-24 13:07:49] Constructed sample at index 260.
+[2025-03-24 13:07:49] Constructed sample at index 261.
+[2025-03-24 13:07:49] Constructed sample at index 262.
+[2025-03-24 13:07:49] Constructed sample at index 263.
+[2025-03-24 13:07:49] Constructed sample at index 264.
+[2025-03-24 13:07:49] Constructed sample at index 265.
+[2025-03-24 13:07:49] Constructed sample at index 266.
+[2025-03-24 13:07:49] Constructed sample at index 267.
+[2025-03-24 13:07:49] Constructed sample at index 268.
+[2025-03-24 13:07:49] Constructed sample at index 269.
+[2025-03-24 13:07:49] Constructed sample at index 270.
+[2025-03-24 13:07:49] Constructed sample at index 271.
+[2025-03-24 13:07:49] Constructed sample at index 272.
+[2025-03-24 13:07:49] Constructed sample at index 273.
+[2025-03-24 13:07:49] Constructed sample at index 274.
+[2025-03-24 13:07:49] Constructed sample at index 275.
+[2025-03-24 13:07:49] Constructed sample at index 276.
+[2025-03-24 13:07:49] Constructed sample at index 277.
+[2025-03-24 13:07:49] Constructed sample at index 278.
+[2025-03-24 13:07:49] Constructed sample at index 279.
+[2025-03-24 13:07:49] Constructed sample at index 280.
+[2025-03-24 13:07:49] Constructed sample at index 281.
+[2025-03-24 13:07:49] Constructed sample at index 282.
+[2025-03-24 13:07:49] Constructed sample at index 283.
+[2025-03-24 13:07:49] Constructed sample at index 284.
+[2025-03-24 13:07:49] Constructed sample at index 285.
+[2025-03-24 13:07:49] Constructed sample at index 286.
+[2025-03-24 13:07:49] Constructed sample at index 287.
+[2025-03-24 13:07:49] Constructed sample at index 288.
+[2025-03-24 13:07:49] Constructed sample at index 289.
+[2025-03-24 13:07:49] Constructed sample at index 290.
+[2025-03-24 13:07:49] Constructed sample at index 291.
+[2025-03-24 13:07:49] Constructed sample at index 292.
+[2025-03-24 13:07:49] Constructed sample at index 293.
+[2025-03-24 13:07:49] Constructed sample at index 294.
+[2025-03-24 13:07:49] Constructed sample at index 295.
+[2025-03-24 13:07:49] Constructed sample at index 296.
+[2025-03-24 13:07:49] Constructed sample at index 297.
+[2025-03-24 13:07:49] Constructed sample at index 298.
+[2025-03-24 13:07:49] Constructed sample at index 299.
+[2025-03-24 13:07:49] Constructed sample at index 300.
+[2025-03-24 13:07:49] Constructed sample at index 301.
+[2025-03-24 13:07:49] Constructed sample at index 302.
+[2025-03-24 13:07:49] Constructed sample at index 303.
+[2025-03-24 13:07:49] Constructed sample at index 304.
+[2025-03-24 13:07:49] Constructed sample at index 305.
+[2025-03-24 13:07:49] Constructed sample at index 306.
+[2025-03-24 13:07:49] Constructed sample at index 307.
+[2025-03-24 13:07:49] Constructed sample at index 308.
+[2025-03-24 13:07:49] Constructed sample at index 309.
+[2025-03-24 13:07:49] Constructed sample at index 310.
+[2025-03-24 13:07:49] Constructed sample at index 311.
+[2025-03-24 13:07:49] Constructed sample at index 312.
+[2025-03-24 13:07:49] Constructed sample at index 313.
+[2025-03-24 13:07:49] Constructed sample at index 314.
+[2025-03-24 13:07:49] Constructed sample at index 315.
+[2025-03-24 13:07:49] Constructed sample at index 316.
+[2025-03-24 13:07:49] Constructed sample at index 317.
+[2025-03-24 13:07:49] Constructed sample at index 318.
+[2025-03-24 13:07:49] Constructed sample at index 319.
+[2025-03-24 13:07:49] Constructed sample at index 320.
+[2025-03-24 13:07:49] Constructed sample at index 321.
+[2025-03-24 13:07:49] Constructed sample at index 322.
+[2025-03-24 13:07:49] Constructed sample at index 323.
+[2025-03-24 13:07:49] Constructed sample at index 324.
+[2025-03-24 13:07:49] Constructed sample at index 325.
+[2025-03-24 13:07:49] Constructed sample at index 326.
+[2025-03-24 13:07:49] Constructed sample at index 327.
+[2025-03-24 13:07:49] Constructed sample at index 328.
+[2025-03-24 13:07:49] Constructed sample at index 329.
+[2025-03-24 13:07:49] Constructed sample at index 330.
+[2025-03-24 13:07:49] Constructed sample at index 331.
+[2025-03-24 13:07:49] Constructed sample at index 332.
+[2025-03-24 13:07:49] Constructed sample at index 333.
+[2025-03-24 13:07:49] Constructed sample at index 334.
+[2025-03-24 13:07:49] Constructed sample at index 335.
+[2025-03-24 13:07:49] Constructed sample at index 336.
+[2025-03-24 13:07:49] Constructed sample at index 337.
+[2025-03-24 13:07:49] Constructed sample at index 338.
+[2025-03-24 13:07:49] Constructed sample at index 339.
+[2025-03-24 13:07:49] Constructed sample at index 340.
+[2025-03-24 13:07:49] Constructed sample at index 341.
+[2025-03-24 13:07:49] Constructed sample at index 342.
+[2025-03-24 13:07:49] Constructed sample at index 343.
+[2025-03-24 13:07:49] Constructed sample at index 344.
+[2025-03-24 13:07:49] Constructed sample at index 345.
+[2025-03-24 13:07:49] Constructed sample at index 346.
+[2025-03-24 13:07:49] Constructed sample at index 347.
+[2025-03-24 13:07:49] Constructed sample at index 348.
+[2025-03-24 13:07:49] Constructed sample at index 349.
+[2025-03-24 13:07:49] Constructed sample at index 350.
+[2025-03-24 13:07:49] Constructed sample at index 351.
+[2025-03-24 13:07:49] Constructed sample at index 352.
+[2025-03-24 13:07:49] Constructed sample at index 353.
+[2025-03-24 13:07:49] Constructed sample at index 354.
+[2025-03-24 13:07:49] Constructed sample at index 355.
+[2025-03-24 13:07:49] Constructed sample at index 356.
+[2025-03-24 13:07:49] Constructed sample at index 357.
+[2025-03-24 13:07:49] Constructed sample at index 358.
+[2025-03-24 13:07:49] Constructed sample at index 359.
+[2025-03-24 13:07:49] Constructed sample at index 360.
+[2025-03-24 13:07:49] Constructed sample at index 361.
+[2025-03-24 13:07:49] Constructed sample at index 362.
+[2025-03-24 13:07:49] Constructed sample at index 363.
+[2025-03-24 13:07:49] Constructed sample at index 364.
+[2025-03-24 13:07:49] Constructed sample at index 365.
+[2025-03-24 13:07:49] Constructed sample at index 366.
+[2025-03-24 13:07:49] Constructed sample at index 367.
+[2025-03-24 13:07:49] Constructed sample at index 368.
+[2025-03-24 13:07:49] Constructed sample at index 369.
+[2025-03-24 13:07:49] Constructed sample at index 370.
+[2025-03-24 13:07:49] Constructed sample at index 371.
+[2025-03-24 13:07:49] Constructed sample at index 372.
+[2025-03-24 13:07:49] Constructed sample at index 373.
+[2025-03-24 13:07:49] Constructed sample at index 374.
+[2025-03-24 13:07:49] Constructed sample at index 375.
+[2025-03-24 13:07:49] Constructed sample at index 376.
+[2025-03-24 13:07:49] Constructed sample at index 377.
+[2025-03-24 13:07:49] Constructed sample at index 378.
+[2025-03-24 13:07:49] Constructed sample at index 379.
+[2025-03-24 13:07:49] Constructed sample at index 380.
+[2025-03-24 13:07:49] Constructed sample at index 381.
+[2025-03-24 13:07:49] Constructed sample at index 382.
+[2025-03-24 13:07:49] Constructed sample at index 383.
+[2025-03-24 13:07:49] Constructed sample at index 384.
+[2025-03-24 13:07:49] Constructed sample at index 385.
+[2025-03-24 13:07:49] Constructed sample at index 386.
+[2025-03-24 13:07:49] Constructed sample at index 387.
+[2025-03-24 13:07:49] Constructed sample at index 388.
+[2025-03-24 13:07:49] Constructed sample at index 389.
+[2025-03-24 13:07:49] Constructed sample at index 390.
+[2025-03-24 13:07:49] Constructed sample at index 391.
+[2025-03-24 13:07:49] Constructed sample at index 392.
+[2025-03-24 13:07:49] Constructed sample at index 393.
+[2025-03-24 13:07:49] Constructed sample at index 394.
+[2025-03-24 13:07:49] Constructed sample at index 395.
+[2025-03-24 13:07:49] Constructed sample at index 396.
+[2025-03-24 13:07:49] Constructed sample at index 397.
+[2025-03-24 13:07:49] Constructed sample at index 398.
+[2025-03-24 13:07:49] Constructed sample at index 399.
+[2025-03-24 13:07:49] [Trajectory2] Training Samples: 397, Input size: 22
+[2025-03-24 13:07:49] [Trajectory2] Epoch 1: RMSE per output: [0.26872843 0.27332153 0.24565412 0.36819756], Avg RMSE: 0.28898
+[2025-03-24 13:07:49] [Trajectory2] Epoch 2: RMSE per output: [0.28259682 0.2518688  0.27606108 0.32558097], Avg RMSE: 0.28403
+[2025-03-24 13:07:49] [Trajectory2] Epoch 3: RMSE per output: [0.24274414 0.25555859 0.25527589 0.32546283], Avg RMSE: 0.26976
+[2025-03-24 13:07:50] [Trajectory2] Epoch 4: RMSE per output: [0.23117027 0.24447735 0.25117625 0.30943692], Avg RMSE: 0.25907
+[2025-03-24 13:07:50] [Trajectory2] Epoch 5: RMSE per output: [0.26110507 0.23455747 0.21972606 0.31312996], Avg RMSE: 0.25713
+[2025-03-24 13:07:50] [Trajectory2] Epoch 6: RMSE per output: [0.23444687 0.24052909 0.23024326 0.29899736], Avg RMSE: 0.25105
+[2025-03-24 13:07:50] [Trajectory2] Epoch 7: RMSE per output: [0.22624395 0.23278478 0.21882869 0.28474794], Avg RMSE: 0.24065
+[2025-03-24 13:07:50] [Trajectory2] Epoch 8: RMSE per output: [0.22520075 0.23202642 0.21694412 0.27916456], Avg RMSE: 0.23833
+[2025-03-24 13:07:51] [Trajectory2] Epoch 9: RMSE per output: [0.22447661 0.21434124 0.21447574 0.25624079], Avg RMSE: 0.22738
+[2025-03-24 13:07:51] [Trajectory2] Epoch 10: RMSE per output: [0.2039633  0.20814307 0.20610763 0.26290595], Avg RMSE: 0.22028
+[2025-03-24 13:07:51] [Trajectory2] Epoch 11: RMSE per output: [0.21320066 0.19930762 0.19428658 0.26615464], Avg RMSE: 0.21824
+[2025-03-24 13:07:51] [Trajectory2] Epoch 12: RMSE per output: [0.19984695 0.19704244 0.18590201 0.25475189], Avg RMSE: 0.20939
+[2025-03-24 13:07:51] [Trajectory2] Epoch 13: RMSE per output: [0.18190041 0.18384915 0.19055069 0.24070808], Avg RMSE: 0.19925
+[2025-03-24 13:07:52] [Trajectory2] Epoch 14: RMSE per output: [0.18405919 0.19870734 0.18881791 0.23010797], Avg RMSE: 0.20042
+[2025-03-24 13:07:52] [Trajectory2] Epoch 15: RMSE per output: [0.1825989  0.19693849 0.18130041 0.23358148], Avg RMSE: 0.19860
+[2025-03-24 13:07:52] [Trajectory2] Epoch 16: RMSE per output: [0.17791778 0.19102602 0.1553629  0.211084  ], Avg RMSE: 0.18385
+[2025-03-24 13:07:52] [Trajectory2] Epoch 17: RMSE per output: [0.16462559 0.16841611 0.16048864 0.21708525], Avg RMSE: 0.17765
+[2025-03-24 13:07:52] [Trajectory2] Epoch 18: RMSE per output: [0.16888693 0.1806426  0.16796795 0.21127041], Avg RMSE: 0.18219
+[2025-03-24 13:07:53] [Trajectory2] Epoch 19: RMSE per output: [0.15006803 0.18040047 0.16029308 0.20278569], Avg RMSE: 0.17339
+[2025-03-24 13:07:53] [Trajectory2] Epoch 20: RMSE per output: [0.14626257 0.15296767 0.15026937 0.19430047], Avg RMSE: 0.16095
+[2025-03-24 13:07:53] [Trajectory2] Epoch 21: RMSE per output: [0.15260502 0.14735944 0.13941759 0.18282815], Avg RMSE: 0.15555
+[2025-03-24 13:07:53] [Trajectory2] Epoch 22: RMSE per output: [0.1526689  0.14832303 0.13910494 0.19691045], Avg RMSE: 0.15925
+[2025-03-24 13:07:53] [Trajectory2] Epoch 23: RMSE per output: [0.144424   0.13787233 0.14254552 0.17688236], Avg RMSE: 0.15043
+[2025-03-24 13:07:54] [Trajectory2] Epoch 24: RMSE per output: [0.12996848 0.13975994 0.13193607 0.18196327], Avg RMSE: 0.14591
+[2025-03-24 13:07:54] [Trajectory2] Epoch 25: RMSE per output: [0.14032555 0.12798149 0.13255549 0.17854095], Avg RMSE: 0.14485
+[2025-03-24 13:07:54] [Trajectory2] Epoch 26: RMSE per output: [0.13576793 0.14216994 0.13060022 0.17026237], Avg RMSE: 0.14470
+[2025-03-24 13:07:54] [Trajectory2] Epoch 27: RMSE per output: [0.13940845 0.12978678 0.12467744 0.16144578], Avg RMSE: 0.13883
+[2025-03-24 13:07:54] [Trajectory2] Epoch 28: RMSE per output: [0.1162472  0.12642098 0.12265959 0.16099904], Avg RMSE: 0.13158
+[2025-03-24 13:07:55] [Trajectory2] Epoch 29: RMSE per output: [0.11451422 0.12964042 0.11806737 0.15168993], Avg RMSE: 0.12848
+[2025-03-24 13:07:55] [Trajectory2] Epoch 30: RMSE per output: [0.11249814 0.12258071 0.1145108  0.1511623 ], Avg RMSE: 0.12519
+[2025-03-24 13:07:55] [Trajectory2] Epoch 31: RMSE per output: [0.11705731 0.12267189 0.11538861 0.1479719 ], Avg RMSE: 0.12577
+[2025-03-24 13:07:55] [Trajectory2] Epoch 32: RMSE per output: [0.12219549 0.11126659 0.11567472 0.1448522 ], Avg RMSE: 0.12350
+[2025-03-24 13:07:55] [Trajectory2] Epoch 33: RMSE per output: [0.11272636 0.12378297 0.10934357 0.13922826], Avg RMSE: 0.12127
+[2025-03-24 13:07:56] [Trajectory2] Epoch 34: RMSE per output: [0.10580651 0.11893019 0.1066452  0.12981395], Avg RMSE: 0.11530
+[2025-03-24 13:07:56] [Trajectory2] Epoch 35: RMSE per output: [0.11040762 0.10441354 0.10424591 0.13497565], Avg RMSE: 0.11351
+[2025-03-24 13:07:56] [Trajectory2] Epoch 36: RMSE per output: [0.09969347 0.10895723 0.09922374 0.12944334], Avg RMSE: 0.10933
+[2025-03-24 13:07:56] [Trajectory2] Epoch 37: RMSE per output: [0.10249652 0.10802108 0.10200184 0.12172639], Avg RMSE: 0.10856
+[2025-03-24 13:07:56] [Trajectory2] Epoch 38: RMSE per output: [0.09676299 0.11446567 0.10674754 0.12740771], Avg RMSE: 0.11135
+[2025-03-24 13:07:57] [Trajectory2] Epoch 39: RMSE per output: [0.09565133 0.11811885 0.09980742 0.12114821], Avg RMSE: 0.10868
+[2025-03-24 13:07:57] [Trajectory2] Epoch 40: RMSE per output: [0.09447491 0.11722077 0.09849974 0.12402399], Avg RMSE: 0.10855
+[2025-03-24 13:07:57] [Trajectory2] Training predictions plot saved to Results/MNN_Results/exp_lr0.001_dr0.3_hn100_reg0.1_bfw40/Plots/FinalOutputPredictions_Trajectory2_npbi3_niu1_nl2_trtrajT1-30-T2-40_ttrajTrajectory3_b1_20-b2_15-b3_10-b4_5.png
+[2025-03-24 13:07:57] Final checkpoint saved to Results/MNN_Results/exp_lr0.001_dr0.3_hn100_reg0.1_bfw40/Checkpoints/MNN_npbi3_niu1_nl2_trtrajT1-30-T2-40_ttrajTrajectory3_b1_20-b2_15-b3_10-b4_5_final.pth
+[2025-03-24 13:07:57] Global training summary saved to Results/MNN_Results/exp_lr0.001_dr0.3_hn100_reg0.1_bfw40/TrainingSummaries/GlobalTrainingSummary_npbi3_niu1_nl2_trtrajT1-30-T2-40_ttrajTrajectory3_b1_20-b2_15-b3_10-b4_5.csv
+[2025-03-24 13:07:57] === Testing Phase ===
+[2025-03-24 13:07:57] Processing testing trajectory: Trajectory3
+[2025-03-24 13:07:57] DEBUG: beams_training length: 400, beams_gt length: 400, imu length: 40000
+[2025-03-24 13:07:57] [Trajectory3] Testing Samples: 360, Input size: 22
+[2025-03-24 13:07:57] [Trajectory3] Test RMSE per output: [0.0340187  0.03464751 0.03473041 0.03995459]
+[2025-03-24 13:07:57] [Trajectory3] Test predictions saved to Results/MNN_Results/exp_lr0.001_dr0.3_hn100_reg0.1_bfw40/Predictions/TestPredictions_Trajectory3_npbi3_niu1_nl2_trtrajT1-30-T2-40_ttrajTrajectory3_b1_20-b2_15-b3_10-b4_5.csv
+[2025-03-24 13:07:58] [Trajectory3] Velocity predictions plot saved to Results/MNN_Results/exp_lr0.001_dr0.3_hn100_reg0.1_bfw40/Plots/VelocityPredictions_Trajectory3_npbi3_niu1_nl2_trtrajT1-30-T2-40_ttrajTrajectory3_b1_20-b2_15-b3_10-b4_5.png
+[2025-03-24 13:07:58] Global test summary saved to Results/MNN_Results/exp_lr0.001_dr0.3_hn100_reg0.1_bfw40/TestSummaries/GlobalTestSummary_npbi3_niu1_nl2_trtrajT1-30-T2-40_ttrajTrajectory3_b1_20-b2_15-b3_10-b4_5.csv

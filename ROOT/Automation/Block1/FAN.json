@@ -1,18 +1,24 @@
 {
-    "learning_rate": 0.001,
-    "dropout_rate": 0.3,
-    "hidden_neurons": 100,
-    "beam_fill_window": 3,
-    "num_past_beam_instances": 3,
-    "regularization": 0.01,
-    "num_imu_instances": 1,
-    "partial_rmse": true,
-    "training_trajectories": [
-      ["Trajectory1", 30],
-      ["Trajectory2", 40]
-    ],
-    "testing_trajectories": [
-      "Trajectory3"
-    ]
-  }
-  
+  "learning_rate": 0.001,
+  "dropout_rate": 0.3,
+  "hidden_neurons": 100,
+  "num_layers": 2,
+  "regularization": 0.01,
+  "beam_fill_window": 25,
+  "num_past_beam_instances": 3,
+  "num_imu_instances": 1,
+  "partial_rmse": true,
+  "missing_beam_probability": {
+    "b1": 0.2,
+    "b2": 0.15,
+    "b3": 0.1,
+    "b4": 0.05
+  },
+  "training_trajectories": [
+    ["Trajectory1", 30],
+    ["Trajectory2", 40]
+  ],
+  "testing_trajectories": [
+    "Trajectory3"
+  ]
+}

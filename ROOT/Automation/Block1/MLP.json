@@ -15,10 +15,10 @@
     "b4": 0.05
   },
   "training_trajectories": [
-    ["Trajectory1", 30],
-    ["Trajectory2", 40]
+    ["Trajectory1", 30]
   ],
   "testing_trajectories": [
-    "Trajectory3"
+    "Trajectory3",
+    "Trajectory5"
   ]
 }

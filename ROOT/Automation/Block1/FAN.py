@@ -8,7 +8,7 @@ class FourierAnalysisNetwork(nn.Module):
         torch.manual_seed(seed_value)
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         
-        # Using a real FFT (rfft) on a real-valued input of length N gives N//2+1 frequency bins.
+        # Compute the FFT feature size for a real-valued input:
         self.fft_feature_size = number_of_input_neurons // 2 + 1
         
         # Fully connected layers on the frequency-domain features.

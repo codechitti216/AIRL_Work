@@ -17,14 +17,8 @@
     "b4": 0.05
   },
   "training_trajectories": [
-    ["Trajectory1", 300],
-    ["Trajectory2", 400],
-    ["Trajectory13", 400],
-    ["Trajectory9", 400],
-    ["Trajectory8", 400],
-    ["Trajectory7", 400],
-    ["Trajectory10", 400],
-    ["Trajectory12", 400]
+    ["Trajectory1", 30],
+    ["Trajectory2", 40]
   ],
   "testing_trajectories": [
     "Trajectory3"
