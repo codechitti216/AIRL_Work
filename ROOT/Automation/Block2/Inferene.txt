@@ -1,0 +1,227 @@
+[INFO] Starting inference process...
+[INFO] Loaded inference configuration from inference.json
+[INFO] Scanning for checkpoints under base folder: Results/MNN_Results
+[DEBUG] Found Checkpoints folder under: exp_lr0.001_dr0.3_hn100_reg0.1_bfw7
+[DEBUG] Found checkpoint file: MNN_npbi3_niu1_nl2_trtrajT13-100-T14-100_ttrajTrajectory15_range_removed_final.pth in Results/MNN_Results/exp_lr0.001_dr0.3_hn100_reg0.1_bfw7/Checkpoints
+[DEBUG] Found Checkpoints folder under: exp_lr0.001_dr0.3_hn100_reg0.1_bfw3
+[DEBUG] Found checkpoint file: MNN_npbi3_niu1_nl2_trtrajT1-100-T2-100-T3-100_ttrajTrajectory16_range_removed_final.pth in Results/MNN_Results/exp_lr0.001_dr0.3_hn100_reg0.1_bfw3/Checkpoints
+[DEBUG] Found Checkpoints folder under: exp_lr0.001_dr0.3_hn100_reg0.1_bfw5
+[DEBUG] Found checkpoint file: MNN_npbi3_niu1_nl2_trtrajT1-100-T2-100-T3-100_ttrajTrajectory16_range_removed_final.pth in Results/MNN_Results/exp_lr0.001_dr0.3_hn100_reg0.1_bfw5/Checkpoints
+[DEBUG] Found checkpoint file: MNN_npbi3_niu1_nl2_trtrajT1-100-T2-100_ttrajTrajectory15_range_removed_final.pth in Results/MNN_Results/exp_lr0.001_dr0.3_hn100_reg0.1_bfw5/Checkpoints
+[DEBUG] Found Checkpoints folder under: exp_lr0.001_dr0.5_hn64_reg0.0001_bfw5
+[DEBUG] Found checkpoint file: MNN_npbi3_niu1_nl2_trtrajT13-1000_ttrajT14_random_removed_final.pth in Results/MNN_Results/exp_lr0.001_dr0.5_hn64_reg0.0001_bfw5/Checkpoints
+[DEBUG] Found Checkpoints folder under: exp_lr0.001_dr0.0_hn150_reg0.0001_bfw5
+[DEBUG] Found checkpoint file: MNN_npbi3_niu1_nl3_trtrajT13-300_ttrajT14_range_removed_final.pth in Results/MNN_Results/exp_lr0.001_dr0.0_hn150_reg0.0001_bfw5/Checkpoints
+[DEBUG] Found Checkpoints folder under: exp_lr0.001_dr0.5_hn64_reg0.0001_bfw3
+[DEBUG] Found checkpoint file: MNN_npbi5_niu3_nl2_trtrajT13-100_ttrajT14_random_removed_final.pth in Results/MNN_Results/exp_lr0.001_dr0.5_hn64_reg0.0001_bfw3/Checkpoints
+[DEBUG] Found checkpoint file: MNN_npbi5_niu3_nl2_trtrajT13-500_ttrajT14_random_removed_final.pth in Results/MNN_Results/exp_lr0.001_dr0.5_hn64_reg0.0001_bfw3/Checkpoints
+[INFO] Total checkpoints found: 8
+[INFO] Processing checkpoint file: MNN_npbi3_niu1_nl2_trtrajT13-100-T14-100_ttrajTrajectory15_range_removed_final.pth from folder: exp_lr0.001_dr0.3_hn100_reg0.1_bfw7
+[DEBUG] Parsing folder name: exp_lr0.001_dr0.3_hn100_reg0.1_bfw7
+[INFO] Extracted hidden_neurons=100, beam_fill_window=7 from folder name
+[DEBUG] Parsing checkpoint file name: MNN_npbi3_niu1_nl2_trtrajT13-100-T14-100_ttrajTrajectory15_range_removed_final.pth
+[INFO] Extracted npbi=3, niu=1, nl=2 from checkpoint file name
+[INFO] Computed input size: 4 + (3*4) + (1*6) = 22
+[INFO] Creating model with num_inputs=22, hidden_neurons=100
+[INFO] Unique checkpoint identifier: exp_lr0.001_dr0.3_hn100_reg0.1_bfw7_MNN_npbi3_niu1_nl2_trtrajT13-100-T14-100_ttrajTrajectory15_range_removed_final
+[INFO] Running inference on trajectory: Trajectory13 using checkpoint: exp_lr0.001_dr0.3_hn100_reg0.1_bfw7_MNN_npbi3_niu1_nl2_trtrajT13-100-T14-100_ttrajTrajectory15_range_removed_final
+[INFO] Running inference for checkpoint: exp_lr0.001_dr0.3_hn100_reg0.1_bfw7_MNN_npbi3_niu1_nl2_trtrajT13-100-T14-100_ttrajTrajectory15_range_removed_final on trajectory: Trajectory13
+[INFO] Loading CSV files from trajectory folder: ../../Data/Trajectory13
+[INFO] Loaded beams_gt (3116 rows) and velocity_gt (3116 rows)
+[INFO] Loaded IMU file: IMU_trajectory13.csv with 21800 rows
+[DEBUG] Parsing folder name: exp
+[ERROR] 'hn' not found in folder name: exp
+[ERROR] Could not determine beam_fill_window from checkpoint identifier.
+[WARN] Inference for trajectory Trajectory13 with checkpoint exp_lr0.001_dr0.3_hn100_reg0.1_bfw7_MNN_npbi3_niu1_nl2_trtrajT13-100-T14-100_ttrajTrajectory15_range_removed_final failed or returned no results.
+[INFO] Running inference on trajectory: Trajectory14 using checkpoint: exp_lr0.001_dr0.3_hn100_reg0.1_bfw7_MNN_npbi3_niu1_nl2_trtrajT13-100-T14-100_ttrajTrajectory15_range_removed_final
+[INFO] Running inference for checkpoint: exp_lr0.001_dr0.3_hn100_reg0.1_bfw7_MNN_npbi3_niu1_nl2_trtrajT13-100-T14-100_ttrajTrajectory15_range_removed_final on trajectory: Trajectory14
+[INFO] Loading CSV files from trajectory folder: ../../Data/Trajectory14
+[INFO] Loaded beams_gt (929 rows) and velocity_gt (929 rows)
+[INFO] Loaded IMU file: IMU_trajectory14.csv with 6500 rows
+[DEBUG] Parsing folder name: exp
+[ERROR] 'hn' not found in folder name: exp
+[ERROR] Could not determine beam_fill_window from checkpoint identifier.
+[WARN] Inference for trajectory Trajectory14 with checkpoint exp_lr0.001_dr0.3_hn100_reg0.1_bfw7_MNN_npbi3_niu1_nl2_trtrajT13-100-T14-100_ttrajTrajectory15_range_removed_final failed or returned no results.
+[INFO] Processing checkpoint file: MNN_npbi3_niu1_nl2_trtrajT1-100-T2-100-T3-100_ttrajTrajectory16_range_removed_final.pth from folder: exp_lr0.001_dr0.3_hn100_reg0.1_bfw3
+[DEBUG] Parsing folder name: exp_lr0.001_dr0.3_hn100_reg0.1_bfw3
+[INFO] Extracted hidden_neurons=100, beam_fill_window=3 from folder name
+[DEBUG] Parsing checkpoint file name: MNN_npbi3_niu1_nl2_trtrajT1-100-T2-100-T3-100_ttrajTrajectory16_range_removed_final.pth
+[INFO] Extracted npbi=3, niu=1, nl=2 from checkpoint file name
+[INFO] Computed input size: 4 + (3*4) + (1*6) = 22
+[INFO] Creating model with num_inputs=22, hidden_neurons=100
+[INFO] Unique checkpoint identifier: exp_lr0.001_dr0.3_hn100_reg0.1_bfw3_MNN_npbi3_niu1_nl2_trtrajT1-100-T2-100-T3-100_ttrajTrajectory16_range_removed_final
+[INFO] Running inference on trajectory: Trajectory13 using checkpoint: exp_lr0.001_dr0.3_hn100_reg0.1_bfw3_MNN_npbi3_niu1_nl2_trtrajT1-100-T2-100-T3-100_ttrajTrajectory16_range_removed_final
+[INFO] Running inference for checkpoint: exp_lr0.001_dr0.3_hn100_reg0.1_bfw3_MNN_npbi3_niu1_nl2_trtrajT1-100-T2-100-T3-100_ttrajTrajectory16_range_removed_final on trajectory: Trajectory13
+[INFO] Loading CSV files from trajectory folder: ../../Data/Trajectory13
+[INFO] Loaded beams_gt (3116 rows) and velocity_gt (3116 rows)
+[INFO] Loaded IMU file: IMU_trajectory13.csv with 21800 rows
+[DEBUG] Parsing folder name: exp
+[ERROR] 'hn' not found in folder name: exp
+[ERROR] Could not determine beam_fill_window from checkpoint identifier.
+[WARN] Inference for trajectory Trajectory13 with checkpoint exp_lr0.001_dr0.3_hn100_reg0.1_bfw3_MNN_npbi3_niu1_nl2_trtrajT1-100-T2-100-T3-100_ttrajTrajectory16_range_removed_final failed or returned no results.
+[INFO] Running inference on trajectory: Trajectory14 using checkpoint: exp_lr0.001_dr0.3_hn100_reg0.1_bfw3_MNN_npbi3_niu1_nl2_trtrajT1-100-T2-100-T3-100_ttrajTrajectory16_range_removed_final
+[INFO] Running inference for checkpoint: exp_lr0.001_dr0.3_hn100_reg0.1_bfw3_MNN_npbi3_niu1_nl2_trtrajT1-100-T2-100-T3-100_ttrajTrajectory16_range_removed_final on trajectory: Trajectory14
+[INFO] Loading CSV files from trajectory folder: ../../Data/Trajectory14
+[INFO] Loaded beams_gt (929 rows) and velocity_gt (929 rows)
+[INFO] Loaded IMU file: IMU_trajectory14.csv with 6500 rows
+[DEBUG] Parsing folder name: exp
+[ERROR] 'hn' not found in folder name: exp
+[ERROR] Could not determine beam_fill_window from checkpoint identifier.
+[WARN] Inference for trajectory Trajectory14 with checkpoint exp_lr0.001_dr0.3_hn100_reg0.1_bfw3_MNN_npbi3_niu1_nl2_trtrajT1-100-T2-100-T3-100_ttrajTrajectory16_range_removed_final failed or returned no results.
+[INFO] Processing checkpoint file: MNN_npbi3_niu1_nl2_trtrajT1-100-T2-100-T3-100_ttrajTrajectory16_range_removed_final.pth from folder: exp_lr0.001_dr0.3_hn100_reg0.1_bfw5
+[DEBUG] Parsing folder name: exp_lr0.001_dr0.3_hn100_reg0.1_bfw5
+[INFO] Extracted hidden_neurons=100, beam_fill_window=5 from folder name
+[DEBUG] Parsing checkpoint file name: MNN_npbi3_niu1_nl2_trtrajT1-100-T2-100-T3-100_ttrajTrajectory16_range_removed_final.pth
+[INFO] Extracted npbi=3, niu=1, nl=2 from checkpoint file name
+[INFO] Computed input size: 4 + (3*4) + (1*6) = 22
+[INFO] Creating model with num_inputs=22, hidden_neurons=100
+[INFO] Unique checkpoint identifier: exp_lr0.001_dr0.3_hn100_reg0.1_bfw5_MNN_npbi3_niu1_nl2_trtrajT1-100-T2-100-T3-100_ttrajTrajectory16_range_removed_final
+[INFO] Running inference on trajectory: Trajectory13 using checkpoint: exp_lr0.001_dr0.3_hn100_reg0.1_bfw5_MNN_npbi3_niu1_nl2_trtrajT1-100-T2-100-T3-100_ttrajTrajectory16_range_removed_final
+[INFO] Running inference for checkpoint: exp_lr0.001_dr0.3_hn100_reg0.1_bfw5_MNN_npbi3_niu1_nl2_trtrajT1-100-T2-100-T3-100_ttrajTrajectory16_range_removed_final on trajectory: Trajectory13
+[INFO] Loading CSV files from trajectory folder: ../../Data/Trajectory13
+[INFO] Loaded beams_gt (3116 rows) and velocity_gt (3116 rows)
+[INFO] Loaded IMU file: IMU_trajectory13.csv with 21800 rows
+[DEBUG] Parsing folder name: exp
+[ERROR] 'hn' not found in folder name: exp
+[ERROR] Could not determine beam_fill_window from checkpoint identifier.
+[WARN] Inference for trajectory Trajectory13 with checkpoint exp_lr0.001_dr0.3_hn100_reg0.1_bfw5_MNN_npbi3_niu1_nl2_trtrajT1-100-T2-100-T3-100_ttrajTrajectory16_range_removed_final failed or returned no results.
+[INFO] Running inference on trajectory: Trajectory14 using checkpoint: exp_lr0.001_dr0.3_hn100_reg0.1_bfw5_MNN_npbi3_niu1_nl2_trtrajT1-100-T2-100-T3-100_ttrajTrajectory16_range_removed_final
+[INFO] Running inference for checkpoint: exp_lr0.001_dr0.3_hn100_reg0.1_bfw5_MNN_npbi3_niu1_nl2_trtrajT1-100-T2-100-T3-100_ttrajTrajectory16_range_removed_final on trajectory: Trajectory14
+[INFO] Loading CSV files from trajectory folder: ../../Data/Trajectory14
+[INFO] Loaded beams_gt (929 rows) and velocity_gt (929 rows)
+[INFO] Loaded IMU file: IMU_trajectory14.csv with 6500 rows
+[DEBUG] Parsing folder name: exp
+[ERROR] 'hn' not found in folder name: exp
+[ERROR] Could not determine beam_fill_window from checkpoint identifier.
+[WARN] Inference for trajectory Trajectory14 with checkpoint exp_lr0.001_dr0.3_hn100_reg0.1_bfw5_MNN_npbi3_niu1_nl2_trtrajT1-100-T2-100-T3-100_ttrajTrajectory16_range_removed_final failed or returned no results.
+[INFO] Processing checkpoint file: MNN_npbi3_niu1_nl2_trtrajT1-100-T2-100_ttrajTrajectory15_range_removed_final.pth from folder: exp_lr0.001_dr0.3_hn100_reg0.1_bfw5
+[DEBUG] Parsing folder name: exp_lr0.001_dr0.3_hn100_reg0.1_bfw5
+[INFO] Extracted hidden_neurons=100, beam_fill_window=5 from folder name
+[DEBUG] Parsing checkpoint file name: MNN_npbi3_niu1_nl2_trtrajT1-100-T2-100_ttrajTrajectory15_range_removed_final.pth
+[INFO] Extracted npbi=3, niu=1, nl=2 from checkpoint file name
+[INFO] Computed input size: 4 + (3*4) + (1*6) = 22
+[INFO] Creating model with num_inputs=22, hidden_neurons=100
+[INFO] Unique checkpoint identifier: exp_lr0.001_dr0.3_hn100_reg0.1_bfw5_MNN_npbi3_niu1_nl2_trtrajT1-100-T2-100_ttrajTrajectory15_range_removed_final
+[INFO] Running inference on trajectory: Trajectory13 using checkpoint: exp_lr0.001_dr0.3_hn100_reg0.1_bfw5_MNN_npbi3_niu1_nl2_trtrajT1-100-T2-100_ttrajTrajectory15_range_removed_final
+[INFO] Running inference for checkpoint: exp_lr0.001_dr0.3_hn100_reg0.1_bfw5_MNN_npbi3_niu1_nl2_trtrajT1-100-T2-100_ttrajTrajectory15_range_removed_final on trajectory: Trajectory13
+[INFO] Loading CSV files from trajectory folder: ../../Data/Trajectory13
+[INFO] Loaded beams_gt (3116 rows) and velocity_gt (3116 rows)
+[INFO] Loaded IMU file: IMU_trajectory13.csv with 21800 rows
+[DEBUG] Parsing folder name: exp
+[ERROR] 'hn' not found in folder name: exp
+[ERROR] Could not determine beam_fill_window from checkpoint identifier.
+[WARN] Inference for trajectory Trajectory13 with checkpoint exp_lr0.001_dr0.3_hn100_reg0.1_bfw5_MNN_npbi3_niu1_nl2_trtrajT1-100-T2-100_ttrajTrajectory15_range_removed_final failed or returned no results.
+[INFO] Running inference on trajectory: Trajectory14 using checkpoint: exp_lr0.001_dr0.3_hn100_reg0.1_bfw5_MNN_npbi3_niu1_nl2_trtrajT1-100-T2-100_ttrajTrajectory15_range_removed_final
+[INFO] Running inference for checkpoint: exp_lr0.001_dr0.3_hn100_reg0.1_bfw5_MNN_npbi3_niu1_nl2_trtrajT1-100-T2-100_ttrajTrajectory15_range_removed_final on trajectory: Trajectory14
+[INFO] Loading CSV files from trajectory folder: ../../Data/Trajectory14
+[INFO] Loaded beams_gt (929 rows) and velocity_gt (929 rows)
+[INFO] Loaded IMU file: IMU_trajectory14.csv with 6500 rows
+[DEBUG] Parsing folder name: exp
+[ERROR] 'hn' not found in folder name: exp
+[ERROR] Could not determine beam_fill_window from checkpoint identifier.
+[WARN] Inference for trajectory Trajectory14 with checkpoint exp_lr0.001_dr0.3_hn100_reg0.1_bfw5_MNN_npbi3_niu1_nl2_trtrajT1-100-T2-100_ttrajTrajectory15_range_removed_final failed or returned no results.
+[INFO] Processing checkpoint file: MNN_npbi3_niu1_nl2_trtrajT13-1000_ttrajT14_random_removed_final.pth from folder: exp_lr0.001_dr0.5_hn64_reg0.0001_bfw5
+[DEBUG] Parsing folder name: exp_lr0.001_dr0.5_hn64_reg0.0001_bfw5
+[INFO] Extracted hidden_neurons=64, beam_fill_window=5 from folder name
+[DEBUG] Parsing checkpoint file name: MNN_npbi3_niu1_nl2_trtrajT13-1000_ttrajT14_random_removed_final.pth
+[INFO] Extracted npbi=3, niu=1, nl=2 from checkpoint file name
+[INFO] Computed input size: 4 + (3*4) + (1*6) = 22
+[INFO] Creating model with num_inputs=22, hidden_neurons=64
+[INFO] Unique checkpoint identifier: exp_lr0.001_dr0.5_hn64_reg0.0001_bfw5_MNN_npbi3_niu1_nl2_trtrajT13-1000_ttrajT14_random_removed_final
+[INFO] Running inference on trajectory: Trajectory13 using checkpoint: exp_lr0.001_dr0.5_hn64_reg0.0001_bfw5_MNN_npbi3_niu1_nl2_trtrajT13-1000_ttrajT14_random_removed_final
+[INFO] Running inference for checkpoint: exp_lr0.001_dr0.5_hn64_reg0.0001_bfw5_MNN_npbi3_niu1_nl2_trtrajT13-1000_ttrajT14_random_removed_final on trajectory: Trajectory13
+[INFO] Loading CSV files from trajectory folder: ../../Data/Trajectory13
+[INFO] Loaded beams_gt (3116 rows) and velocity_gt (3116 rows)
+[INFO] Loaded IMU file: IMU_trajectory13.csv with 21800 rows
+[DEBUG] Parsing folder name: exp
+[ERROR] 'hn' not found in folder name: exp
+[ERROR] Could not determine beam_fill_window from checkpoint identifier.
+[WARN] Inference for trajectory Trajectory13 with checkpoint exp_lr0.001_dr0.5_hn64_reg0.0001_bfw5_MNN_npbi3_niu1_nl2_trtrajT13-1000_ttrajT14_random_removed_final failed or returned no results.
+[INFO] Running inference on trajectory: Trajectory14 using checkpoint: exp_lr0.001_dr0.5_hn64_reg0.0001_bfw5_MNN_npbi3_niu1_nl2_trtrajT13-1000_ttrajT14_random_removed_final
+[INFO] Running inference for checkpoint: exp_lr0.001_dr0.5_hn64_reg0.0001_bfw5_MNN_npbi3_niu1_nl2_trtrajT13-1000_ttrajT14_random_removed_final on trajectory: Trajectory14
+[INFO] Loading CSV files from trajectory folder: ../../Data/Trajectory14
+[INFO] Loaded beams_gt (929 rows) and velocity_gt (929 rows)
+[INFO] Loaded IMU file: IMU_trajectory14.csv with 6500 rows
+[DEBUG] Parsing folder name: exp
+[ERROR] 'hn' not found in folder name: exp
+[ERROR] Could not determine beam_fill_window from checkpoint identifier.
+[WARN] Inference for trajectory Trajectory14 with checkpoint exp_lr0.001_dr0.5_hn64_reg0.0001_bfw5_MNN_npbi3_niu1_nl2_trtrajT13-1000_ttrajT14_random_removed_final failed or returned no results.
+[INFO] Processing checkpoint file: MNN_npbi3_niu1_nl3_trtrajT13-300_ttrajT14_range_removed_final.pth from folder: exp_lr0.001_dr0.0_hn150_reg0.0001_bfw5
+[DEBUG] Parsing folder name: exp_lr0.001_dr0.0_hn150_reg0.0001_bfw5
+[INFO] Extracted hidden_neurons=150, beam_fill_window=5 from folder name
+[DEBUG] Parsing checkpoint file name: MNN_npbi3_niu1_nl3_trtrajT13-300_ttrajT14_range_removed_final.pth
+[INFO] Extracted npbi=3, niu=1, nl=3 from checkpoint file name
+[INFO] Computed input size: 4 + (3*4) + (1*6) = 22
+[INFO] Creating model with num_inputs=22, hidden_neurons=150
+[INFO] Unique checkpoint identifier: exp_lr0.001_dr0.0_hn150_reg0.0001_bfw5_MNN_npbi3_niu1_nl3_trtrajT13-300_ttrajT14_range_removed_final
+[INFO] Running inference on trajectory: Trajectory13 using checkpoint: exp_lr0.001_dr0.0_hn150_reg0.0001_bfw5_MNN_npbi3_niu1_nl3_trtrajT13-300_ttrajT14_range_removed_final
+[INFO] Running inference for checkpoint: exp_lr0.001_dr0.0_hn150_reg0.0001_bfw5_MNN_npbi3_niu1_nl3_trtrajT13-300_ttrajT14_range_removed_final on trajectory: Trajectory13
+[INFO] Loading CSV files from trajectory folder: ../../Data/Trajectory13
+[INFO] Loaded beams_gt (3116 rows) and velocity_gt (3116 rows)
+[INFO] Loaded IMU file: IMU_trajectory13.csv with 21800 rows
+[DEBUG] Parsing folder name: exp
+[ERROR] 'hn' not found in folder name: exp
+[ERROR] Could not determine beam_fill_window from checkpoint identifier.
+[WARN] Inference for trajectory Trajectory13 with checkpoint exp_lr0.001_dr0.0_hn150_reg0.0001_bfw5_MNN_npbi3_niu1_nl3_trtrajT13-300_ttrajT14_range_removed_final failed or returned no results.
+[INFO] Running inference on trajectory: Trajectory14 using checkpoint: exp_lr0.001_dr0.0_hn150_reg0.0001_bfw5_MNN_npbi3_niu1_nl3_trtrajT13-300_ttrajT14_range_removed_final
+[INFO] Running inference for checkpoint: exp_lr0.001_dr0.0_hn150_reg0.0001_bfw5_MNN_npbi3_niu1_nl3_trtrajT13-300_ttrajT14_range_removed_final on trajectory: Trajectory14
+[INFO] Loading CSV files from trajectory folder: ../../Data/Trajectory14
+[INFO] Loaded beams_gt (929 rows) and velocity_gt (929 rows)
+[INFO] Loaded IMU file: IMU_trajectory14.csv with 6500 rows
+[DEBUG] Parsing folder name: exp
+[ERROR] 'hn' not found in folder name: exp
+[ERROR] Could not determine beam_fill_window from checkpoint identifier.
+[WARN] Inference for trajectory Trajectory14 with checkpoint exp_lr0.001_dr0.0_hn150_reg0.0001_bfw5_MNN_npbi3_niu1_nl3_trtrajT13-300_ttrajT14_range_removed_final failed or returned no results.
+[INFO] Processing checkpoint file: MNN_npbi5_niu3_nl2_trtrajT13-100_ttrajT14_random_removed_final.pth from folder: exp_lr0.001_dr0.5_hn64_reg0.0001_bfw3
+[DEBUG] Parsing folder name: exp_lr0.001_dr0.5_hn64_reg0.0001_bfw3
+[INFO] Extracted hidden_neurons=64, beam_fill_window=3 from folder name
+[DEBUG] Parsing checkpoint file name: MNN_npbi5_niu3_nl2_trtrajT13-100_ttrajT14_random_removed_final.pth
+[INFO] Extracted npbi=5, niu=3, nl=2 from checkpoint file name
+[INFO] Computed input size: 4 + (5*4) + (3*6) = 42
+[INFO] Creating model with num_inputs=42, hidden_neurons=64
+[INFO] Unique checkpoint identifier: exp_lr0.001_dr0.5_hn64_reg0.0001_bfw3_MNN_npbi5_niu3_nl2_trtrajT13-100_ttrajT14_random_removed_final
+[INFO] Running inference on trajectory: Trajectory13 using checkpoint: exp_lr0.001_dr0.5_hn64_reg0.0001_bfw3_MNN_npbi5_niu3_nl2_trtrajT13-100_ttrajT14_random_removed_final
+[INFO] Running inference for checkpoint: exp_lr0.001_dr0.5_hn64_reg0.0001_bfw3_MNN_npbi5_niu3_nl2_trtrajT13-100_ttrajT14_random_removed_final on trajectory: Trajectory13
+[INFO] Loading CSV files from trajectory folder: ../../Data/Trajectory13
+[INFO] Loaded beams_gt (3116 rows) and velocity_gt (3116 rows)
+[INFO] Loaded IMU file: IMU_trajectory13.csv with 21800 rows
+[DEBUG] Parsing folder name: exp
+[ERROR] 'hn' not found in folder name: exp
+[ERROR] Could not determine beam_fill_window from checkpoint identifier.
+[WARN] Inference for trajectory Trajectory13 with checkpoint exp_lr0.001_dr0.5_hn64_reg0.0001_bfw3_MNN_npbi5_niu3_nl2_trtrajT13-100_ttrajT14_random_removed_final failed or returned no results.
+[INFO] Running inference on trajectory: Trajectory14 using checkpoint: exp_lr0.001_dr0.5_hn64_reg0.0001_bfw3_MNN_npbi5_niu3_nl2_trtrajT13-100_ttrajT14_random_removed_final
+[INFO] Running inference for checkpoint: exp_lr0.001_dr0.5_hn64_reg0.0001_bfw3_MNN_npbi5_niu3_nl2_trtrajT13-100_ttrajT14_random_removed_final on trajectory: Trajectory14
+[INFO] Loading CSV files from trajectory folder: ../../Data/Trajectory14
+[INFO] Loaded beams_gt (929 rows) and velocity_gt (929 rows)
+[INFO] Loaded IMU file: IMU_trajectory14.csv with 6500 rows
+[DEBUG] Parsing folder name: exp
+[ERROR] 'hn' not found in folder name: exp
+[ERROR] Could not determine beam_fill_window from checkpoint identifier.
+[WARN] Inference for trajectory Trajectory14 with checkpoint exp_lr0.001_dr0.5_hn64_reg0.0001_bfw3_MNN_npbi5_niu3_nl2_trtrajT13-100_ttrajT14_random_removed_final failed or returned no results.
+[INFO] Processing checkpoint file: MNN_npbi5_niu3_nl2_trtrajT13-500_ttrajT14_random_removed_final.pth from folder: exp_lr0.001_dr0.5_hn64_reg0.0001_bfw3
+[DEBUG] Parsing folder name: exp_lr0.001_dr0.5_hn64_reg0.0001_bfw3
+[INFO] Extracted hidden_neurons=64, beam_fill_window=3 from folder name
+[DEBUG] Parsing checkpoint file name: MNN_npbi5_niu3_nl2_trtrajT13-500_ttrajT14_random_removed_final.pth
+[INFO] Extracted npbi=5, niu=3, nl=2 from checkpoint file name
+[INFO] Computed input size: 4 + (5*4) + (3*6) = 42
+[INFO] Creating model with num_inputs=42, hidden_neurons=64
+[INFO] Unique checkpoint identifier: exp_lr0.001_dr0.5_hn64_reg0.0001_bfw3_MNN_npbi5_niu3_nl2_trtrajT13-500_ttrajT14_random_removed_final
+[INFO] Running inference on trajectory: Trajectory13 using checkpoint: exp_lr0.001_dr0.5_hn64_reg0.0001_bfw3_MNN_npbi5_niu3_nl2_trtrajT13-500_ttrajT14_random_removed_final
+[INFO] Running inference for checkpoint: exp_lr0.001_dr0.5_hn64_reg0.0001_bfw3_MNN_npbi5_niu3_nl2_trtrajT13-500_ttrajT14_random_removed_final on trajectory: Trajectory13
+[INFO] Loading CSV files from trajectory folder: ../../Data/Trajectory13
+[INFO] Loaded beams_gt (3116 rows) and velocity_gt (3116 rows)
+[INFO] Loaded IMU file: IMU_trajectory13.csv with 21800 rows
+[DEBUG] Parsing folder name: exp
+[ERROR] 'hn' not found in folder name: exp
+[ERROR] Could not determine beam_fill_window from checkpoint identifier.
+[WARN] Inference for trajectory Trajectory13 with checkpoint exp_lr0.001_dr0.5_hn64_reg0.0001_bfw3_MNN_npbi5_niu3_nl2_trtrajT13-500_ttrajT14_random_removed_final failed or returned no results.
+[INFO] Running inference on trajectory: Trajectory14 using checkpoint: exp_lr0.001_dr0.5_hn64_reg0.0001_bfw3_MNN_npbi5_niu3_nl2_trtrajT13-500_ttrajT14_random_removed_final
+[INFO] Running inference for checkpoint: exp_lr0.001_dr0.5_hn64_reg0.0001_bfw3_MNN_npbi5_niu3_nl2_trtrajT13-500_ttrajT14_random_removed_final on trajectory: Trajectory14
+[INFO] Loading CSV files from trajectory folder: ../../Data/Trajectory14
+[INFO] Loaded beams_gt (929 rows) and velocity_gt (929 rows)
+[INFO] Loaded IMU file: IMU_trajectory14.csv with 6500 rows
+[DEBUG] Parsing folder name: exp
+[ERROR] 'hn' not found in folder name: exp
+[ERROR] Could not determine beam_fill_window from checkpoint identifier.
+[WARN] Inference for trajectory Trajectory14 with checkpoint exp_lr0.001_dr0.5_hn64_reg0.0001_bfw3_MNN_npbi5_niu3_nl2_trtrajT13-500_ttrajT14_random_removed_final failed or returned no results.
+[INFO] Inference complete. Test summary saved to: Results/Inference_Results/inference_summary.csv

@@ -1,0 +1,2 @@
+Trajectory,NumSamples,Test_RMSE_V_North,Test_RMSE_V_East,Test_RMSE_V_Down,AvgTest_RMSE,TrainedOn,RemovalMethod
+Trajectory14,924,0.11234132103218314,0.16207960586818662,0.17897574912837577,0.15113222534291518,Trajectory13:500,random
