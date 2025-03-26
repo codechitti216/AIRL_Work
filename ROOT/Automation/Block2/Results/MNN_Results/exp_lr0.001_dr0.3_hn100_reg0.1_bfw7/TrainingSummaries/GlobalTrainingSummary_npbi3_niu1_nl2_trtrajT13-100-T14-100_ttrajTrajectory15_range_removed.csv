@@ -1,3 +1,0 @@
-Trajectory,NumSamples,InputSize,EpochsTrained,AvgBestRMSE,TrainingTime,TrainedOn,RemovalMethod
-Trajectory13,1355,22,100,1.3841967829439297,38.625572681427,NONE,RangeRemoval
-Trajectory14,1755,22,100,0.38453512184723104,50.82496976852417,"Trajectory13:100,Trajectory13:100",RangeRemoval

@@ -1,8 +1,0 @@
-{
-    "checkpoints_base_folder": "Results/MNN_Results",
-    "inference_trajectories": [
-      "Trajectory15"
-    ],
-    "output_folder": "Results/Inference_Results"
-  }
-  
