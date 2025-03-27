@@ -291,6 +291,27 @@ def plot_velocity_predictions(predictions, traj, beam_fill_window, title_suffix=
     axes[-1].set_xlabel("Sample Index")
     fig.suptitle(f"Predicted vs Ground Truth & Moving Avg for {traj} {title_suffix}")
     return fig
+def plot_square_error(predictions, traj, beam_fill_window, title_suffix=""):
+    fig, axes = plt.subplots(4, 1, figsize=(10, 12), sharex=True)
+    samples = [pred["Sample"] for pred in predictions]
+    for i, beam in enumerate(["b1", "b2", "b3", "b4"]):
+        gt_vals = [pred[f"GT_{beam}"] for pred in predictions]
+        pred_vals = [pred[f"Pred_{beam}"] for pred in predictions]
+        # Compute moving average for ground truth
+        gt_series = pd.Series(gt_vals)
+        moving_avg = gt_series.rolling(window=beam_fill_window, min_periods=1).mean().tolist()
+        # Compute squared errors for both (Predicted - GT) and (Moving Avg - GT)
+        sq_error_pred = [(p - g) ** 2 for p, g in zip(pred_vals, gt_vals)]
+        sq_error_moving = [(m - g) ** 2 for m, g in zip(moving_avg, gt_vals)]
+        axes[i].plot(samples, sq_error_pred, label="Squared Error (Pred vs GT)", marker='o')
+        axes[i].plot(samples, sq_error_moving, label="Squared Error (Moving Avg vs GT)", marker='x')
+        axes[i].set_ylabel("Squared Error")
+        axes[i].legend(loc="upper right")
+        axes[i].grid(True)
+    axes[-1].set_xlabel("Sample Index")
+    fig.suptitle(f"Square Error for {traj} {title_suffix}")
+    return fig
+
 
 def plot_missing_beams_frequency(beams_training, traj, run_id):
     """
@@ -438,6 +459,14 @@ def sequential_train(training_trajectory_pairs, config, model, run_id, trained_l
         train_fig.savefig(train_plot_path)
         plt.close(train_fig)
         log_global(f"[{traj}] Training predictions plot saved to {train_plot_path}")
+
+        # New Square Error Plot for Training
+        error_plot_path = os.path.join(PLOTS_DIR, f"SquareError_{sanitize(traj)}_{run_id}_{missing_freq_str}.png")
+        square_error_fig = plot_square_error(final_predictions, traj, config["beam_fill_window"], title_suffix="(Training)")
+        square_error_fig.savefig(error_plot_path)
+        plt.close(square_error_fig)
+        log_global(f"[{traj}] Square error plot saved to {error_plot_path}")
+
         
         current_trained_on = ",".join(trained_list) if trained_list else "NONE"
         summary = {
@@ -528,6 +557,14 @@ def test_on_trajectory(traj, config, checkpoint_filename, run_id, base_trained_o
     fig.savefig(plot_file)
     plt.close(fig)
     log_global(f"[{traj}] Velocity predictions plot saved to {plot_file}")
+
+    # New Square Error Plot for Testing
+    error_plot_path = os.path.join(PLOTS_DIR, f"SquareError_{sanitize(traj)}_{run_id}_{missing_freq_str}.png")
+    square_error_fig = plot_square_error(predictions, traj, config["beam_fill_window"], title_suffix="(Testing Data)")
+    square_error_fig.savefig(error_plot_path)
+    plt.close(square_error_fig)
+    log_global(f"[{traj}] Square error plot saved to {error_plot_path}")
+
     
     test_summary = {
         "Trajectory": traj,
