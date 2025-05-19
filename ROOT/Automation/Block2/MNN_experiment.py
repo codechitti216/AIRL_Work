@@ -27,6 +27,8 @@ import numpy as np
 import torch
 import torch.optim as optim
 import torch.nn as nn
+import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 # Import the Memory Neural Network model from MNN.py
 from MNN import MemoryNeuralNetwork
@@ -41,12 +43,6 @@ def sanitize(text):
     text = str(text).replace(":", "")
     text = re.sub(r'[^\w_.-]', '', text)
     return text
-
-def create_checkpoint_folder(base_folder="Checkpoints"):
-    """Create and return a folder for storing checkpoints."""
-    if not os.path.exists(base_folder):
-        os.makedirs(base_folder)
-    return base_folder
 
 def load_csv_files(traj_path):
     print(f"[INFO] Loading CSV files from trajectory folder: {traj_path}")
@@ -154,7 +150,9 @@ def process_training_trajectory(traj, traj_epochs, config):
     
     inputs, targets = [], []
     start_t = max(config["num_past_beam_instances"], config["num_imu_instances"] - 1)
-    for t in range(start_t, min(len(beams_filled), len(velocity_df))):
+    print(f"[INFO] Constructing input-target pairs from trajectory: {traj}")
+    for t in tqdm(range(start_t, min(len(beams_filled), len(velocity_df))), desc=f"[{traj}] Samples"):
+
         try:
             inp, tar = construct_input_target(beams_filled, velocity_df, imu_df, t,
                                               config["num_past_beam_instances"],
@@ -188,34 +186,92 @@ def check_gradients(model):
         else:
             print(f"[DEBUG] Gradient norm for {name}: {param.grad.norm().item():.5f}")
 
-def train_model_on_trajectory(inputs, targets, config, model, traj, traj_epochs):
-    optimizer = optim.Adam(model.parameters(), lr=config["learning_rate"], weight_decay=config["regularization"])
-    loss_fn = nn.MSELoss()
+from tqdm import tqdm
+import os
+import torch
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+def train_model_on_trajectory(model, inputs, targets, traj_name, traj_epochs, learning_rate):
+    criterion = torch.nn.MSELoss()
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
     num_samples = inputs.shape[0]
-    
-    print(f"[INFO] Trajectory {traj}: {num_samples} training samples, input size: {inputs.shape[1]}")
-    for epoch in range(1, traj_epochs + 1):
-        optimizer.zero_grad()
-        losses = []
-        epoch_squared_errors = np.zeros(3)  # Three velocity outputs
-        for i in range(num_samples):
-            x = torch.tensor(inputs[i], dtype=torch.float32, device=model.device).unsqueeze(0).unsqueeze(0)
-            y = torch.tensor(targets[i], dtype=torch.float32, device=model.device)
-            y_pred = model(x).squeeze().view(-1)
-            y = y.view(-1)
-            sample_loss = loss_fn(y_pred, y)
-            losses.append(sample_loss)
-            error = (y_pred - y).detach().cpu().numpy() ** 2
-            epoch_squared_errors += error
-        epoch_loss = torch.stack(losses).sum()
-        epoch_loss.backward()
-        check_gradients(model)
-        check_model_params(model)
-        optimizer.step()
-        # Calculate RMSE per output and average RMSE
-        epoch_rmse = np.sqrt(epoch_squared_errors / num_samples)
-        avg_rmse = np.mean(epoch_rmse)
-        print(f"[INFO] Trajectory {traj}: Epoch {epoch}/{traj_epochs} loss: {epoch_loss.item():.5f} | RMSE per output: {epoch_rmse} | Avg RMSE: {avg_rmse:.5f}")
+
+    results_dir = 'Results'
+    os.makedirs(results_dir, exist_ok=True)
+
+    for epoch in range(traj_epochs):
+        model.train()
+        epoch_predictions = []
+        epoch_targets = []
+
+        epoch_squared_error = np.zeros(3)  # For V_North, V_East, V_Down
+
+        with tqdm(total=num_samples, desc=f"[{traj_name}] Epoch {epoch + 1}/{traj_epochs}", leave=False) as pbar:
+            for i in range(num_samples):
+                input_tensor = torch.tensor(inputs[i], dtype=torch.float32, device=model.device).unsqueeze(0)
+                target_tensor = torch.tensor(targets[i], dtype=torch.float32, device=model.device).unsqueeze(0)
+
+                optimizer.zero_grad()
+                output = model(input_tensor)
+                loss = criterion(output, target_tensor)
+                loss.backward()
+                optimizer.step()
+
+                if epoch == traj_epochs - 1:
+                    epoch_predictions.append(output.detach().cpu().numpy().flatten())
+                    epoch_targets.append(target_tensor.cpu().numpy().flatten())
+
+                # Accumulate squared error
+                error = (output.detach().cpu().numpy().flatten() - target_tensor.cpu().numpy().flatten()) ** 2
+                epoch_squared_error += error
+
+                pbar.update(1)
+
+        epoch_rmse = np.sqrt(epoch_squared_error / num_samples)
+        tqdm.write(f"[{traj_name}] Epoch {epoch + 1}/{traj_epochs} RMSE: V_North={epoch_rmse[0]:.4f}, V_East={epoch_rmse[1]:.4f}, V_Down={epoch_rmse[2]:.4f}")
+
+    # Final epoch: plot results
+    epoch_predictions = np.array(epoch_predictions)
+    epoch_targets = np.array(epoch_targets)
+    time_axis = np.arange(len(epoch_predictions))
+    components = ['V_North', 'V_East', 'V_Down']
+
+    plt.figure(figsize=(15, 10))
+    for idx in range(3):
+        plt.subplot(3, 1, idx + 1)
+        plt.plot(time_axis, epoch_targets[:, idx], label='Ground Truth', color='blue')
+        plt.plot(time_axis, epoch_predictions[:, idx], label='Predicted', color="magenta")
+        plt.title(f'{components[idx]}: Predicted vs Ground Truth')
+        plt.xlabel('Sample Index')
+        plt.ylabel('Velocity (m/s)')
+        plt.legend()
+        plt.grid(True)
+
+    plt.tight_layout()
+    fig_path1 = os.path.join(results_dir, f'{traj_name}_final_epoch_comparison.png')
+    plt.savefig(fig_path1)
+    plt.close()
+    print(f"[INFO] Saved: {fig_path1}")
+
+    # -------- Plot 2: RMSE over time (per sample) --------
+    rmse_over_time = np.abs(epoch_predictions - epoch_targets)
+    plt.figure(figsize=(15, 10))
+    for idx in range(3):
+        plt.subplot(3, 1, idx + 1)
+        plt.plot(time_axis, rmse_over_time[:, idx], color="red")
+        plt.title(f'{components[idx]} RMSE over Time')
+        plt.xlabel('Sample Index')
+        plt.ylabel('RMSE (m/s)')
+        plt.grid(True)
+
+    plt.tight_layout()
+    fig_path2 = os.path.join(results_dir, f'{traj_name}_final_epoch_rmse_curve.png')
+    plt.savefig(fig_path2)
+    plt.close()
+    print(f"[INFO] Saved: {fig_path2}")
+
     return model
 
 def main():
@@ -226,41 +282,42 @@ def main():
     if not training_trajectory_pairs:
         print("No training trajectories provided in configuration.")
         sys.exit(1)
-    
+
     first_traj = training_trajectory_pairs[0][0]
     beams_df, imu_df, velocity_df = load_csv_files(os.path.join(DATA_DIR, first_traj))
     beams_filled = fill_missing_beams(beams_df, config["beam_fill_window"])
     first_valid = find_first_valid_index(beams_filled, velocity_df, imu_df,
-                                           config["num_past_beam_instances"],
-                                           config["num_imu_instances"])
+                                         config["num_past_beam_instances"],
+                                         config["num_imu_instances"])
     if first_valid is None:
         print("Not enough valid training data in the first trajectory.")
         sys.exit(1)
-    
+
     sample_inp, _ = construct_input_target(beams_filled, velocity_df, imu_df, first_valid,
                                            config["num_past_beam_instances"],
                                            config["num_imu_instances"])
     input_size = sample_inp.shape[0]
-    
-    model = MemoryNeuralNetwork(number_of_input_neurons=input_size,
-                                number_of_hidden_neurons=config["hidden_neurons"],
-                                number_of_output_neurons=3,  # Predicting V North, V East, V Down
-                                dropout_rate=config["dropout_rate"],
-                                learning_rate=config["learning_rate"],
-                                learning_rate_2=config["learning_rate_2"],
-                                lipschitz_constant=config["lipschitz_constant"])
-    
-    for traj_pair in training_trajectory_pairs:
-        traj, traj_epochs = traj_pair
+
+    model = MemoryNeuralNetwork(
+        number_of_input_neurons=input_size,
+        number_of_hidden_neurons=config["hidden_neurons"],
+        number_of_output_neurons=3,
+        dropout_rate=config["dropout_rate"],
+        learning_rate=config["learning_rate"],
+        learning_rate_2=config["learning_rate_2"],
+        lipschitz_constant=config["lipschitz_constant"]
+    )
+
+    for traj, traj_epochs in training_trajectory_pairs:
         inputs, targets = process_training_trajectory(traj, traj_epochs, config)
-        model = train_model_on_trajectory(inputs, targets, config, model, traj, traj_epochs)
-    
-    checkpoint_folder = create_checkpoint_folder()
-    run_id = sanitize(f"MNN_{int(time.time())}")
-    checkpoint_filename = f"{run_id}_final.pth"
-    cp_path = os.path.join(checkpoint_folder, checkpoint_filename)
-    torch.save(model.state_dict(), cp_path)
-    print(f"[INFO] Final checkpoint saved to {cp_path}")
+        model = train_model_on_trajectory(model, inputs, targets, traj, traj_epochs, config["learning_rate"])
+
+    # 🔒 Save ONE final checkpoint
+    os.makedirs("Checkpoints", exist_ok=True)
+    checkpoint_path = os.path.join("Checkpoints", "final_model_checkpoint.pth")
+    torch.save(model.state_dict(), checkpoint_path)
+    print(f"[INFO] Final model checkpoint saved to {checkpoint_path}")
+
 
 if __name__ == "__main__":
     main()

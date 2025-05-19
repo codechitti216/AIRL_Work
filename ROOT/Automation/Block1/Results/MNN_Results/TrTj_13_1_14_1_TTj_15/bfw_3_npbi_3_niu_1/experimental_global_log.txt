@@ -1,0 +1,2 @@
+Experiment Log
+[2025-05-19 11:49:32] Experiment folder created at: Results/MNN_Results/TrTj_13_1_14_1_TTj_15/bfw_3_npbi_3_niu_1

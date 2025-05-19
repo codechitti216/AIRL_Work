@@ -11,7 +11,6 @@ IMU_INPUT_FILE = "../../Confidential/IMU_time_range_05_58_to_06_08.csv"
 def get_latest_trajectory_number():
     """
     Finds the highest trajectory number in the Data folder.
-    Expects folders named as "TrajectoryX" where X is an integer.
     """
     if not os.path.exists(DATA_FOLDER):
         print(f"DEBUG: Data folder '{DATA_FOLDER}' does not exist.")
@@ -109,7 +108,7 @@ if __name__ == "__main__":
     latest_number = get_latest_trajectory_number()
     if latest_number == 0:
         print("No existing trajectory found. Please ensure the Data folder contains valid trajectory folders.")
-        sys.exit(1)
+        process_trajectory(latest_number, DVL_INPUT_FILE, IMU_INPUT_FILE)
     else:
         print(f"DEBUG: Latest trajectory number found: {latest_number}")
         process_trajectory(latest_number, DVL_INPUT_FILE, IMU_INPUT_FILE)
