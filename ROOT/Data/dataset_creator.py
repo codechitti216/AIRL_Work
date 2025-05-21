@@ -35,7 +35,7 @@ for traj_folder in os.listdir(data_folder):
         for i in range(4)
     ]
     A = np.array(b_vectors).reshape((4, 3))
-    V = dvl_data[['DVL X [m/s]', 'DVL Y [m/s]', 'DVL Z [m/s]']].to_numpy().T
+    V = dvl_data[["V North [m/s]","V East [m/s]","V Down [m/s]"]].to_numpy().T
     beams = np.matmul(A, V).T
 
     # Save beams_gt.csv (ground truth beams)

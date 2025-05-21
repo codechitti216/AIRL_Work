@@ -38,12 +38,6 @@ DATA_DIR = "../../Data"
 # Required columns in velocity CSV
 REQUIRED_VELOCITY_COLS = ["V North", "V East", "V Down"]
 
-def sanitize(text):
-    """Remove unwanted characters from text."""
-    text = str(text).replace(":", "")
-    text = re.sub(r'[^\w_.-]', '', text)
-    return text
-
 def load_csv_files(traj_path):
     print(f"[INFO] Loading CSV files from trajectory folder: {traj_path}")
     beams_df = pd.read_csv(os.path.join(traj_path, "beams_gt.csv"), na_values=[''])

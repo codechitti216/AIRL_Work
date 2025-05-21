@@ -1,0 +1,26 @@
+{
+    "training_trajectories": [
+        ["Trajectory1", 50],
+        ["Trajectory2", 50],
+        ["Trajectory3", 50]
+    ],
+    "testing_trajectories": [
+        "Trajectory4",
+        "Trajectory5",
+        "Trajectory6"
+    ],
+    "beam_fill_window": 5,
+    "num_past_beam_instances": 3,
+    "num_imu_instances": 3,
+    "hidden_neurons": 100,
+    "dropout_rate": 0.25,
+    "learning_rate": 0.001,
+    "learning_rate_2": 0.0005,
+    "lipschitz_constant": 1.2,
+    "random_removal_percentages": {
+        "b1": 20,
+        "b2": 20,
+        "b3": 20,
+        "b4": 20
+    }
+} 

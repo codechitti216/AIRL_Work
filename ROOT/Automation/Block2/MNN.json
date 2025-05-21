@@ -4,7 +4,14 @@
     ["Trajectory2", 100],
     ["Trajectory3", 100],
     ["Trajectory4", 100],
-    ["Trajectory5", 100]
+    ["Trajectory5", 100],
+    ["Trajectory6", 100],
+    ["Trajectory7", 100],
+    ["Trajectory8", 100],
+    ["Trajectory9", 100],
+    ["Trajectory10", 100],
+    ["Trajectory11", 100],
+    ["Trajectory12", 100]
   ],
   "beam_fill_window": 5,
   "num_past_beam_instances": 3, 

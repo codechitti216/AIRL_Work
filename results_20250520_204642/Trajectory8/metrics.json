@@ -1,0 +1,85 @@
+{
+    "beam_rmse": [
+        0.045785578708064864,
+        0.15022979309693474,
+        0.1007863643874373,
+        0.214883480728065
+    ],
+    "velocity_rmse": [
+        0.34673401578873086,
+        0.12995080557591657,
+        0.053931471394653735
+    ],
+    "model_config": {
+        "learning_rate": 0.001,
+        "learning_rate_2": 0.001,
+        "dropout_rate": 0.2,
+        "hidden_neurons": 100,
+        "num_layers": 2,
+        "regularization": 0.1,
+        "beam_fill_window": 3,
+        "lipschitz_constant": 0.01,
+        "num_past_beam_instances": 3,
+        "num_imu_instances": 1,
+        "partial_rmse": false,
+        "missing_beam_probability": {
+            "b1": 0.2,
+            "b2": 0.15,
+            "b3": 0.1,
+            "b4": 0.05
+        },
+        "training_trajectories": [
+            [
+                "Trajectory1",
+                100
+            ],
+            [
+                "Trajectory2",
+                100
+            ],
+            [
+                "Trajectory3",
+                100
+            ],
+            [
+                "Trajectory4",
+                100
+            ],
+            [
+                "Trajectory5",
+                100
+            ],
+            [
+                "Trajectory6",
+                100
+            ],
+            [
+                "Trajectory7",
+                100
+            ],
+            [
+                "Trajectory8",
+                100
+            ],
+            [
+                "Trajectory9",
+                100
+            ],
+            [
+                "Trajectory10",
+                100
+            ],
+            [
+                "Trajectory11",
+                100
+            ],
+            [
+                "Trajectory12",
+                100
+            ]
+        ],
+        "testing_trajectories": [
+            "Trajectory13"
+        ]
+    }
+}
