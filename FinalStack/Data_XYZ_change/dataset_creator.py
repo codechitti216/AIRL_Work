@@ -42,7 +42,8 @@ for traj_folder in os.listdir(data_folder):
     beams_df.to_csv(os.path.join(traj_path, 'beams_gt.csv'), index=False)
 
     # Save velocity_gt.csv (ground truth velocities)
-    velocity_df = gt_data[['Time [s]', 'V North [m/s]', 'V East [m/s]', 'V Down [m/s]']].copy()
+    velocity_df = dvl_data[['Time [s]', 'DVL X [m/s]', 'DVL Y [m/s]', 'DVL Z [m/s]']].copy()
+
     velocity_df.columns = ['Time', 'V North', 'V East', 'V Down']
     velocity_df.to_csv(os.path.join(traj_path, 'velocity_gt.csv'), index=False)
 

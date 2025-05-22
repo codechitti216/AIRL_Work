@@ -21,20 +21,11 @@ def calculate_relative_changes(df, columns):
 
 def process_trajectory(traj_path):
     """
-    Process DVL and GT data for a single trajectory
+    Process GT and beams data for a single trajectory
     """
     # Get trajectory number from folder name (handles both single and double digit numbers)
     traj_name = os.path.basename(traj_path)
     traj_num = ''.join(filter(str.isdigit, traj_name))
-    
-    # Process DVL data
-    dvl_file = os.path.join(traj_path, f"DVL_trajectory{traj_num}.csv")
-    if os.path.exists(dvl_file):
-        dvl_data = pd.read_csv(dvl_file)
-        dvl_columns = ['DVL X [m/s]', 'DVL Y [m/s]', 'DVL Z [m/s]']
-        dvl_data = calculate_relative_changes(dvl_data, dvl_columns)
-        dvl_data.to_csv(dvl_file, index=False)
-        print(f"Processed DVL data in {traj_name}")
     
     # Process GT data
     gt_file = os.path.join(traj_path, f"GT_trajectory{traj_num}.csv")
@@ -44,6 +35,15 @@ def process_trajectory(traj_path):
         gt_data = calculate_relative_changes(gt_data, gt_columns)
         gt_data.to_csv(gt_file, index=False)
         print(f"Processed GT data in {traj_name}")
+    
+    # Process beams data
+    beams_file = os.path.join(traj_path, "beams_gt.csv")
+    if os.path.exists(beams_file):
+        beams_data = pd.read_csv(beams_file)
+        beams_columns = ['b1', 'b2', 'b3', 'b4']
+        beams_data = calculate_relative_changes(beams_data, beams_columns)
+        beams_data.to_csv(beams_file, index=False)
+        print(f"Processed beams data in {traj_name}")
 
 def main():
     # Get the data directory path (current directory where the script is located)

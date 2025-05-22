@@ -26,7 +26,7 @@ def plot_predictions(beams_df, predicted_beams, velocity_df, predicted_velocitie
     ax1.grid(True)
     
     # Plot velocity predictions
-    velocity_components = ['V North', 'V East', 'V Down']
+    velocity_components = ['DVL X [m/s]', 'DVL Y [m/s]', 'DVL Z [m/s]']
     vtime = velocity_df['Time'].values
     vstart_t = len(vtime) - len(predicted_velocities)
     vtime_pred = vtime[vstart_t:]
@@ -56,7 +56,7 @@ def main():
     
     # Create results directory with timestamp
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    results_dir = f'results_{timestamp}'
+    results_dir = f'Results/results_{timestamp}'
     os.makedirs(results_dir, exist_ok=True)
     
     # Create subdirectories for each component
@@ -78,7 +78,7 @@ def main():
         os.makedirs(traj_dir, exist_ok=True)
         
         # Load data using the stack's load_csv_files method
-        traj_path = os.path.join('FinalStack', 'data', traj_name)
+        traj_path = os.path.join('FinalStack', 'Data_XYZ', traj_name)
         try:
             beams_df, imu_df, velocity_df = stack.load_csv_files(traj_path)
         except Exception as e:
@@ -123,7 +123,7 @@ def main():
         # Calculate metrics
         start_t = max(config['num_past_beam_instances'], config['num_imu_instances'] - 1)
         beam_rmse = calculate_metrics(beams_df[['b1', 'b2', 'b3', 'b4']].values[start_t:], predicted_beams)
-        velocity_rmse = calculate_metrics(velocity_df[['V North', 'V East', 'V Down']].values[start_t:start_t + len(predicted_velocities)], predicted_velocities)
+        velocity_rmse = calculate_metrics(velocity_df[['DVL X [m/s]', 'DVL Y [m/s]', 'DVL Z [m/s]']].values[start_t:start_t + len(predicted_velocities)], predicted_velocities)
         
         # Save metrics
         metrics = {
@@ -150,7 +150,7 @@ def main():
             os.makedirs(traj_dir, exist_ok=True)
             
             # Load data
-            traj_path = os.path.join('FinalStack', 'Data', traj_name)
+            traj_path = os.path.join('FinalStack', 'Data_XYZ', traj_name)
             try:
                 beams_df, imu_df, velocity_df = stack.load_csv_files(traj_path)
             except Exception as e:
@@ -175,7 +175,7 @@ def main():
             # Calculate metrics
             start_t = max(config['num_past_beam_instances'], config['num_imu_instances'] - 1)
             beam_rmse = calculate_metrics(beams_df[['b1', 'b2', 'b3', 'b4']].values[start_t:], predicted_beams)
-            velocity_rmse = calculate_metrics(velocity_df[['V North', 'V East', 'V Down']].values[start_t:start_t + len(predicted_velocities)], predicted_velocities)
+            velocity_rmse = calculate_metrics(velocity_df[['DVL X [m/s]', 'DVL Y [m/s]', 'DVL Z [m/s]']].values[start_t:start_t + len(predicted_velocities)], predicted_velocities)
             
             # Save metrics
             metrics = {

@@ -15,7 +15,7 @@ from tqdm import tqdm
 from MNN import MemoryNeuralNetwork
 
 # Data directory
-DATA_DIR = "../Data"
+DATA_DIR = "../Data_XYZ"
 # Required columns in velocity CSV
 REQUIRED_VELOCITY_COLS = ["V North", "V East", "V Down"]
 
