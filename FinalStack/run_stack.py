@@ -150,7 +150,7 @@ def main():
             os.makedirs(traj_dir, exist_ok=True)
             
             # Load data
-            traj_path = os.path.join('FinalStack', 'data', traj_name)
+            traj_path = os.path.join('FinalStack', 'Data', traj_name)
             try:
                 beams_df, imu_df, velocity_df = stack.load_csv_files(traj_path)
             except Exception as e:
