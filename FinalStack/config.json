@@ -1,21 +1,25 @@
 {
+    "device": "auto",
+    "force_cpu": false,
     "learning_rate": 0.001,
-    "learning_rate_2": 0.001,
-    "dropout_rate": 0.2,
+    "learning_rate_2": 0.0005,
+    "learning_rate_3": 0.00025,
+    "dropout_rate": 0.0,
     "hidden_neurons": 100,
     "num_layers": 2,
     "regularization": 0.1,
-    "beam_fill_window": 3,
-    "lipschitz_constant": 0.01,
-    "num_past_beam_instances": 3,
+    "beam_fill_window": 10,
+    "lipschitz_constant": 1.0,
+    "num_past_beam_instances": 5,
     "num_imu_instances": 1,
     "partial_rmse": false,
     "missing_beam_probability": {
-        "b1": 0.2,
-        "b2": 0.15,
+        "b1": 0.1,
+        "b2": 0.1,
         "b3": 0.1,
-        "b4": 0.05
+        "b4": 0.1
     },
+    "epochs": 100,
     "training_trajectories": [
         ["Trajectory1", 100],
         ["Trajectory2", 100],
@@ -33,4 +37,4 @@
     "testing_trajectories": [
         "Trajectory13"
     ]
-} 
+}
