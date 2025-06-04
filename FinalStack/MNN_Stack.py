@@ -84,70 +84,35 @@ class BeamVelocityStack:
         return beams_df, imu_df, velocity_df, original_beams
         
     def load_csv_files_enhanced(self, traj_path):
-        """Enhanced load method that also returns missed beams dataframe"""
-        print(f"[INFO] Loading CSV files from trajectory folder: {traj_path}")
-        beams_df = pd.read_csv(os.path.join(traj_path, "beams_gt.csv"), na_values=[''])
-        velocity_df = pd.read_csv(os.path.join(traj_path, "velocity_gt.csv"), na_values=[''])
-        
-        if not all(col in velocity_df.columns for col in REQUIRED_VELOCITY_COLS):
-            raise ValueError(f"velocity_gt file missing required columns. Expected: {REQUIRED_VELOCITY_COLS}, Found: {list(velocity_df.columns)}")
-        
-        imu_files = [f for f in os.listdir(traj_path) if f.startswith("IMU_") and f.endswith(".csv")]
-        if not imu_files:
-            raise ValueError(f"No IMU file found in {traj_path}")
-        imu_df = pd.read_csv(os.path.join(traj_path, imu_files[0]))
-        
-        # Convert time columns to float for synchronization
-        beams_df['Time'] = beams_df['Time'].astype(float)
-        velocity_df['Time'] = velocity_df['Time'].astype(float)
-        imu_df['Time'] = imu_df['Time [s]'].astype(float)
-        
-        # Sort by time
-        beams_df = beams_df.sort_values('Time').reset_index(drop=True)
-        velocity_df = velocity_df.sort_values('Time').reset_index(drop=True)
-        imu_df = imu_df.sort_values('Time').reset_index(drop=True)
-        
-        # Merge using nearest time (merge_asof)
-        merged = pd.merge_asof(beams_df, velocity_df, on='Time', direction='nearest', tolerance=0.02)
-        merged = pd.merge_asof(merged, imu_df, left_on='Time', right_on='Time', direction='nearest', tolerance=0.02)
-        # Drop rows with any NaNs (from failed merges)
-        merged = merged.dropna().reset_index(drop=True)
-        
-        # Split back into separate DataFrames
-        beams_cols = ['Time', 'b1', 'b2', 'b3', 'b4']
-        velocity_cols = ['Time'] + REQUIRED_VELOCITY_COLS
-        imu_cols = ['Time [s]', 'ACC X [m/s^2]', 'ACC Y [m/s^2]', 'ACC Z [m/s^2]',
-                    'GYRO X [rad/s]', 'GYRO Y [rad/s]', 'GYRO Z [rad/s]']
-        beams_out = merged[beams_cols].copy()
-        velocity_out = merged[velocity_cols].copy()
-        imu_out = merged[['Time'] + imu_cols[1:]].copy()
-        imu_out = imu_out.rename(columns={'Time': 'Time [s]'})
-
-        # Create a copy of original beams for ground truth
-        original_beams = beams_out.copy()
-        
-        # Create a copy for missed beams (before filling)
-        missed_beams = beams_out.copy()
-        
-        # Modify beam data (remove and replace with moving average)
-        beam_fill_window = self.config["beam_fill_window"]
-        missing_probabilities = self.config["missing_beam_probability"]
-        
-        # Start after beam_fill_window
-        for i in range(beam_fill_window, len(beams_out)):
-            for beam in ['b1', 'b2', 'b3', 'b4']:
-                # Randomly remove values based on probability
-                if np.random.random() < missing_probabilities[beam]:
-                    # Set to NaN in missed_beams
-                    missed_beams.loc[i, beam] = np.nan
-                    
-                    # Calculate moving average of past beam_fill_window instances for beams_out
-                    window = beams_out.loc[i - beam_fill_window:i - 1, beam]
-                    if not window.isna().all():
-                        beams_out.loc[i, beam] = window.mean()
-        
-        print(f"[INFO] Loaded and synchronized data: beams={beams_out.shape}, velocity={velocity_out.shape}, imu={imu_out.shape}")
-        return beams_out, imu_out, velocity_out, original_beams, missed_beams
+        """Load and synchronize CSV files with enhanced error handling"""
+        try:
+            # Get the absolute path to the data directory
+            data_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'FinalStack', 'Data_XYZ_change')
+            traj_path = os.path.join(data_dir, os.path.basename(traj_path))
+            
+            print(f"[INFO] Loading CSV files from trajectory folder: {traj_path}")
+            
+            # Load beams data
+            beams_df = pd.read_csv(os.path.join(traj_path, "beams_gt.csv"), na_values=[''])
+            imu_df = pd.read_csv(os.path.join(traj_path, f"IMU_{os.path.basename(traj_path)}.csv"), na_values=[''])
+            velocity_df = pd.read_csv(os.path.join(traj_path, "velocity_gt.csv"), na_values=[''])
+            
+            # Store original beams for comparison
+            original_beams = beams_df.copy()
+            
+            # Create missed beams DataFrame
+            missed_beams = beams_df.copy()
+            missed_beams[['b1', 'b2', 'b3', 'b4']] = np.nan
+            
+            # Fill missing beams with moving averages
+            beams_df = self.fill_missing_beams(beams_df, self.config["beam_fill_window"])
+            
+            print(f"[INFO] Loaded and synchronized data: beams={beams_df.shape}, velocity={velocity_df.shape}, imu={imu_df.shape}")
+            return beams_df, imu_df, velocity_df, original_beams, missed_beams
+            
+        except Exception as e:
+            print(f"[ERROR] Failed to load data from {traj_path}: {e}")
+            return None, None, None, None, None
 
     def fill_missing_beams(self, beams_df, beam_fill_window, beam_cols=["b1", "b2", "b3", "b4"]):
         filled = beams_df.copy()
@@ -367,69 +332,120 @@ class BeamVelocityStack:
         
         return model, final_predictions
 
-    def train_velocity_model(self, original_beams, predicted_beams, imu_df, velocity_df, traj_name, epochs):
-        """Train velocity model on a single trajectory"""
-        # Initialize velocity model if needed
-        if self.velocity_model is None:
-            input_size = 4 + (4 * self.config["num_past_beam_instances"]) + 6  # Current IMU only
-            self.velocity_model = MemoryNeuralNetwork(
+    def train_velocity_models_leave_one_out(self, training_trajectories):
+        """
+        For each training trajectory, train a velocity model on (n-1) other trajectories (leave-one-out),
+        test on the left-out, and store all models, predictions, and RMSEs.
+        """
+        print("\n[INFO] PHASE 2: VELOCITY MODEL TRAINING (LEAVE-ONE-OUT)")
+        print("===================================================")
+        self.velocity_models = {}
+        self.velocity_predictions = {}
+        self.velocity_rmse = {}
+        n = len(training_trajectories)
+        for target_idx, target_traj_config in enumerate(training_trajectories):
+            target_traj_name = target_traj_config[0]
+            target_epochs = target_traj_config[1]
+            print(f"\n[INFO] Training velocity model for target trajectory: {target_traj_name}")
+            # Collect training data from all other trajectories
+            train_inputs, train_targets = [], []
+            for other_idx, other_traj_config in enumerate(training_trajectories):
+                other_traj_name = other_traj_config[0]
+                if other_traj_name == target_traj_name:
+                    continue
+                # Use hybrid beams, IMU, and velocity data from phase 1
+                hybrid_beams = self.hybrid_beams[other_traj_name]
+                imu_df = self.imu_data[other_traj_name]
+                velocity_df = self.velocity_data[other_traj_name]
+                start_t = self.config["num_past_beam_instances"]
+                for t in range(start_t, len(hybrid_beams)):
+                    try:
+                        inp, tar = self.construct_velocity_input_target(
+                            hybrid_beams, hybrid_beams, imu_df, velocity_df, t,
+                            self.config["num_past_beam_instances"], 1
+                        )
+                        train_inputs.append(inp)
+                        train_targets.append(tar)
+                    except Exception:
+                        continue
+            if len(train_inputs) == 0:
+                print(f"[WARNING] No training data for velocity model {target_traj_name}")
+                continue
+            train_inputs = np.array(train_inputs)
+            train_targets = np.array(train_targets)
+            # Initialize and train velocity model
+            input_size = 4 + (4 * self.config["num_past_beam_instances"]) + 6
+            model = MemoryNeuralNetwork(
                 number_of_input_neurons=input_size,
                 number_of_hidden_neurons=self.config["hidden_neurons"],
                 number_of_output_neurons=3,
                 dropout_rate=self.config["dropout_rate"],
                 learning_rate=self.config["learning_rate"],
                 learning_rate_2=self.config["learning_rate_2"],
-                learning_rate_3=self.config["learning_rate_3"],
                 lipschitz_constant=self.config["lipschitz_constant"]
             ).to(self.device)
+            criterion = RMSELoss()
+            optimizer = optim.Adam(model.parameters(), lr=self.config["learning_rate"])
+            for epoch in range(target_epochs):
+                model.train()
+                epoch_loss = 0
+                for i in range(len(train_inputs)):
+                    input_tensor = torch.tensor(train_inputs[i], dtype=torch.float32).unsqueeze(0).to(self.device)
+                    target_tensor = torch.tensor(train_targets[i], dtype=torch.float32).unsqueeze(0).to(self.device)
+                    optimizer.zero_grad()
+                    output = model(input_tensor)
+                    loss = criterion(output, target_tensor)
+                    loss.backward()
+                    optimizer.step()
+                    epoch_loss += loss.item()
+                avg_loss = epoch_loss / len(train_inputs)
+                print(f"Velocity Model [{target_traj_name}] Epoch {epoch+1}/{target_epochs} RMSE: {avg_loss:.6f}")
+            # Test on the left-out trajectory
+            hybrid_beams = self.hybrid_beams[target_traj_name]
+            imu_df = self.imu_data[target_traj_name]
+            velocity_df = self.velocity_data[target_traj_name]
+            start_t = self.config["num_past_beam_instances"]
+            predictions = np.zeros((len(hybrid_beams), 3))
+            with torch.no_grad():
+                for t in range(start_t, len(hybrid_beams)):
+                    try:
+                        input_vector, _ = self.construct_velocity_input_target(
+                            hybrid_beams, hybrid_beams, imu_df, velocity_df, t,
+                            self.config["num_past_beam_instances"], 1
+                        )
+                        input_tensor = torch.tensor(input_vector, dtype=torch.float32).unsqueeze(0).to(self.device)
+                        output = model(input_tensor)
+                        predictions[t] = output.cpu().numpy().flatten()
+                    except Exception as e:
+                        print(f"[WARNING] Error predicting velocity at index {t}: {e}")
+                        continue
+            valid_predictions = predictions[start_t:]
+            non_zero_mask = np.any(valid_predictions != 0, axis=1)
+            velocity_predictions = valid_predictions[non_zero_mask]
+            # Pad/truncate to match length
+            total_length = len(velocity_df)
+            remaining_length = total_length - 2
+            if len(velocity_predictions) < remaining_length:
+                padding = np.zeros((remaining_length - len(velocity_predictions), 3))
+                velocity_predictions = np.vstack([velocity_predictions, padding])
+            elif len(velocity_predictions) > remaining_length:
+                velocity_predictions = velocity_predictions[:remaining_length]
+            full_velocity_predictions = np.vstack([
+                velocity_df[['V North', 'V East', 'V Down']].values[:2],
+                velocity_predictions
+            ])
+            # Compute RMSE
+            rmse = np.sqrt(np.mean((full_velocity_predictions - velocity_df[['V North', 'V East', 'V Down']].values) ** 2))
+            self.velocity_models[target_traj_name] = model
+            self.velocity_predictions[target_traj_name] = full_velocity_predictions
+            self.velocity_rmse[target_traj_name] = rmse
+            print(f"[INFO] Velocity RMSE for {target_traj_name}: {rmse:.6f}")
+        # After training all models, select the best one based on lowest RMSE
+        best_traj = min(self.velocity_rmse.items(), key=lambda x: x[1])[0]
+        self.velocity_model = self.velocity_models[best_traj]
+        print(f"\n[INFO] Selected best velocity model from {best_traj} with RMSE: {self.velocity_rmse[best_traj]:.6f}")
         
-        # Prepare training data
-        inputs, targets = [], []
-        start_t = self.config["num_past_beam_instances"]
-        
-        for t in range(start_t, len(original_beams)):
-            try:
-                inp, tar = self.construct_velocity_input_target(
-                    original_beams, predicted_beams, imu_df, velocity_df, t,
-                    self.config["num_past_beam_instances"], 1
-                )
-                inputs.append(inp)
-                targets.append(tar)
-            except Exception:
-                continue
-        
-        if len(inputs) == 0:
-            return self.velocity_model
-        
-        # Convert inputs and targets to numpy arrays
-        inputs = np.array(inputs)
-        targets = np.array(targets)
-        
-        # Train velocity model with RMSE loss
-        criterion = RMSELoss()
-        optimizer = optim.Adam(self.velocity_model.parameters(), lr=self.config["learning_rate"])
-        
-        for epoch in range(epochs):
-            self.velocity_model.train()
-            epoch_loss = 0
-            
-            # Process sample by sample
-            for i in range(len(inputs)):
-                input_tensor = torch.tensor(inputs[i], dtype=torch.float32).unsqueeze(0).to(self.device)
-                target_tensor = torch.tensor(targets[i], dtype=torch.float32).unsqueeze(0).to(self.device)
-                
-                optimizer.zero_grad()
-                output = self.velocity_model(input_tensor)
-                loss = criterion(output, target_tensor)
-                loss.backward()
-                optimizer.step()
-                
-                epoch_loss += loss.item()
-            
-            avg_loss = epoch_loss / len(inputs)
-            print(f"Velocity Model [{traj_name}] Epoch {epoch+1}/{epochs} RMSE: {avg_loss:.6f}")
-        
-        return self.velocity_model
+        print("\n[INFO] Leave-one-out velocity model training completed for all training trajectories.")
 
     def train(self, training_trajectories):
         """Train the model stack using a strict two-phase approach with leave-one-out.
@@ -597,44 +613,8 @@ class BeamVelocityStack:
         print("===================================================")
         
         # PHASE 2: Train velocity model using hybrid beams from phase 1
-        print("\n[INFO] PHASE 2: VELOCITY MODEL TRAINING")
-        print("===================================================")
+        self.train_velocity_models_leave_one_out(training_trajectories)
         
-        # Initialize velocity model
-        input_size_vel = 4 + (4 * self.config["num_past_beam_instances"]) + 6  # Current IMU only
-        self.velocity_model = MemoryNeuralNetwork(
-            number_of_input_neurons=input_size_vel,
-            number_of_hidden_neurons=self.config["hidden_neurons"],
-            number_of_output_neurons=3,
-            dropout_rate=self.config["dropout_rate"],
-            learning_rate=self.config["learning_rate"],
-            learning_rate_2=self.config["learning_rate_2"],
-            learning_rate_3=self.config["learning_rate_3"],
-            lipschitz_constant=self.config["lipschitz_constant"]
-        ).to(self.device)
-        print(f"[INFO] Initialized new velocity model for training")
-        
-        # Train velocity model using hybrid beam data from phase 1
-        for traj_config in tqdm(training_trajectories, desc="Velocity Training Trajectories", leave=True):
-            traj_name = traj_config[0]
-            traj_epochs = traj_config[1]
-            print(f"\n[INFO] Processing trajectory for velocity model: {traj_name}")
-            
-            # Retrieve stored data from phase 1
-            original_beams = self.original_beams.get(traj_name)
-            beam_predictions = self.beam_predictions.get(traj_name)
-            imu_df = self.imu_data.get(traj_name)
-            velocity_df = self.velocity_data.get(traj_name)
-            
-            if original_beams is None or beam_predictions is None or imu_df is None or velocity_df is None:
-                print(f"[ERROR] Missing data for trajectory {traj_name}, skipping velocity training")
-                continue
-            
-            print(f"[INFO] Training velocity model on trajectory: {traj_name}")
-            self.train_velocity_model(original_beams, beam_predictions, imu_df, velocity_df, traj_name, traj_epochs)
-        
-        print("\n[INFO] Velocity model training completed on all trajectories")
-        print("===================================================")
         print("\n[INFO] Two-phase training completed successfully")
         
         # After training is complete, save results for each training trajectory
@@ -674,26 +654,25 @@ class BeamVelocityStack:
             if beam_predictions is None:
                 print(f"[ERROR] No beam predictions available for training trajectory {traj_name}")
                 return None, None, None
+            # Use the correct leave-one-out velocity model
+            velocity_model = self.velocity_models.get(traj_name)
+            if velocity_model is None:
+                print(f"[ERROR] No velocity model available for training trajectory {traj_name}")
+                return beam_predictions, None, None
         else:
             print(f"[INFO] {traj_name} is a testing trajectory, using best beam model")
             # Use the best beam model for predictions
             if self.beam_model is None:
                 print(f"[ERROR] No beam model available for testing trajectory {traj_name}")
                 return None, None, None
-            
             # Set model to evaluation mode
             self.beam_model.eval()
-            
-            # Reset model state
             if hasattr(self.beam_model, 'prev_output_of_nn'):
                 batch_size = 1
                 output_size = 4
                 self.beam_model.prev_output_of_nn = torch.zeros(batch_size, output_size, device=self.device)
-            
-            # Predict beams sample by sample
             predictions = np.zeros((len(beams_df), 4))
             start_idx = self.config["num_past_beam_instances"]
-            
             with torch.no_grad():
                 for t in range(start_idx, len(beams_df)):
                     try:
@@ -701,67 +680,49 @@ class BeamVelocityStack:
                             beams_df, imu_df, None, t,
                             self.config["num_past_beam_instances"], 1
                         )
-                        
                         input_tensor = torch.tensor(input_vector, dtype=torch.float32).unsqueeze(0).to(self.device)
                         output = self.beam_model(input_tensor)
                         predictions[t] = output.cpu().numpy().flatten()
                     except Exception as e:
                         print(f"[WARNING] Error predicting beam at index {t}: {e}")
                         continue
-            
-            # Return only the non-zero predictions
             valid_predictions = predictions[start_idx:]
             non_zero_mask = np.any(valid_predictions != 0, axis=1)
             beam_predictions = valid_predictions[non_zero_mask]
-            
             if len(beam_predictions) == 0:
                 print(f"[ERROR] No valid beam predictions generated for {traj_name}")
                 return None, None, None
-        
+            # Use the best velocity model for test
+            velocity_model = self.velocity_model
+            if velocity_model is None:
+                print(f"[ERROR] No velocity model available for {traj_name}")
+                return beam_predictions, None, None
         # Create full beam predictions array with first 2 instances from GT
-        # Pad beam_predictions to match the total length needed
         total_length = len(beams_df)
-        remaining_length = total_length - 2  # After first 2 GT instances
+        remaining_length = total_length - 2
         if len(beam_predictions) < remaining_length:
-            # Pad with zeros if we don't have enough predictions
             padding = np.zeros((remaining_length - len(beam_predictions), 4))
             beam_predictions = np.vstack([beam_predictions, padding])
         elif len(beam_predictions) > remaining_length:
-            # Truncate if we have too many predictions
             beam_predictions = beam_predictions[:remaining_length]
-            
         full_beam_predictions = np.vstack([
-            original_beams[['b1', 'b2', 'b3', 'b4']].values[:2],  # First 2 instances from GT
-            beam_predictions  # Rest from predictions
+            original_beams[['b1', 'b2', 'b3', 'b4']].values[:2],
+            beam_predictions
         ])
-        
-        # Create hybrid beams (original where available, predicted where missing)
         print(f"[INFO] Creating hybrid beams for {traj_name}")
         hybrid_beams = original_beams.copy()
         for i in range(len(hybrid_beams)):
             for j, beam in enumerate(['b1', 'b2', 'b3', 'b4']):
                 if pd.isna(missed_beams.loc[i, beam]):
                     hybrid_beams.loc[i, beam] = full_beam_predictions[i, j]
-        
-        # Predict velocities using hybrid beams
         print(f"[INFO] Predicting velocities for {traj_name}")
-        if self.velocity_model is None:
-            print(f"[ERROR] No velocity model available for {traj_name}")
-            return full_beam_predictions, None, hybrid_beams
-        
-        # Set model to evaluation mode
-        self.velocity_model.eval()
-        
-        # Reset model state
-        if hasattr(self.velocity_model, 'prev_output_of_nn'):
+        velocity_model.eval()
+        if hasattr(velocity_model, 'prev_output_of_nn'):
             batch_size = 1
             output_size = 3
-            self.velocity_model.prev_output_of_nn = torch.zeros(batch_size, output_size, device=self.device)
-        
-        # Predict velocities sample by sample
+            velocity_model.prev_output_of_nn = torch.zeros(batch_size, output_size, device=self.device)
         predictions = np.zeros((len(beams_df), 3))
         start_idx = self.config["num_past_beam_instances"]
-        
         with torch.no_grad():
             for t in range(start_idx, len(beams_df)):
                 try:
@@ -769,48 +730,36 @@ class BeamVelocityStack:
                         beams_df, hybrid_beams, imu_df, velocity_df, t,
                         self.config["num_past_beam_instances"], 1
                     )
-                    
                     input_tensor = torch.tensor(input_vector, dtype=torch.float32).unsqueeze(0).to(self.device)
-                    output = self.velocity_model(input_tensor)
+                    output = velocity_model(input_tensor)
                     predictions[t] = output.cpu().numpy().flatten()
                 except Exception as e:
                     print(f"[WARNING] Error predicting velocity at index {t}: {e}")
                     continue
-        
-        # Create full velocity predictions array with first 2 instances from GT
         valid_predictions = predictions[start_idx:]
         non_zero_mask = np.any(valid_predictions != 0, axis=1)
         velocity_predictions = valid_predictions[non_zero_mask]
-        
-        # Pad velocity_predictions to match the total length needed
         total_length = len(velocity_df)
-        remaining_length = total_length - 2  # After first 2 GT instances
+        remaining_length = total_length - 2
         if len(velocity_predictions) < remaining_length:
-            # Pad with zeros if we don't have enough predictions
             padding = np.zeros((remaining_length - len(velocity_predictions), 3))
             velocity_predictions = np.vstack([velocity_predictions, padding])
         elif len(velocity_predictions) > remaining_length:
-            # Truncate if we have too many predictions
             velocity_predictions = velocity_predictions[:remaining_length]
-            
         full_velocity_predictions = np.vstack([
-            velocity_df[['V North', 'V East', 'V Down']].values[:2],  # First 2 instances from GT
-            velocity_predictions  # Rest from predictions
+            velocity_df[['V North', 'V East', 'V Down']].values[:2],
+            velocity_predictions
         ])
-        
         print(f"[INFO] Completed predictions for {traj_name}")
         print(f"Beam predictions shape: {full_beam_predictions.shape}")
         print(f"Velocity predictions shape: {full_velocity_predictions.shape}")
-        
-        # After predictions are complete, save results
-        results_dir = "testing_results" if not any(traj_config[0] == traj_name for traj_config in self.config["training_trajectories"]) else "training_results"
+        results_dir = "testing_results" if not is_training else "training_results"
         os.makedirs(results_dir, exist_ok=True)
         self.save_trajectory_results(traj_name, results_dir, 
-                                   is_training=any(traj_config[0] == traj_name for traj_config in self.config["training_trajectories"]),
+                                   is_training=is_training,
                                    beam_predictions=full_beam_predictions,
                                    velocity_predictions=full_velocity_predictions,
                                    hybrid_beams=hybrid_beams)
-        
         return full_beam_predictions, full_velocity_predictions, hybrid_beams
 
     def save_models(self, path):

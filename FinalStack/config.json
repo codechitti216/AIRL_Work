@@ -21,18 +21,18 @@
     },
     "epochs": 100,
     "training_trajectories": [
-        ["Trajectory1", 100],
-        ["Trajectory2", 100],
-        ["Trajectory3", 100],
-        ["Trajectory4", 100],
-        ["Trajectory5", 100],
-        ["Trajectory6", 100],
-        ["Trajectory7", 100],
-        ["Trajectory8", 100],
-        ["Trajectory9", 100],
-        ["Trajectory10", 100],
-        ["Trajectory11", 100],
-        ["Trajectory12", 100]
+    ["Trajectory1", 100],
+    ["Trajectory2", 100],
+    ["Trajectory3", 100],
+    ["Trajectory4", 100],
+    ["Trajectory5", 100],
+    ["Trajectory6", 100],
+    ["Trajectory7", 100],
+    ["Trajectory8", 100],
+    ["Trajectory9", 100],
+    ["Trajectory10", 100],
+    ["Trajectory11", 100],
+    ["Trajectory12", 100]
     ],
     "testing_trajectories": [
         "Trajectory13"

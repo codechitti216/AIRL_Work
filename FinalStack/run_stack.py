@@ -393,6 +393,9 @@ def process_trajectory(traj_config, stack, results_dir, is_training=True):
     beam_rmse = calculate_metrics(beam_array, beam_predictions)
     
     # For velocity metrics
+    if velocity_predictions is None:
+        print(f"[ERROR] No velocity predictions available for {traj_name}. Skipping trajectory.")
+        return False
     vel_offset = len(velocity_df) - len(velocity_predictions)
     velocity_df_subset = velocity_df.iloc[vel_offset:].reset_index(drop=True)
     velocity_array = velocity_df_subset[REQUIRED_VELOCITY_COLS].values
@@ -438,7 +441,7 @@ def main():
     global stack, results_dir
     
     # Load configuration
-    config_path = 'config.json'
+    config_path = os.path.join(os.path.dirname(__file__), 'config.json')
     with open(config_path, 'r') as f:
         config = json.load(f)
     
